@@ -230,11 +230,14 @@ export function DividendDashboard() {
   };
 
   return (
-    <div className="px-4 pb-20 space-y-4">
-      <div className="flex items-center justify-between pt-2 pb-1">
-        <div className="flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-green-400" />
-          <h3 className="text-base font-semibold text-gray-100">예상 배당금</h3>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <DollarSign className="w-6 h-6 text-green-400" />
+            예상 배당금
+          </h2>
+          <p className="text-sm text-gray-400 mt-1">보유 종목 기반 배당 일정 및 수령 예상액</p>
         </div>
         <CurrencyToggleButton />
       </div>

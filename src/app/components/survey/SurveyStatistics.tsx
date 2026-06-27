@@ -79,10 +79,12 @@ export function SurveyStatistics({ defaultExpandedSurveyId, onExpandHandled }: S
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4 pb-20">
-        <div className="flex items-center gap-2 mb-4">
-          <BarChart3 className="w-6 h-6 text-purple-400" />
-          <h2 className="text-xl font-semibold text-gray-100">설문 통계</h2>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-purple-400" />
+            설문 통계
+          </h2>
         </div>
         <Card className="p-8 text-center bg-slate-700 border-slate-600">
           <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -94,10 +96,12 @@ export function SurveyStatistics({ defaultExpandedSurveyId, onExpandHandled }: S
 
   if (completedResponses.length === 0) {
     return (
-      <div className="p-4 space-y-4 pb-20">
-        <div className="flex items-center gap-2 mb-4">
-          <BarChart3 className="w-6 h-6 text-purple-400" />
-          <h2 className="text-xl font-semibold text-gray-100">설문 통계</h2>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-purple-400" />
+            설문 통계
+          </h2>
         </div>
 
         <Card className="p-8 text-center bg-slate-700/50 border-slate-600">
@@ -114,7 +118,7 @@ export function SurveyStatistics({ defaultExpandedSurveyId, onExpandHandled }: S
   }
 
   return (
-    <div className="p-4 space-y-4 pb-20">
+    <div className="space-y-6">
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-6 h-6 text-purple-400" />
         <h2 className="text-xl font-semibold text-gray-100">설문 통계</h2>

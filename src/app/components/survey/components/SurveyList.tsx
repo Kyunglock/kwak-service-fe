@@ -14,10 +14,12 @@ interface SurveyListProps {
 export function SurveyList({ surveys, completedSurveyIds, incompleteCount, loading, onSelectSurvey }: SurveyListProps) {
   if (loading) {
     return (
-      <div className="p-4 space-y-4 pb-20">
-        <div className="flex items-center gap-2 mb-4">
-          <ClipboardList className="w-6 h-6 text-cyan-400" />
-          <h2 className="text-xl font-semibold text-gray-100">투자 설문</h2>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <ClipboardList className="w-6 h-6 text-cyan-400" />
+            투자 설문
+          </h2>
         </div>
         <Card className="p-8 text-center bg-slate-700 border-slate-600">
           <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -30,11 +32,14 @@ export function SurveyList({ surveys, completedSurveyIds, incompleteCount, loadi
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="p-4 space-y-4 pb-20">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <ClipboardList className="w-6 h-6 text-cyan-400" />
-          <h2 className="text-xl font-semibold text-gray-100">투자 설문</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <ClipboardList className="w-6 h-6 text-cyan-400" />
+            투자 설문
+          </h2>
+          <p className="text-sm text-gray-400 mt-1">AI 기반 맞춤 설문으로 투자 성향을 분석합니다</p>
         </div>
         {incompleteCount > 0 && (
           <Badge variant="destructive" className="bg-red-600 text-white">

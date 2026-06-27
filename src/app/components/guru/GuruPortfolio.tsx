@@ -99,20 +99,16 @@ export function GuruPortfolio() {
   }
 
   return (
-    <div className="p-4 space-y-5 pb-20">
+    <div className="space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-slate-600 flex items-center justify-center">
-          <Crown className="w-4 h-4 text-slate-200" />
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold text-gray-100">
-            투자 대가 포트폴리오
-          </h2>
-          <p className="text-xs text-gray-400">
-            전설적인 투자자들의 실제 보유 종목
-          </p>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+          <Crown className="w-6 h-6 text-orange-400" />
+          투자 대가 포트폴리오
+        </h2>
+        <p className="text-sm text-gray-400 mt-1">
+          전설적인 투자자들의 실제 보유 종목
+        </p>
       </div>
 
       {/* 안내 문구 */}

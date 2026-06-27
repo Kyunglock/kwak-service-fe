@@ -246,6 +246,11 @@ export interface PortfolioItemResponse {
   useYn: string;
   regDt: string;
   updDt: string;
+  // dashboard / detail 엔드포인트에서 embed (기존 엔드포인트에선 undefined)
+  stockNm?: string;
+  stockNmKo?: string;
+  sector?: string;
+  sectorKo?: string;
 }
 
 export interface PortfolioItemAddRequest {

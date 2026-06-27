@@ -221,11 +221,14 @@ export function InvestmentCompetition() {
   };
 
   return (
-    <div className="p-2 space-y-3 pb-20">
+    <div className="space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center gap-2 mb-2">
-        <Award className="w-6 h-6 text-yellow-400" />
-        <h2 className="text-lg font-bold text-gray-100">모의투자 경기</h2>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+          <Award className="w-6 h-6 text-yellow-400" />
+          모의투자 경기
+        </h2>
+        <p className="text-sm text-gray-400 mt-1">실시간 수익률 기반 모의 투자 경쟁</p>
       </div>
 
       {/* 대회 정보 */}

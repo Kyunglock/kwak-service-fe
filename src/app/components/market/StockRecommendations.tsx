@@ -346,7 +346,7 @@ export function StockRecommendations() {
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4 pb-20">
+      <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
             <Lightbulb className="w-4 h-4 text-white" />
@@ -371,16 +371,14 @@ export function StockRecommendations() {
   }
 
   return (
-    <div className="p-4 space-y-5 pb-20">
+    <div className="space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-          <Lightbulb className="w-4 h-4 text-white" />
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold text-gray-100">투자 아이디어</h2>
-          <p className="text-xs text-gray-400">AI 포트폴리오 분석 기반 맞춤 추천</p>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+          <Lightbulb className="w-6 h-6 text-cyan-400" />
+          투자 아이디어
+        </h2>
+        <p className="text-sm text-gray-400 mt-1">AI 포트폴리오 분석 기반 맞춤 추천</p>
       </div>
 
       {/* 포트폴리오 분석 결과 */}

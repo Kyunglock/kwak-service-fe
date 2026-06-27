@@ -9,7 +9,6 @@ import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 import { StockRecommendations } from "@/app/components/market/StockRecommendations";
 import { InsightsDashboard } from "@/app/components/market/InsightsDashboard";
 import { Portfolio } from "@/app/components/portfolio/Portfolio";
-import { PortfolioAnalysis } from "@/app/components/portfolio/PortfolioAnalysis";
 import { DividendDashboard } from "@/app/components/portfolio/DividendDashboard";
 import { SurveyStatistics } from "@/app/components/survey/SurveyStatistics";
 import { GuruPortfolio } from "@/app/components/guru/GuruPortfolio";
@@ -88,31 +87,9 @@ export function MainLayout() {
 
   return (
     <CurrencyProvider>
-      <div className="min-h-screen bg-slate-800 pb-20">
-        <MobileAlert />
-        <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-lg sticky top-0 z-50">
-          <div className="max-w-md mx-auto flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold">🧭 주식 나침반</h1>
-              <p className="text-xs opacity-90 mt-1">
-                S&amp;P 500 종목 기반 포트폴리오 관리
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:bg-white/20 h-14 w-14 p-0"
-            >
-              {isMenuOpen ? (
-                <X className="size-7" />
-              ) : (
-                <Menu className="size-7" />
-              )}
-            </Button>
-          </div>
-        </header>
-
+      <MobileAlert />
+      <div className="min-h-screen bg-slate-800 lg:flex">
+        {/* 사이드바 (PC: 항상 표시, 모바일: 햄버거 토글) */}
         <SideMenu
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
@@ -126,58 +103,82 @@ export function MainLayout() {
           onNavigateToAdmin={() => navigate("/admin/login")}
         />
 
-        <div className="max-w-md mx-auto">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsContent value="portfolio" className="mt-0">
-              <Portfolio stockPrices={stockPrices} />
-            </TabsContent>
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* 모바일 전용 헤더 */}
+          <header className="lg:hidden bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-lg sticky top-0 z-50">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-xl font-bold">🧭 주식 나침반</h1>
+                <p className="text-xs opacity-90 mt-1">
+                  S&amp;P 500 종목 기반 포트폴리오 관리
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-white hover:bg-white/20 h-14 w-14 p-0"
+              >
+                {isMenuOpen ? (
+                  <X className="size-7" />
+                ) : (
+                  <Menu className="size-7" />
+                )}
+              </Button>
+            </div>
+          </header>
 
-            <TabsContent value="analysis" className="mt-0">
-              <PortfolioAnalysis stockPrices={stockPrices} />
-            </TabsContent>
+          {/* 콘텐츠 */}
+          <main className="flex-1 p-4 lg:p-6">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsContent value="portfolio" className="mt-0">
+                <Portfolio stockPrices={stockPrices} />
+              </TabsContent>
 
-            <TabsContent value="dividend" className="mt-0">
-              <DividendDashboard />
-            </TabsContent>
+              <TabsContent value="dividend" className="mt-0">
+                <DividendDashboard />
+              </TabsContent>
 
-            <TabsContent value="survey" className="mt-0">
-              <InvestmentSurvey onComplete={handleSurveyComplete} />
-            </TabsContent>
+              <TabsContent value="survey" className="mt-0">
+                <InvestmentSurvey onComplete={handleSurveyComplete} />
+              </TabsContent>
 
-            <TabsContent value="statistics" className="mt-0">
-              <SurveyStatistics
-                defaultExpandedSurveyId={completedSurveyId}
-                onExpandHandled={() => setCompletedSurveyId(null)}
-              />
-            </TabsContent>
+              <TabsContent value="statistics" className="mt-0">
+                <SurveyStatistics
+                  defaultExpandedSurveyId={completedSurveyId}
+                  onExpandHandled={() => setCompletedSurveyId(null)}
+                />
+              </TabsContent>
 
-            <TabsContent value="recommendations" className="mt-0">
-              {surveyAnswers ? (
-                <StockRecommendations />
-              ) : (
-                <div className="p-4 text-center py-12">
-                  <Star className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                  <p className="text-sm text-gray-300">
-                    설문을 완료하시면 맞춤형 종목 추천을 받을 수 있습니다.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
+              <TabsContent value="recommendations" className="mt-0">
+                {surveyAnswers ? (
+                  <StockRecommendations />
+                ) : (
+                  <div className="p-4 text-center py-12">
+                    <Star className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                    <p className="text-sm text-gray-300">
+                      설문을 완료하시면 맞춤형 종목 추천을 받을 수 있습니다.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
 
-            <TabsContent value="insights" className="mt-0">
-              <InsightsDashboard
-                onRetakeSurvey={() => setActiveTab("survey")}
-              />
-            </TabsContent>
+              <TabsContent value="insights" className="mt-0">
+                <InsightsDashboard
+                  onRetakeSurvey={() => setActiveTab("survey")}
+                />
+              </TabsContent>
 
-            <TabsContent value="competition" className="mt-0">
-              <GuruPortfolio />
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="competition" className="mt-0">
+                <GuruPortfolio />
+              </TabsContent>
+            </Tabs>
+          </main>
         </div>
       </div>
     </CurrencyProvider>

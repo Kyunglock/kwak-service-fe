@@ -1,17 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
-import { Briefcase, Plus } from "lucide-react";
+import { Briefcase, Plus, FolderOpen, Settings } from "lucide-react";
 import type {
   PortfolioResponse,
   StockPrice,
   PortfolioItemResponse,
   TransactionResponse,
 } from "@/app/types";
-import { getPortfolioItems } from "@/app/services/portfolioItemService";
-import { getPortfoliosByUser } from "@/app/services/portfolioService";
 import {
-  getTransactionsByPortfolio,
-  removeTransaction,
-} from "@/app/services/transactionService";
+  getPortfolioDashboard,
+  getPortfolioDetail,
+  getPortfoliosByUser,
+} from "@/app/services/portfolioService";
+import { removeTransaction } from "@/app/services/transactionService";
 import {
   getStocksWithPrice,
   type StockWithPrice,
@@ -21,6 +21,7 @@ import { EditTradeDialog } from "@/app/components/portfolio/EditTradeDialog";
 import { ManagePortfolioDialog } from "@/app/components/portfolio/ManagePortfolioDialog";
 import { PositionList } from "@/app/components/portfolio/PositionList";
 import { TradeHistoryList } from "@/app/components/portfolio/TradeHistoryList";
+import { PortfolioAnalysis } from "@/app/components/portfolio/PortfolioAnalysis";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
 
 interface PortfolioProps {
@@ -32,23 +33,82 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
   const [currentPortfolioId, setCurrentPortfolioId] = useState<number>(0);
   const [positions, setPositions] = useState<PortfolioItemResponse[]>([]);
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
-  const [stocks, setStocks] = useState<StockWithPrice[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [stocksLoading, setStocksLoading] = useState(true);
+  const [tradeDialogStocks, setTradeDialogStocks] = useState<StockWithPrice[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isManagePortfolioOpen, setIsManagePortfolioOpen] = useState(false);
   const [openTradeAfterPortfolio, setOpenTradeAfterPortfolio] = useState(false);
   const [editingTransaction, setEditingTransaction] =
     useState<TransactionResponse | null>(null);
 
+  // positions에 stock 정보가 embed되어 있으므로 별도 stocks API 불필요
+  const stocks: StockWithPrice[] = positions.map((pos) => ({
+    stockCd: pos.stockCd,
+    stockNm: pos.stockNm ?? pos.stockCd,
+    stockNmKo: pos.stockNmKo,
+    sector: pos.sector ?? '',
+    sectorKo: pos.sectorKo ?? '',
+    priceDt: '',
+    openPrice: 0,
+    highPrice: 0,
+    lowPrice: 0,
+    closePrice: 0,
+    volume: 0,
+  }));
+
+  // 탭 최초 진입 — 1 call로 포트폴리오 목록 + positions + transactions 수신
   useEffect(() => {
-    getStocksWithPrice()
-      .then((res) => setStocks(res.data.data))
-      .catch(() => {})
-      .finally(() => setStocksLoading(false));
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await getPortfolioDashboard();
+        const data = res.data.data;
+        const list = data.portfolios ?? [];
+        setPortfolios(list);
+        const defaultId = data.activePortfolioId ?? list[0]?.portfolioId ?? 0;
+        setCurrentPortfolioId(defaultId);
+        setPositions(data.positions ?? []);
+        setTransactions(data.transactions ?? []);
+      } catch {
+        // apiClient 인터셉터에서 에러 처리됨
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  // API에서 포트폴리오 로드
+  useEffect(() => {
+    if (openTradeAfterPortfolio && currentPortfolioId) {
+      setOpenTradeAfterPortfolio(false);
+      setIsAddDialogOpen(true);
+    }
+  }, [openTradeAfterPortfolio, currentPortfolioId]);
+
+  // 포트폴리오 전환 — 1 call로 positions + transactions 동시 수신
+  const fetchPortfolioDetail = useCallback(async (portfolioId: number) => {
+    if (!portfolioId) return;
+    setLoading(true);
+    try {
+      const res = await getPortfolioDetail(portfolioId);
+      const data = res.data.data;
+      setPositions(data.positions ?? []);
+      setTransactions(data.transactions ?? []);
+    } catch {
+      // apiClient 인터셉터에서 에러 처리됨
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handlePortfolioSelect = useCallback((portfolioId: number) => {
+    setCurrentPortfolioId(portfolioId);
+    fetchPortfolioDetail(portfolioId);
+  }, [fetchPortfolioDetail]);
+
+  const handleTradeComplete = useCallback(async () => {
+    await fetchPortfolioDetail(currentPortfolioId);
+  }, [fetchPortfolioDetail, currentPortfolioId]);
+
   const fetchPortfolios = useCallback(async () => {
     try {
       const response = await getPortfoliosByUser();
@@ -62,54 +122,6 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
     }
   }, []);
 
-  useEffect(() => {
-    fetchPortfolios();
-  }, [fetchPortfolios]);
-
-  // 포트폴리오 생성 후 거래 다이얼로그 자동 오픈
-  useEffect(() => {
-    if (openTradeAfterPortfolio && currentPortfolioId) {
-      setOpenTradeAfterPortfolio(false);
-      setIsAddDialogOpen(true);
-    }
-  }, [openTradeAfterPortfolio, currentPortfolioId]);
-
-  // API에서 포트폴리오 종목 로드
-  const fetchPositions = useCallback(async () => {
-    if (!currentPortfolioId) return;
-    setLoading(true);
-    try {
-      const response = await getPortfolioItems(currentPortfolioId);
-      setPositions(response.data.data ?? []);
-    } catch {
-      // apiClient 인터셉터에서 에러 처리됨
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPortfolioId]);
-
-  // API에서 거래 이력 로드
-  const fetchTransactions = useCallback(async () => {
-    if (!currentPortfolioId) return;
-    try {
-      const response = await getTransactionsByPortfolio(currentPortfolioId);
-      setTransactions(response.data.data ?? []);
-    } catch {
-      // apiClient 인터셉터에서 에러 처리됨
-    }
-  }, [currentPortfolioId]);
-
-  useEffect(() => {
-    fetchPositions();
-    fetchTransactions();
-  }, [fetchPositions, fetchTransactions]);
-
-  // 거래 완료 후: 보유종목 + 거래내역 모두 리프레시
-  const handleTradeComplete = useCallback(async () => {
-    await Promise.all([fetchPositions(), fetchTransactions()]);
-  }, [fetchPositions, fetchTransactions]);
-
-  // 거래 내역 삭제
   const handleDeleteTransaction = async (tx: TransactionResponse) => {
     if (
       !confirm(
@@ -119,21 +131,26 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
       return;
     try {
       await removeTransaction(tx.transId);
-      await Promise.all([fetchPositions(), fetchTransactions()]);
+      await fetchPortfolioDetail(currentPortfolioId);
     } catch {
       // apiClient 인터셉터에서 에러 처리됨
     }
   };
 
-  // 거래 추가 버튼: 포트폴리오 없으면 포트폴리오 먼저 생성
+  // TradeDialog는 전체 종목 검색이 필요 — 다이얼로그 첫 오픈 시에만 로드
   const handleAddClick = useCallback(() => {
     if (!currentPortfolioId) {
       setOpenTradeAfterPortfolio(true);
       setIsManagePortfolioOpen(true);
     } else {
+      if (tradeDialogStocks.length === 0) {
+        getStocksWithPrice()
+          .then((res) => setTradeDialogStocks(res.data.data))
+          .catch(() => {});
+      }
       setIsAddDialogOpen(true);
     }
-  }, [currentPortfolioId]);
+  }, [currentPortfolioId, tradeDialogStocks.length]);
 
   const handlePortfolioChange = useCallback(async () => {
     await fetchPortfolios();
@@ -150,18 +167,57 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
   );
 
   return (
-    <div className="p-2 space-y-2 pb-20">
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-base font-semibold text-gray-100">
+    <div className="space-y-5">
+      {/* 페이지 헤더 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <Briefcase className="w-6 h-6 text-indigo-400" />
             내 포트폴리오
           </h2>
+          <p className="text-sm text-gray-400 mt-1">보유 종목 및 매매 내역 관리</p>
         </div>
-        <CurrencyToggleButton />
+        <div className="flex items-center gap-3">
+          <CurrencyToggleButton />
+          <button
+            onClick={handleAddClick}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-900/30"
+          >
+            <Plus className="w-4 h-4" />
+            매수/매도
+          </button>
+        </div>
       </div>
 
-      {/* 포트폴리오 관리 다이얼로그 */}
+      {/* 포트폴리오 탭 선택 */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {portfolios.map((p) => (
+          <button
+            key={p.portfolioId}
+            onClick={() => handlePortfolioSelect(p.portfolioId)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
+              currentPortfolioId === p.portfolioId
+                ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
+                : "bg-slate-800 border-slate-700 text-gray-400 hover:text-gray-200 hover:border-slate-600"
+            }`}
+          >
+            <FolderOpen className="w-3.5 h-3.5" />
+            <span>{p.portfolioNm}</span>
+            {p.baseCurrency && (
+              <span className="text-[10px] opacity-50 font-normal">{p.baseCurrency}</span>
+            )}
+          </button>
+        ))}
+        <button
+          onClick={() => setIsManagePortfolioOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-300 hover:bg-slate-800 transition-colors border border-dashed border-slate-700"
+        >
+          <Settings className="w-3.5 h-3.5" />
+          {portfolios.length === 0 ? "포트폴리오 만들기" : "관리"}
+        </button>
+      </div>
+
+      {/* 다이얼로그들 */}
       <ManagePortfolioDialog
         open={isManagePortfolioOpen}
         onOpenChange={setIsManagePortfolioOpen}
@@ -170,18 +226,14 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
         onPortfolioChange={handlePortfolioChange}
         onPortfolioDeleted={handlePortfolioDeleted}
       />
-
-      {/* 매수/매도 다이얼로그 */}
       <TradeDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         currentPortfolioId={currentPortfolioId}
         positions={positions}
         onTradeComplete={handleTradeComplete}
-        stocks={stocks} // 추가
+        stocks={tradeDialogStocks}
       />
-
-      {/* 거래 내역 수정 다이얼로그 */}
       <EditTradeDialog
         open={editingTransaction !== null}
         onOpenChange={(open) => {
@@ -191,32 +243,36 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
         onEditComplete={handleTradeComplete}
       />
 
-      {/* 보유 종목 목록 */}
-      <PositionList
-        positions={positions}
-        loading={loading || stocksLoading}
-        stockPrices={stockPrices}
-        stocks={stocks}
-        onAddClick={handleAddClick}
-      />
+      {/* 보유종목 + 매매내역 2열 그리드 */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+        <PositionList
+          positions={positions}
+          loading={loading}
+          stockPrices={stockPrices}
+          stocks={stocks}
+          onAddClick={handleAddClick}
+        />
+        <TradeHistoryList
+          transactions={transactions}
+          stocks={stocks}
+          onEdit={(tx) => setEditingTransaction(tx)}
+          onDelete={handleDeleteTransaction}
+          onAddClick={handleAddClick}
+        />
+      </div>
 
-      {/* 매매 내역 */}
-      <TradeHistoryList
-        transactions={transactions}
-        stocks={stocks}
-        onEdit={(tx) => setEditingTransaction(tx)}
-        onDelete={handleDeleteTransaction}
-        onAddClick={handleAddClick}
-      />
-
-      {/* 플로팅 액션 버튼 */}
-      <button
-        onClick={handleAddClick}
-        className="fixed bottom-20 right-4 w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center z-40"
-        aria-label="매수/매도하기"
-      >
-        <Plus className="w-6 h-6" />
-      </button>
+      {/* 자산 분석 차트 — 데이터를 부모에서 내려줘 중복 API 호출 없음 */}
+      <div className="border-t border-slate-700/60 pt-6">
+        <PortfolioAnalysis
+          stockPrices={stockPrices}
+          embedded
+          portfolioId={currentPortfolioId}
+          positions={positions}
+          transactions={transactions}
+          stocks={stocks}
+          isLoading={loading}
+        />
+      </div>
     </div>
   );
 }

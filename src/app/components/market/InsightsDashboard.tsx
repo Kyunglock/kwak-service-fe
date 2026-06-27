@@ -64,12 +64,15 @@ export function InsightsDashboard({ onRetakeSurvey }: Props) {
     insightResults.find((r) => r.resultTypeCd === typeCd) ?? null;
 
   return (
-    <div className="p-4 space-y-4 pb-20">
+    <div className="space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <PieChart className="w-6 h-6 text-green-400" />
-          <h2 className="text-xl font-semibold text-gray-100">투자자 인사이트</h2>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <PieChart className="w-6 h-6 text-teal-400" />
+            투자자 인사이트
+          </h2>
+          <p className="text-sm text-gray-400 mt-1">설문 기반 투자 성향 분석 및 포트폴리오 인사이트</p>
         </div>
         <CurrencyToggleButton />
       </div>

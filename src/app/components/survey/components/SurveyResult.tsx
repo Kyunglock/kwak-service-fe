@@ -13,7 +13,7 @@ interface SurveyResultProps {
 export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: SurveyResultProps) {
   if (statsLoading) {
     return (
-      <div className="p-4 space-y-4 pb-20">
+      <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <Button variant="ghost" size="sm" onClick={onBackToList} className="text-gray-300 hover:text-white -ml-2">
             ← 목록
@@ -30,7 +30,7 @@ export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: 
 
   if (!surveyStatsDetail) {
     return (
-      <div className="p-4 space-y-4 pb-20">
+      <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <Button variant="ghost" size="sm" onClick={onBackToList} className="text-gray-300 hover:text-white -ml-2">
             ← 목록
@@ -54,7 +54,7 @@ export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: 
   ) ?? 0;
 
   return (
-    <div className="p-4 space-y-4 pb-20">
+    <div className="space-y-6">
       <div className="flex items-center gap-2 mb-2">
         <Button variant="ghost" size="sm" onClick={onBackToList} className="text-gray-300 hover:text-white -ml-2">
           ← 목록

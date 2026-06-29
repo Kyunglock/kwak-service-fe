@@ -510,7 +510,8 @@ export type InsightResultTypeCd =
   | "RISK_ASSESSMENT"
   | "PORTFOLIO_ALIGNMENT"
   | "INVESTMENT_RECOMMENDATION"
-  | "STOCK_MBTI";
+  | "STOCK_MBTI"
+  | "PROFILE_FIT";
 
 export interface InsightResultResponse {
   resultId: number;
@@ -520,6 +521,20 @@ export interface InsightResultResponse {
   content: string;
   regDt: string;
   updDt: string | null;
+}
+
+// 빌드 상태 (비동기 폴링)
+export type BuildStatus = "IDLE" | "PROCESSING" | "DONE" | "FAILED";
+
+// PROFILE_FIT content(JSON) 구조
+export interface ProfileFitItem {
+  ticker: string;
+  level: string; // "높음" | "보통" | "낮음"
+  reason: string;
+}
+export interface ProfileFitContent {
+  fit: ProfileFitItem[];
+  rebalance: string[];
 }
 
 // ========== Divergence API DTOs ==========

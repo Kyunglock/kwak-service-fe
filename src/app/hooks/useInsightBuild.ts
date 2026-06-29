@@ -10,9 +10,11 @@ export function useInsightBuild(onDone: () => void) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<number>(0);
   const onDoneRef = useRef(onDone);
+  const stoppedRef = useRef(false);
   onDoneRef.current = onDone;
 
   const stopPolling = useCallback(() => {
+    stoppedRef.current = true;
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -30,9 +32,11 @@ export function useInsightBuild(onDone: () => void) {
 
   const startPolling = useCallback(() => {
     stopPolling();
+    stoppedRef.current = false;
     startedAtRef.current = Date.now();
     timerRef.current = setInterval(async () => {
       const s = await readStatus();
+      if (stoppedRef.current) return;
       setStatus(s);
       if (s === "DONE") {
         stopPolling();

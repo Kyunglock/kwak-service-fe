@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Brain, RefreshCw, AlertTriangle, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 import { Card } from "@/app/components/ui/layout/card";
 import { Badge } from "@/app/components/ui/feedback/badge";
-import { buildInsightContext } from "@/app/services/insightService";
-import type { InsightResultResponse, InsightResultTypeCd, ApiResponse } from "@/app/types";
+import { requestInsightBuild } from "@/app/services/insightService";
+import type { InsightResultResponse, InsightResultTypeCd } from "@/app/types";
 
 const RESULT_CARD_TYPES = ["RISK_ASSESSMENT", "PORTFOLIO_ALIGNMENT", "INVESTMENT_RECOMMENDATION"];
 
@@ -82,7 +82,7 @@ const TYPE_META: Record<
 
 interface Props {
   results: InsightResultResponse[];
-  onBuildComplete: (all: InsightResultResponse[]) => void;
+  onBuildComplete?: (all: InsightResultResponse[]) => void;
 }
 
 function InsightSection({ item }: { item: InsightResultResponse }) {
@@ -150,15 +150,14 @@ function InsightSection({ item }: { item: InsightResultResponse }) {
   );
 }
 
-export function InsightResultCard({ results, onBuildComplete }: Props) {
+export function InsightResultCard({ results }: Props) {
   const [building, setBuilding] = useState(false);
 
   const handleBuildContext = async () => {
     setBuilding(true);
     try {
-      const res  = await buildInsightContext();
-      const data = (res.data as ApiResponse<InsightResultResponse[]>).data;
-      if (Array.isArray(data)) onBuildComplete(data);
+      await requestInsightBuild();
+      // 결과 갱신은 상위 대시보드의 폴링이 담당
     } catch {
       // 에러는 apiClient 인터셉터에서 처리
     } finally {

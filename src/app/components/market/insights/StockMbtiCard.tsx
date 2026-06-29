@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Fingerprint, RefreshCcw, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
-import { buildInsightContext } from "@/app/services/insightService";
-import type { InsightResultResponse, ApiResponse } from "@/app/types";
+import { requestInsightBuild } from "@/app/services/insightService";
+import type { InsightResultResponse } from "@/app/types";
 
 interface Props {
   insightResult: InsightResultResponse | null;
@@ -322,7 +322,7 @@ const MBTI_DETAIL: Record<string, MbtiDetail> = {
   },
 };
 
-export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuildComplete }: Props) {
+export function StockMbtiCard({ insightResult, onRetakeSurvey }: Props) {
   const [showDetail, setShowDetail] = useState(false);
   const [building, setBuilding] = useState(false);
 
@@ -346,9 +346,7 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuildComplete }
   const handleBuildContext = async () => {
     setBuilding(true);
     try {
-      const res  = await buildInsightContext();
-      const data = (res.data as ApiResponse<InsightResultResponse[]>).data;
-      if (Array.isArray(data)) onBuildComplete?.(data);
+      await requestInsightBuild();
     } catch {
       // 에러는 apiClient 인터셉터에서 처리
     } finally {

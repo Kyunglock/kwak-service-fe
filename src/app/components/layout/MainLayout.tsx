@@ -8,12 +8,13 @@ import type { SurveyResponse, UserSurveyResponseDto } from "@/app/types";
 import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 import { StockRecommendations } from "@/app/components/market/StockRecommendations";
 import { InsightsDashboard } from "@/app/components/market/InsightsDashboard";
+import { InvestorTypeDashboard } from "@/app/components/market/InvestorTypeDashboard";
 import { Portfolio } from "@/app/components/portfolio/Portfolio";
 import { DividendDashboard } from "@/app/components/portfolio/DividendDashboard";
 import { SurveyStatistics } from "@/app/components/survey/SurveyStatistics";
 import { GuruPortfolio } from "@/app/components/guru/GuruPortfolio";
 import { Tabs, TabsContent } from "@/app/components/ui/layout/tabs";
-import { Star, X, Menu } from "lucide-react";
+import { Star, X, Menu, Search } from "lucide-react";
 import { Button } from "@/app/components/ui/form/button";
 import { useStockPrice } from "@/app/hooks/useStockPrice";
 import { MobileAlert } from "@/app/components/ui/feedback/mobile-alert";
@@ -34,11 +35,16 @@ export function MainLayout() {
     },
     [setSearchParams],
   );
-  const [completedSurveyId, setCompletedSurveyId] = useState<number | null>(
-    null,
-  );
+  const [completedSurveyId, setCompletedSurveyId] = useState<number | null>(null);
   const [incompleteSurveyCount, setIncompleteSurveyCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [surveyInputKeyword, setSurveyInputKeyword] = useState("");
+  const [surveyKeyword, setSurveyKeyword] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSurveyKeyword(surveyInputKeyword), 500);
+    return () => clearTimeout(timer);
+  }, [surveyInputKeyword]);
 
   const { prices: stockPrices, connected: sseConnected } =
     useStockPrice(isLoggedIn);
@@ -80,15 +86,10 @@ export function MainLayout() {
     navigate("/login");
   };
 
-  const handleSurveyComplete = (surveyId: number) => {
-    setCompletedSurveyId(surveyId);
-    setActiveTab("statistics");
-  };
-
   return (
     <CurrencyProvider>
       <MobileAlert />
-      <div className="min-h-screen bg-slate-800 lg:flex">
+      <div className="min-h-screen min-h-dvh bg-slate-800 lg:flex">
         {/* 사이드바 (PC: 항상 표시, 모바일: 햄버거 토글) */}
         <SideMenu
           isOpen={isMenuOpen}
@@ -140,19 +141,38 @@ export function MainLayout() {
                 <Portfolio stockPrices={stockPrices} />
               </TabsContent>
 
-              <TabsContent value="dividend" className="mt-0">
-                <DividendDashboard />
-              </TabsContent>
-
               <TabsContent value="survey" className="mt-0">
-                <InvestmentSurvey onComplete={handleSurveyComplete} />
-              </TabsContent>
+                <div className="space-y-4">
+                  {/* 공유 검색창 */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <input
+                      type="text"
+                      value={surveyInputKeyword}
+                      onChange={(e) => setSurveyInputKeyword(e.target.value)}
+                      placeholder="설문 제목 또는 설명 검색"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-600 transition-colors"
+                    />
+                  </div>
 
-              <TabsContent value="statistics" className="mt-0">
-                <SurveyStatistics
-                  defaultExpandedSurveyId={completedSurveyId}
-                  onExpandHandled={() => setCompletedSurveyId(null)}
-                />
+                  <div className="flex flex-col lg:flex-row lg:gap-5 lg:items-start">
+                    <div className="lg:w-3/5">
+                      <InvestmentSurvey
+                        keyword={surveyKeyword}
+                        onComplete={(surveyId) => setCompletedSurveyId(surveyId)}
+                      />
+                    </div>
+                    <div className="hidden lg:block w-px bg-slate-700 self-stretch" />
+                    <hr className="lg:hidden border-slate-700 my-6" />
+                    <div className="lg:w-2/5 lg:sticky lg:top-6">
+                      <SurveyStatistics
+                        keyword={surveyKeyword}
+                        defaultExpandedSurveyId={completedSurveyId}
+                        onExpandHandled={() => setCompletedSurveyId(null)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="recommendations" className="mt-0">
@@ -169,13 +189,17 @@ export function MainLayout() {
               </TabsContent>
 
               <TabsContent value="insights" className="mt-0">
-                <InsightsDashboard
-                  onRetakeSurvey={() => setActiveTab("survey")}
-                />
+                <InsightsDashboard />
               </TabsContent>
 
               <TabsContent value="competition" className="mt-0">
                 <GuruPortfolio />
+              </TabsContent>
+
+              <TabsContent value="investor-type" className="mt-0">
+                <InvestorTypeDashboard
+                  onRetakeSurvey={() => setActiveTab("survey")}
+                />
               </TabsContent>
             </Tabs>
           </main>

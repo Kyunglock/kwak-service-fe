@@ -94,13 +94,15 @@ export function GuruMatchCard({ portfolioItems, guruPortfolios }: Props) {
   const hasPortfolio = portfolioItems.length > 0;
 
   return (
-    <Card className="p-4 bg-slate-700 border-slate-600">
+    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
+      <div className="h-1 bg-gradient-to-r from-indigo-400/90 to-purple-400/60" />
+      <div className="p-4">
       <h3 className="font-semibold text-sm mb-1 flex items-center gap-2 text-gray-100">
         <Crown className="w-4 h-4 text-indigo-400" />
         투자 대가 포트폴리오 일치도
       </h3>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-500 mb-3">
         내 포트폴리오와 가장 비슷한 투자 대가를 분석합니다
       </p>
 
@@ -205,6 +207,7 @@ export function GuruMatchCard({ portfolioItems, guruPortfolios }: Props) {
           })}
         </div>
       )}
+      </div>
     </Card>
   );
 }

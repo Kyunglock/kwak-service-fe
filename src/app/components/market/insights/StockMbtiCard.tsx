@@ -357,7 +357,9 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuildComplete }
   };
 
   return (
-    <Card className="p-4 bg-slate-700 border-slate-600">
+    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
+      <div className={`h-1 ${theme.bar} opacity-70`} />
+      <div className="p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm flex items-center gap-2 text-gray-100">
           <Fingerprint className="w-4 h-4 text-pink-400" />
@@ -541,6 +543,7 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuildComplete }
           </div>
         </div>
       )}
+      </div>
     </Card>
   );
 }

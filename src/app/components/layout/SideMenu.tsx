@@ -7,6 +7,7 @@ import {
   TrendingUp,
   PieChart,
   Crown,
+  Sparkles,
   LogOut,
   LogIn,
   Shield,
@@ -115,18 +116,6 @@ export function SideMenu({
             </button>
 
             <button
-              onClick={() => handleTabClick("dividend")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                activeTab === "dividend"
-                  ? "bg-green-600 text-white"
-                  : "text-gray-300 hover:bg-slate-800"
-              }`}
-            >
-              <DollarSign className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">배당금</span>
-            </button>
-
-            <button
               onClick={() => handleTabClick("survey")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative ${
                 activeTab === "survey"
@@ -135,7 +124,7 @@ export function SideMenu({
               }`}
             >
               <ClipboardList className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">설문</span>
+              <span className="font-medium">설문/통계</span>
               {incompleteSurveyCount > 0 && (
                 <Badge
                   variant="destructive"
@@ -144,18 +133,6 @@ export function SideMenu({
                   {incompleteSurveyCount}
                 </Badge>
               )}
-            </button>
-
-            <button
-              onClick={() => handleTabClick("statistics")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                activeTab === "statistics"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-300 hover:bg-slate-800"
-              }`}
-            >
-              <TrendingUp className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">통계</span>
             </button>
 
             <button
@@ -180,6 +157,18 @@ export function SideMenu({
             >
               <Crown className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">투자 대가</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick("investor-type")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "investor-type"
+                  ? "bg-pink-600 text-white"
+                  : "text-gray-300 hover:bg-slate-800"
+              }`}
+            >
+              <Sparkles className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">투자 놀이터</span>
             </button>
           </div>
 

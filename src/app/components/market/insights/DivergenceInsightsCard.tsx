@@ -65,10 +65,12 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
   }, [portfolioItems]);
 
   return (
-    <Card className="p-4 bg-gradient-to-br from-slate-900 to-slate-800 border-slate-600 text-white">
-      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
+      <div className="h-1 bg-gradient-to-r from-red-500/80 to-orange-400/50" />
+      <div className="p-4">
+      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
         <span>⚠️ 재무 이상 징후 감지</span>
-        <span className="text-[10px] font-normal opacity-60 ml-auto">AI 분석</span>
+        <span className="text-[10px] font-normal text-gray-500 ml-auto">AI 분석</span>
       </h3>
 
       {loading && (
@@ -85,9 +87,9 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
       {!loading && stockDivergences.length > 0 && (
         <div className="space-y-4">
           {stockDivergences.map(({ stockCd, results, interpretations }) => (
-            <div key={stockCd} className="bg-slate-700/50 rounded-lg p-3">
+            <div key={stockCd} className="bg-slate-600/40 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold bg-slate-600 px-2 py-0.5 rounded">
+                <span className="text-xs font-bold bg-slate-500/60 text-gray-200 px-2 py-0.5 rounded">
                   {stockCd}
                 </span>
                 <span className="text-xs text-gray-400">{results.length}건 감지</span>
@@ -108,10 +110,10 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                   return (
                     <div
                       key={r.id}
-                      className="border border-slate-600 rounded p-2 text-xs space-y-1.5"
+                      className="border border-slate-600/60 rounded-lg bg-slate-700/50 p-2.5 text-xs space-y-1.5"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">
+                        <span className="font-medium text-gray-200">
                           {DIVERGENCE_TYPE_KO[r.divergenceType] ?? r.divergenceType}
                         </span>
                         <span
@@ -123,18 +125,18 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-400 shrink-0">
+                        <span className="text-gray-500 shrink-0">
                           {r.fiscalYear}Q{r.fiscalQuarter}
                         </span>
-                        <div className="flex-1 bg-slate-600 rounded-full h-1">
+                        <div className="flex-1 bg-slate-600 rounded-full h-1.5">
                           <div
-                            className={`h-1 rounded-full ${
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
                               SEVERITY_BAR[riskLevel] ?? SEVERITY_BAR.MEDIUM
                             }`}
                             style={{ width: `${severityPct}%` }}
                           />
                         </div>
-                        <span className="text-gray-400 shrink-0">{severityPct}%</span>
+                        <span className="text-gray-400 shrink-0 tabular-nums">{severityPct}%</span>
                       </div>
                       {interp?.summary ? (
                         <p className="text-gray-300 leading-relaxed">{interp.summary}</p>
@@ -146,8 +148,8 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                       {interp?.watchPoints && interp.watchPoints.length > 0 && (
                         <ul className="mt-1 space-y-0.5">
                           {interp.watchPoints.map((wp, idx) => (
-                            <li key={idx} className="flex items-start gap-1 text-gray-400">
-                              <span className="opacity-60 mt-0.5">·</span>
+                            <li key={idx} className="flex items-start gap-1 text-gray-500">
+                              <span className="mt-0.5 flex-shrink-0">·</span>
                               <span>{wp}</span>
                             </li>
                           ))}
@@ -161,6 +163,7 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
           ))}
         </div>
       )}
+      </div>
     </Card>
   );
 }

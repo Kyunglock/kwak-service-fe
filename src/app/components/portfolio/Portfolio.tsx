@@ -168,20 +168,17 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
 
   return (
     <div className="space-y-5">
-      {/* 페이지 헤더 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
-            <Briefcase className="w-6 h-6 text-indigo-400" />
-            내 포트폴리오
-          </h2>
-          <p className="text-sm text-gray-400 mt-1">보유 종목 및 매매 내역 관리</p>
+      {/* 헤더 */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Briefcase className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-lg font-semibold text-gray-100">내 포트폴리오</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <CurrencyToggleButton />
           <button
             onClick={handleAddClick}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-900/30"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"
           >
             <Plus className="w-4 h-4" />
             매수/매도
@@ -189,30 +186,27 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
         </div>
       </div>
 
-      {/* 포트폴리오 탭 선택 */}
+      {/* 포트폴리오 탭 */}
       <div className="flex items-center gap-2 flex-wrap">
         {portfolios.map((p) => (
           <button
             key={p.portfolioId}
             onClick={() => handlePortfolioSelect(p.portfolioId)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm font-medium transition-all border ${
               currentPortfolioId === p.portfolioId
                 ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
                 : "bg-slate-800 border-slate-700 text-gray-400 hover:text-gray-200 hover:border-slate-600"
             }`}
           >
-            <FolderOpen className="w-3.5 h-3.5" />
+            <FolderOpen className="w-3 h-3" />
             <span>{p.portfolioNm}</span>
-            {p.baseCurrency && (
-              <span className="text-[10px] opacity-50 font-normal">{p.baseCurrency}</span>
-            )}
           </button>
         ))}
         <button
           onClick={() => setIsManagePortfolioOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-gray-300 hover:bg-slate-800 transition-colors border border-dashed border-slate-700"
+          className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-gray-500 hover:text-gray-300 hover:bg-slate-800 transition-colors border border-dashed border-slate-700"
         >
-          <Settings className="w-3.5 h-3.5" />
+          <Settings className="w-3 h-3" />
           {portfolios.length === 0 ? "포트폴리오 만들기" : "관리"}
         </button>
       </div>

@@ -6,23 +6,31 @@ import type {
   SurveySubmitRequest,
   SurveyAnswerResponse,
   SurveyWithMyResponse,
+  PageResponse,
 } from "@/app/types";
 import {
   getSurvey,
   submitSurvey,
   getMySurveyResponse,
-  getSurveyWithMyResponses,
+  getSurveyWithMyResponsesPaged,
 } from "@/app/services/surveyService";
 import { SurveyList } from "./components/SurveyList";
 import { SurveyDetail } from "./components/SurveyDetail";
 
+const PAGE_SIZE = 10;
+
 interface SurveyProps {
+  keyword: string;
   onComplete: (surveyId: number) => void;
 }
 
-export function InvestmentSurvey({ onComplete }: SurveyProps) {
+export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
   const [mySurveyResponses, setMySurveyResponses] = useState<UserSurveyResponseDto>();
-  const [surveyWithMyResponses, setSurveyWithMyResponses] = useState<SurveyWithMyResponse[]>([]);
+  const [surveys, setSurveys] = useState<SurveyWithMyResponse[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [page, setPage] = useState(0);
+
   const [surveyDetail, setSurveyDetail] = useState<SurveyDetailResponse | null>(null);
   const [view, setView] = useState<"list" | "detail">("list");
   const [currentStep, setCurrentStep] = useState(0);
@@ -33,15 +41,41 @@ export function InvestmentSurvey({ onComplete }: SurveyProps) {
   const [detailLoading, setDetailLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // 설문 목록 로드
-  const fetchSurveyWithMyResponses = useCallback(async () => {
+  const fetchList = useCallback(async () => {
+    setListLoading(true);
     try {
-      const res = await getSurveyWithMyResponses();
-      setSurveyWithMyResponses(res.data.data ?? []);
+      const res = await getSurveyWithMyResponsesPaged({ keyword, page, size: PAGE_SIZE, sort: "regDt,desc" });
+      const data = res.data.data;
+      if (Array.isArray(data)) {
+        // 구 형식: 배열 직접 반환
+        setSurveys(data);
+        setTotalPages(1);
+        setTotalElements(data.length);
+      } else {
+        // 신 형식: PageResponse<SurveyWithMyResponse>
+        const paged = data as PageResponse<SurveyWithMyResponse>;
+        setSurveys(paged.content ?? []);
+        setTotalPages(paged.totalPages ?? 1);
+        setTotalElements(paged.totalElements ?? 0);
+      }
     } catch {
       // apiClient 인터셉터에서 에러 처리됨
+    } finally {
+      setListLoading(false);
     }
-  }, []);
+  }, [keyword, page]);
+
+  useEffect(() => {
+    if (view === "list") fetchList();
+  }, [fetchList, view]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [keyword]);
+
+  const handlePageChange = (p: number) => {
+    setPage(p);
+  };
 
   const fetchMySurveyResponse = useCallback(async (surveyId: number, responseId: number) => {
     try {
@@ -54,25 +88,10 @@ export function InvestmentSurvey({ onComplete }: SurveyProps) {
     }
   }, []);
 
-  // 초기 데이터 로드
-  useEffect(() => {
-    const init = async () => {
-      setListLoading(true);
-      await fetchSurveyWithMyResponses();
-      setListLoading(false);
-    };
-    init();
-  }, [fetchSurveyWithMyResponses]);
-
-  // 완료된 설문 ID 집합
   const completedSurveyIds = new Set(
-    surveyWithMyResponses.filter((r) => r.statusCode === "COMPLETED").map((r) => r.surveyId)
+    surveys.filter((r) => r.statusCode === "COMPLETED").map((r) => r.surveyId),
   );
 
-  const incompleteSurveys = surveyWithMyResponses.filter((s) => !completedSurveyIds.has(s.surveyId));
-  const incompleteCount = incompleteSurveys.length;
-
-  // 설문 선택 → 완료 설문은 수정 화면, 미완료는 응답 화면
   const handleSelectSurvey = async (survey: SurveyWithMyResponse) => {
     const isCompleted = completedSurveyIds.has(survey.surveyId);
     setDetailLoading(true);
@@ -98,9 +117,7 @@ export function InvestmentSurvey({ onComplete }: SurveyProps) {
           prevAnswers[a.questionId] = a.selectedOptionId;
         });
         setAnswers(prevAnswers);
-        if (isCompleted) {
-          setOriginalAnswers({ ...prevAnswers });
-        }
+        if (isCompleted) setOriginalAnswers({ ...prevAnswers });
       } else {
         const res = await getSurvey(survey.surveyId);
         const detail: SurveyDetailResponse = res.data.data;
@@ -160,7 +177,6 @@ export function InvestmentSurvey({ onComplete }: SurveyProps) {
         };
         const surveyId = surveyDetail.surveyId;
         await submitSurvey(submitData);
-        await fetchSurveyWithMyResponses();
 
         handleBackToList();
         onComplete(surveyId);
@@ -173,25 +189,25 @@ export function InvestmentSurvey({ onComplete }: SurveyProps) {
   };
 
   const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  // ────────────── View 라우팅 ──────────────
   if (view === "list") {
     return (
       <SurveyList
-        surveys={surveyWithMyResponses}
+        surveys={surveys}
         completedSurveyIds={completedSurveyIds}
-        incompleteCount={incompleteCount}
         loading={listLoading}
+        keyword={keyword}
+        page={page}
+        totalPages={totalPages}
+        totalElements={totalElements}
+        onPageChange={handlePageChange}
         onSelectSurvey={handleSelectSurvey}
       />
     );
   }
 
-  // ────────────── 설문 상세 (응답/수정) 화면 ──────────────
   if (!surveyDetail || detailLoading || !surveyDetail.questions?.length) {
     return (
       <div className="p-4 space-y-4">

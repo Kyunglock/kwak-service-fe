@@ -78,5 +78,14 @@ export const getOptionStats = (surveyId: number, responseId: number) => {
 }
 
 export const getSurveyWithMyResponses = () => {
-  return surveyClient.get(`${BASE_URL}/with-my-responses`)
-}
+  return surveyClient.get(`${BASE_URL}/with-my-responses`);
+};
+
+export const getSurveyWithMyResponsesPaged = (params?: {
+  keyword?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}) => {
+  return surveyClient.get(`${BASE_URL}/with-my-responses/paged`, { params });
+};

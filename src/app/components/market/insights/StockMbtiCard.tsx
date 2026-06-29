@@ -8,7 +8,8 @@ import type { InsightResultResponse } from "@/app/types";
 interface Props {
   insightResult: InsightResultResponse | null;
   onRetakeSurvey?: () => void;
-  onBuildComplete?: (all: InsightResultResponse[]) => void;
+  onBuild?: () => void;
+  building?: boolean;
 }
 
 const MBTI_THEME: Record<string, { bg: string; border: string; text: string; bar: string; glow: string }> = {
@@ -322,9 +323,10 @@ const MBTI_DETAIL: Record<string, MbtiDetail> = {
   },
 };
 
-export function StockMbtiCard({ insightResult, onRetakeSurvey }: Props) {
+export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuild, building }: Props) {
   const [showDetail, setShowDetail] = useState(false);
-  const [building, setBuilding] = useState(false);
+  const [localBuilding, setLocalBuilding] = useState(false);
+  const isBuilding = building ?? localBuilding;
 
   const lines = insightResult?.content?.split("\n") ?? [];
   const code  = lines[0] ?? "";
@@ -344,13 +346,13 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey }: Props) {
   ];
 
   const handleBuildContext = async () => {
-    setBuilding(true);
+    setLocalBuilding(true);
     try {
       await requestInsightBuild();
     } catch {
       // 에러는 apiClient 인터셉터에서 처리
     } finally {
-      setBuilding(false);
+      setLocalBuilding(false);
     }
   };
 
@@ -364,12 +366,12 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey }: Props) {
           투자 MBTI
         </h3>
         <button
-          onClick={handleBuildContext}
-          disabled={building}
+          onClick={onBuild ?? handleBuildContext}
+          disabled={isBuilding}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-500 text-white transition-colors flex-shrink-0"
         >
-          <RefreshCw className={`w-3 h-3 ${building ? "animate-spin" : ""}`} />
-          {building ? "분석 중..." : "결과보기"}
+          <RefreshCw className={`w-3 h-3 ${isBuilding ? "animate-spin" : ""}`} />
+          {isBuilding ? "분석 중..." : "결과보기"}
         </button>
       </div>
 

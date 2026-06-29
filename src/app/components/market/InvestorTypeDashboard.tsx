@@ -4,6 +4,7 @@ import { getGuruPortfolios, getPrevQuarter } from "@/app/services/guruService";
 import { getPortfoliosByUser } from "@/app/services/portfolioService";
 import { getPortfolioItems } from "@/app/services/portfolioItemService";
 import { getAllInsightResults } from "@/app/services/insightService";
+import { useInsightBuild } from "@/app/hooks/useInsightBuild";
 import type {
   GuruPortfolioResponse,
   PortfolioResponse,
@@ -26,6 +27,17 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItemResponse[]>([]);
   const [guruPortfolios, setGuruPortfolios] = useState<GuruPortfolioResponse[]>([]);
   const [insightResults, setInsightResults] = useState<InsightResultResponse[]>([]);
+
+  const fetchResults = () => {
+    getAllInsightResults()
+      .then((res) => {
+        const data = (res.data as ApiResponse<InsightResultResponse[]>).data;
+        setInsightResults(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {});
+  };
+
+  const { isProcessing, trigger } = useInsightBuild(fetchResults);
 
   useEffect(() => {
     getPortfoliosByUser()
@@ -51,12 +63,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
       })
       .catch(() => {});
 
-    getAllInsightResults()
-      .then((res) => {
-        const data = (res.data as ApiResponse<InsightResultResponse[]>).data;
-        setInsightResults(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {});
+    fetchResults();
   }, []);
 
   const findResult = (typeCd: string) =>
@@ -79,7 +86,8 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
         <StockMbtiCard
           insightResult={findResult("STOCK_MBTI")}
           onRetakeSurvey={onRetakeSurvey}
-          onBuildComplete={setInsightResults}
+          onBuild={trigger}
+          building={isProcessing}
         />
       </div>
     );

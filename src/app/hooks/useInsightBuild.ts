@@ -11,6 +11,7 @@ export function useInsightBuild(onDone: () => void) {
   const startedAtRef = useRef<number>(0);
   const onDoneRef = useRef(onDone);
   const stoppedRef = useRef(false);
+  const errorCountRef = useRef(0);
   onDoneRef.current = onDone;
 
   const stopPolling = useCallback(() => {
@@ -21,22 +22,33 @@ export function useInsightBuild(onDone: () => void) {
     }
   }, []);
 
-  const readStatus = useCallback(async (): Promise<BuildStatus> => {
+  const readStatus = useCallback(async (): Promise<BuildStatus | null> => {
     try {
       const res = await getInsightBuildStatus();
       return (res.data as ApiResponse<{ status: BuildStatus }>).data.status;
     } catch {
-      return "FAILED";
+      return null;
     }
   }, []);
 
   const startPolling = useCallback(() => {
     stopPolling();
     stoppedRef.current = false;
+    errorCountRef.current = 0;
     startedAtRef.current = Date.now();
     timerRef.current = setInterval(async () => {
       const s = await readStatus();
       if (stoppedRef.current) return;
+      if (s === null) {
+        errorCountRef.current += 1;
+        if (errorCountRef.current >= 3) {
+          stopPolling();
+          setStatus("FAILED");
+        }
+        return;
+      }
+      errorCountRef.current = 0;
+      if (s === "IDLE") return;
       setStatus(s);
       if (s === "DONE") {
         stopPolling();
@@ -63,8 +75,10 @@ export function useInsightBuild(onDone: () => void) {
     let mounted = true;
     readStatus().then((s) => {
       if (!mounted) return;
-      setStatus(s);
-      if (s === "PROCESSING") startPolling();
+      if (s !== null) {
+        setStatus(s);
+        if (s === "PROCESSING") startPolling();
+      }
     });
     return () => {
       mounted = false;

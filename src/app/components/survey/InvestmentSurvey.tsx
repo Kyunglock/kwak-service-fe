@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Card } from "@/app/components/ui/layout/card";
 import type {
   SurveyDetailResponse,
@@ -6,6 +6,7 @@ import type {
   SurveySubmitRequest,
   SurveyAnswerResponse,
   SurveyWithMyResponse,
+  SurveyStatsDetailResponse,
   PageResponse,
 } from "@/app/types";
 import {
@@ -13,18 +14,23 @@ import {
   submitSurvey,
   getMySurveyResponse,
   getSurveyWithMyResponsesPaged,
+  getOptionStats,
 } from "@/app/services/surveyService";
 import { SurveyList } from "./components/SurveyList";
 import { SurveyDetail } from "./components/SurveyDetail";
+import { SurveyStatsView } from "./components/SurveyStatsView";
 
 const PAGE_SIZE = 10;
 
 interface SurveyProps {
   keyword: string;
   onComplete: (surveyId: number) => void;
+  /** 지정 시 해당 유형(예: RISK_PROFILE) 설문을 목록 로드 후 자동으로 문항 화면으로 연다 */
+  autoOpenType?: string | null;
+  onAutoOpenHandled?: () => void;
 }
 
-export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
+export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpenHandled }: SurveyProps) {
   const [mySurveyResponses, setMySurveyResponses] = useState<UserSurveyResponseDto>();
   const [surveys, setSurveys] = useState<SurveyWithMyResponse[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -32,7 +38,10 @@ export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
   const [page, setPage] = useState(0);
 
   const [surveyDetail, setSurveyDetail] = useState<SurveyDetailResponse | null>(null);
-  const [view, setView] = useState<"list" | "detail">("list");
+  const [view, setView] = useState<"list" | "detail" | "stats">("list");
+  const [statsSurvey, setStatsSurvey] = useState<SurveyWithMyResponse | null>(null);
+  const [statsDetail, setStatsDetail] = useState<SurveyStatsDetailResponse | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [originalAnswers, setOriginalAnswers] = useState<Record<number, number>>({});
@@ -92,7 +101,38 @@ export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
     surveys.filter((r) => r.statusCode === "COMPLETED").map((r) => r.surveyId),
   );
 
-  const handleSelectSurvey = async (survey: SurveyWithMyResponse) => {
+  // 완료 설문 → 통계 화면으로 이동
+  const openStats = async (survey: SurveyWithMyResponse) => {
+    if (!survey.responseId) return;
+    setStatsSurvey(survey);
+    setStatsDetail(null);
+    setStatsLoading(true);
+    setView("stats");
+    try {
+      const res = await getOptionStats(survey.surveyId, survey.responseId);
+      const detail: SurveyStatsDetailResponse = res.data.data;
+      detail.questions.sort((a, b) => (a.sortOrder ?? a.questionNumber) - (b.sortOrder ?? b.questionNumber));
+      detail.questions.forEach((q) => q.options.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)));
+      setStatsDetail(detail);
+    } catch {
+      // apiClient 인터셉터에서 에러 처리됨
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  // 목록에서 설문 클릭: 완료 설문은 통계, 그 외는 답변/수정 화면
+  const handleSelectSurvey = (survey: SurveyWithMyResponse) => {
+    const isCompleted = completedSurveyIds.has(survey.surveyId);
+    if (isCompleted && survey.responseId) {
+      openStats(survey);
+    } else {
+      openEditor(survey);
+    }
+  };
+
+  // 문항 답변/수정 화면 열기
+  const openEditor = async (survey: SurveyWithMyResponse) => {
     const isCompleted = completedSurveyIds.has(survey.surveyId);
     setDetailLoading(true);
 
@@ -145,7 +185,22 @@ export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
     setAnswers({});
     setOriginalAnswers({});
     setIsEditMode(false);
+    setStatsSurvey(null);
+    setStatsDetail(null);
   };
+
+  // autoOpenType 지정 시 목록 로드 후 해당 유형 설문을 1회 자동 오픈
+  const autoOpenedRef = useRef(false);
+  useEffect(() => {
+    if (!autoOpenType) { autoOpenedRef.current = false; return; }
+    if (autoOpenedRef.current || view !== "list" || listLoading) return;
+    const target = surveys.find((s) => s.surveyTypeCode === autoOpenType);
+    if (!target) return;
+    autoOpenedRef.current = true;
+    onAutoOpenHandled?.();
+    openEditor(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpenType, surveys, listLoading, view]);
 
   const handleAnswer = (optionId: number) => {
     if (!surveyDetail) return;
@@ -204,6 +259,19 @@ export function InvestmentSurvey({ keyword, onComplete }: SurveyProps) {
         totalElements={totalElements}
         onPageChange={handlePageChange}
         onSelectSurvey={handleSelectSurvey}
+      />
+    );
+  }
+
+  if (view === "stats") {
+    return (
+      <SurveyStatsView
+        surveyName={statsSurvey?.surveyName ?? ""}
+        totalParticipants={statsSurvey?.totalParticipants ?? 0}
+        detail={statsDetail}
+        loading={statsLoading}
+        onBack={handleBackToList}
+        onEdit={() => statsSurvey && openEditor(statsSurvey)}
       />
     );
   }

@@ -1,7 +1,7 @@
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
 import { Badge } from "@/app/components/ui/feedback/badge";
-import { BarChart3, Users, CheckCircle2 } from "lucide-react";
+import { BarChart3, Users, CheckCircle2, ArrowLeft } from "lucide-react";
 import type { SurveyStatsDetailResponse } from "@/app/types";
 
 interface SurveyResultProps {
@@ -15,8 +15,14 @@ export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: 
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
-          <Button variant="ghost" size="sm" onClick={onBackToList} className="text-gray-300 hover:text-white -ml-2">
-            ← 목록
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBackToList}
+            className="gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-medium text-gray-200 hover:border-slate-500 hover:bg-slate-700 hover:text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            목록
           </Button>
           <h2 className="text-lg font-semibold text-gray-100 flex-1">설문 결과</h2>
         </div>
@@ -32,8 +38,14 @@ export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: 
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
-          <Button variant="ghost" size="sm" onClick={onBackToList} className="text-gray-300 hover:text-white -ml-2">
-            ← 목록
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBackToList}
+            className="gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-medium text-gray-200 hover:border-slate-500 hover:bg-slate-700 hover:text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            목록
           </Button>
           <h2 className="text-lg font-semibold text-gray-100 flex-1">설문 결과</h2>
         </div>

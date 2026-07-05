@@ -7,6 +7,7 @@ import {
 import { Label } from "@/app/components/ui/form/label";
 import { Progress } from "@/app/components/ui/feedback/progress";
 import { Badge } from "@/app/components/ui/feedback/badge";
+import { ArrowLeft } from "lucide-react";
 import type { SurveyDetailResponse } from "@/app/types";
 
 interface SurveyDetailProps {
@@ -47,9 +48,10 @@ export function SurveyDetail({
           variant="ghost"
           size="sm"
           onClick={onBackToList}
-          className="text-gray-300 hover:text-white -ml-2"
+          className="gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-medium text-gray-200 hover:border-slate-500 hover:bg-slate-700 hover:text-white"
         >
-          ← 목록
+          <ArrowLeft className="w-4 h-4" />
+          목록
         </Button>
         <h2 className="text-lg font-semibold text-gray-100 flex-1">
           {surveyDetail.surveyName}

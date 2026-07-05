@@ -2,12 +2,13 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card } from "@/app/components/ui/layout/card";
 import { TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
-import type { StockPrice, PortfolioItemResponse, TransactionResponse, DividendResponse } from "@/app/types";
+import type { StockPrice, PortfolioItemResponse, TransactionResponse, DividendHistoryRecord } from "@/app/types";
 import { getPortfoliosByUser } from "@/app/services/portfolioService";
 import { getPortfolioItems } from "@/app/services/portfolioItemService";
 import { getTransactionsByPortfolio } from "@/app/services/transactionService";
 import { getStocksWithPrice, type StockWithPrice } from "@/app/services/stockService";
 import { getDividendsByPortfolio } from "@/app/services/dividendService";
+import { predictNextExDate, predictNextPaymentDate } from "@/app/utils/dividend";
 import { useCurrency, EXCHANGE_RATE } from "@/app/contexts/CurrencyContext";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
 
@@ -71,6 +72,8 @@ interface ChartItem {
   value: number;
   rawValue: number;
   currency: string;
+  nextExDate?: string | null;      // 예상 배당락일 (배당 섹션 전용)
+  nextPaymentDate?: string | null; // 예상 지급일 (배당 섹션 전용)
 }
 
 const renderLabel = ({
@@ -127,6 +130,7 @@ const DonutChart = ({
           label={renderLabel}
           labelLine={false}
           strokeWidth={0}
+          isAnimationActive={false}
         >
           {data.map((_entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -172,6 +176,11 @@ const ChartLegend = ({
                 style={{ width: `${pct}%`, backgroundColor: COLORS[index % COLORS.length] }}
               />
             </div>
+            {item.nextExDate && (
+              <p className="text-[11px] text-gray-500 mt-1 ml-4">
+                배당락 {item.nextExDate} · 지급 {item.nextPaymentDate ?? "미정"}
+              </p>
+            )}
           </div>
         );
       })}
@@ -201,7 +210,7 @@ export function PortfolioAnalysis({
 }: PortfolioAnalysisProps) {
   const { currency, convert } = useCurrency();
   const [trendPeriod, setTrendPeriod] = useState<TrendPeriod>('month');
-  const [dividends, setDividends] = useState<DividendResponse[]>([]);
+  const [dividendMap, setDividendMap] = useState<Record<string, DividendHistoryRecord[]>>({});
 
   // 독립 탭 모드일 때만 내부 상태/API 사용
   const [currentPortfolioId, setCurrentPortfolioId] = useState<number>(0);
@@ -219,14 +228,20 @@ export function PortfolioAnalysis({
   const stocks = isControlled ? (stocksProp ?? []) : stocksInternal;
   const loading = isControlled ? (isLoadingProp ?? false) : (loadingInternal || stocksLoadingInternal);
 
-  // 배당 데이터 fetch (portfolioId가 결정되면 실행)
+  // 배당 데이터 fetch (portfolioId가 결정되거나 보유 종목 구성이 바뀌면 실행)
   const activePortfolioId = isControlled ? (portfolioIdProp ?? 0) : currentPortfolioId;
+  // 보유 종목코드 집합 — 매수로 새 종목이 추가되면 배당 데이터도 다시 불러온다
+  const holdingsKey = useMemo(
+    () => [...new Set(positions.map((p) => p.stockCd))].sort().join(","),
+    [positions],
+  );
   useEffect(() => {
     if (!activePortfolioId) return;
     getDividendsByPortfolio(activePortfolioId)
-      .then((res) => setDividends(res.data.data ?? []))
-      .catch(() => setDividends([]));
-  }, [activePortfolioId]);
+      .then((res) => setDividendMap(res.data.data ?? {}))
+      .catch(() => setDividendMap({}));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePortfolioId, holdingsKey]);
 
   const fetchPortfolios = useCallback(async () => {
     if (isControlled) return;
@@ -343,17 +358,23 @@ export function PortfolioAnalysis({
   }).sort((a, b) => b.value - a.value), [positions, stockPrices, convert, currency]);
 
   const dividendAllocation = useMemo<ChartItem[]>(() => {
-    if (!dividends.length) return [];
-    return dividends
-      .filter((d) => d.annualDividend > 0)
-      .map((d) => {
-        const pos = positions.find((p) => p.stockCd === d.stockCd);
-        const name = pos ? getDisplayName(pos) : d.stockCd;
-        const converted = convert(d.annualDividend, d.currency);
-        return { name, value: converted, rawValue: converted, currency };
+    return positions
+      .map((pos) => {
+        const records = dividendMap[pos.stockCd] ?? [];
+        const annualPerShare = records.reduce((sum, r) => sum + Number(r.dividend), 0);
+        const annualDividend = annualPerShare * pos.holdQty;
+        return { pos, annualDividend };
+      })
+      .filter((x) => x.annualDividend > 0)
+      .map(({ pos, annualDividend }) => {
+        const converted = convert(annualDividend, pos.currency);
+        const records = dividendMap[pos.stockCd] ?? [];
+        const nextExDate = predictNextExDate(records);
+        const nextPaymentDate = predictNextPaymentDate(records, nextExDate);
+        return { name: getDisplayName(pos), value: converted, rawValue: converted, currency, nextExDate, nextPaymentDate };
       })
       .sort((a, b) => b.value - a.value);
-  }, [dividends, positions, convert, currency]);
+  }, [dividendMap, positions, convert, currency]);
 
   const sectorAllocation = useMemo<ChartItem[]>(() => {
     const map: Record<string, ChartItem> = {};

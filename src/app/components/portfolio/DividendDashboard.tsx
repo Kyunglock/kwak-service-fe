@@ -8,6 +8,7 @@ import { getRecentDividendHistoryBatch } from "@/app/services/marketDividendServ
 import type { PortfolioItemResponse, DividendHistoryRecord } from "@/app/types";
 import { useCurrency, EXCHANGE_RATE } from "@/app/contexts/CurrencyContext";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
+import { predictNextExDate, predictNextPaymentDate } from "@/app/utils/dividend";
 
 const RADIAN = Math.PI / 180;
 const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#06b6d4", "#f97316", "#a78bfa", "#34d399"];
@@ -35,41 +36,6 @@ interface NextDividendInfo {
   nextPaymentDate: string | null;
   amount: number;
   currency: string;
-}
-
-function predictNextExDate(records: DividendHistoryRecord[]): string | null {
-  if (records.length === 0) return null;
-  const sorted = [...records].sort((a, b) => new Date(b.exDate).getTime() - new Date(a.exDate).getTime());
-  const lastDate = new Date(sorted[0].exDate);
-  let avgIntervalDays = 91;
-  if (sorted.length >= 2) {
-    const intervals: number[] = [];
-    for (let i = 0; i < sorted.length - 1; i++) {
-      const diff = new Date(sorted[i].exDate).getTime() - new Date(sorted[i + 1].exDate).getTime();
-      intervals.push(diff / (1000 * 60 * 60 * 24));
-    }
-    avgIntervalDays = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-  }
-  const next = new Date(lastDate.getTime() + avgIntervalDays * 24 * 60 * 60 * 1000);
-  return next.toISOString().split("T")[0];
-}
-
-function predictNextPaymentDate(records: DividendHistoryRecord[], nextExDate: string | null): string | null {
-  if (!nextExDate) return null;
-  const recordsWithPayment = records.filter((r) => r.paymentDt);
-  if (recordsWithPayment.length > 0) {
-    const gaps = recordsWithPayment.map((r) => {
-      const exTs = new Date(r.exDate).getTime();
-      const payTs = new Date(r.paymentDt!).getTime();
-      return (payTs - exTs) / (1000 * 60 * 60 * 24);
-    });
-    const avgGap = Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length);
-    const next = new Date(new Date(nextExDate).getTime() + avgGap * 24 * 60 * 60 * 1000);
-    return next.toISOString().split("T")[0];
-  }
-  // paymentDt 데이터 없으면 30일 후 추정
-  const next = new Date(new Date(nextExDate).getTime() + 30 * 24 * 60 * 60 * 1000);
-  return next.toISOString().split("T")[0];
 }
 
 function daysUntil(dateStr: string): number {

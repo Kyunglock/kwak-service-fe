@@ -3,6 +3,10 @@ import type { StockPrice } from "@/app/types";
 
 const SSE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1/stocks/price/stream`;
 
+// 실시간 시세(SSE) 비활성화 — 종목 시세를 실시간으로 노출하지 않는다.
+// 다시 켜려면 false 로 변경.
+const SSE_DISABLED = true;
+
 export function useStockPrice(enabled: boolean) {
   const [prices, setPrices] = useState<Record<string, StockPrice>>({});
   const [connected, setConnected] = useState(false);
@@ -17,7 +21,7 @@ export function useStockPrice(enabled: boolean) {
   }, []);
 
   useEffect(() => {
-    if (!enabled) {
+    if (SSE_DISABLED || !enabled) {
       disconnect();
       return;
     }

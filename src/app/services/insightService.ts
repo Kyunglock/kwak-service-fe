@@ -20,3 +20,8 @@ export const requestInsightBuild = () => {
 export const getInsightBuildStatus = () => {
   return insightApiClient.get<ApiResponse<{ status: BuildStatus }>>(`${BASE_URL}/build-status`);
 };
+
+/** 투자 MBTI만 즉시 동기 생성 (설문 점수 기반, LLM 미사용). */
+export const generateStockMbti = () => {
+  return insightApiClient.post<ApiResponse<InsightResultResponse>>(`${BASE_URL}/mbti`);
+};

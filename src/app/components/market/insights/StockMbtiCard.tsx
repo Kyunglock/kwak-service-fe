@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Fingerprint, RefreshCcw, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { Fingerprint, RefreshCcw, RefreshCw } from "lucide-react";
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
 import { requestInsightBuild } from "@/app/services/insightService";
@@ -12,15 +12,15 @@ interface Props {
   building?: boolean;
 }
 
-const MBTI_THEME: Record<string, { bg: string; border: string; text: string; bar: string; glow: string }> = {
-  GRL: { bg: "bg-emerald-900/40", border: "border-emerald-600/50", text: "text-emerald-300", bar: "bg-emerald-500", glow: "shadow-emerald-500/20" },
-  GRT: { bg: "bg-red-900/40",     border: "border-red-600/50",     text: "text-red-300",     bar: "bg-red-500",     glow: "shadow-red-500/20"     },
-  GSL: { bg: "bg-teal-900/40",    border: "border-teal-600/50",    text: "text-teal-300",    bar: "bg-teal-500",    glow: "shadow-teal-500/20"    },
-  GST: { bg: "bg-blue-900/40",    border: "border-blue-600/50",    text: "text-blue-300",    bar: "bg-blue-500",    glow: "shadow-blue-500/20"    },
-  VRL: { bg: "bg-purple-900/40",  border: "border-purple-600/50",  text: "text-purple-300",  bar: "bg-purple-500",  glow: "shadow-purple-500/20"  },
-  VRT: { bg: "bg-orange-900/40",  border: "border-orange-600/50",  text: "text-orange-300",  bar: "bg-orange-500",  glow: "shadow-orange-500/20"  },
-  VSL: { bg: "bg-indigo-900/40",  border: "border-indigo-600/50",  text: "text-indigo-300",  bar: "bg-indigo-500",  glow: "shadow-indigo-500/20"  },
-  VST: { bg: "bg-slate-700/60",   border: "border-slate-500/50",   text: "text-slate-300",   bar: "bg-slate-400",   glow: "shadow-slate-400/20"  },
+const MBTI_THEME: Record<string, { bg: string; border: string; text: string; bar: string; glow: string; hero: string; ring: string }> = {
+  GRL: { bg: "bg-emerald-900/40", border: "border-emerald-600/40", text: "text-emerald-300", bar: "bg-emerald-500", glow: "shadow-emerald-500/30", hero: "bg-gradient-to-br from-emerald-500/25 via-emerald-700/10 to-slate-800/70", ring: "ring-emerald-400/30" },
+  GRT: { bg: "bg-red-900/40",     border: "border-red-600/40",     text: "text-red-300",     bar: "bg-red-500",     glow: "shadow-red-500/30",     hero: "bg-gradient-to-br from-red-500/25 via-red-700/10 to-slate-800/70",         ring: "ring-red-400/30"     },
+  GSL: { bg: "bg-teal-900/40",    border: "border-teal-600/40",    text: "text-teal-300",    bar: "bg-teal-500",    glow: "shadow-teal-500/30",    hero: "bg-gradient-to-br from-teal-500/25 via-teal-700/10 to-slate-800/70",       ring: "ring-teal-400/30"    },
+  GST: { bg: "bg-blue-900/40",    border: "border-blue-600/40",    text: "text-blue-300",    bar: "bg-blue-500",    glow: "shadow-blue-500/30",    hero: "bg-gradient-to-br from-blue-500/25 via-blue-700/10 to-slate-800/70",       ring: "ring-blue-400/30"    },
+  VRL: { bg: "bg-purple-900/40",  border: "border-purple-600/40",  text: "text-purple-300",  bar: "bg-purple-500",  glow: "shadow-purple-500/30",  hero: "bg-gradient-to-br from-purple-500/25 via-purple-700/10 to-slate-800/70",   ring: "ring-purple-400/30"  },
+  VRT: { bg: "bg-orange-900/40",  border: "border-orange-600/40",  text: "text-orange-300",  bar: "bg-orange-500",  glow: "shadow-orange-500/30",  hero: "bg-gradient-to-br from-orange-500/25 via-orange-700/10 to-slate-800/70",   ring: "ring-orange-400/30"  },
+  VSL: { bg: "bg-indigo-900/40",  border: "border-indigo-600/40",  text: "text-indigo-300",  bar: "bg-indigo-500",  glow: "shadow-indigo-500/30",  hero: "bg-gradient-to-br from-indigo-500/25 via-indigo-700/10 to-slate-800/70",   ring: "ring-indigo-400/30"  },
+  VST: { bg: "bg-slate-700/60",   border: "border-slate-500/50",   text: "text-slate-300",   bar: "bg-slate-400",   glow: "shadow-slate-400/30",   hero: "bg-gradient-to-br from-slate-400/20 via-slate-600/10 to-slate-800/70",     ring: "ring-slate-300/30"   },
 };
 
 const MBTI_EMOJI: Record<string, string> = {
@@ -323,8 +323,16 @@ const MBTI_DETAIL: Record<string, MbtiDetail> = {
   },
 };
 
+function SectionHeader({ emoji, title, className = "" }: { emoji: string; title: string; className?: string }) {
+  return (
+    <p className={`mb-2.5 flex items-center gap-1.5 text-[14px] font-bold ${className}`}>
+      <span className="text-[15px]">{emoji}</span>
+      {title}
+    </p>
+  );
+}
+
 export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuild, building }: Props) {
-  const [showDetail, setShowDetail] = useState(false);
   const [localBuilding, setLocalBuilding] = useState(false);
   const isBuilding = building ?? localBuilding;
 
@@ -357,193 +365,226 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, onBuild, building
   };
 
   return (
-    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
-      <div className={`h-1 ${theme.bar} opacity-70`} />
-      <div className="p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-sm flex items-center gap-2 text-gray-100">
-          <Fingerprint className="w-4 h-4 text-pink-400" />
-          투자 MBTI
-        </h3>
-        <button
-          onClick={onBuild ?? handleBuildContext}
-          disabled={isBuilding}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-500 text-white transition-colors flex-shrink-0"
-        >
-          <RefreshCw className={`w-3 h-3 ${isBuilding ? "animate-spin" : ""}`} />
-          {isBuilding ? "분석 중..." : "결과보기"}
-        </button>
-      </div>
-
+    <Card className="p-0 gap-0 overflow-hidden border-slate-700/60 bg-slate-800/80 shadow-xl">
       {isSurveyMissing ? (
-        <div className="flex flex-col items-center justify-center py-5 gap-2 text-center">
-          <span className="text-3xl">🧬</span>
-          <p className="text-sm text-gray-300 font-medium">투자 MBTI 분석 전</p>
-          <p className="text-xs text-gray-400">
-            설문을 완료하고 결과보기를 누르면
-            <br />
-            나의 투자 MBTI를 확인할 수 있습니다.
-          </p>
-          {onRetakeSurvey && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onRetakeSurvey}
-              className="mt-2 text-xs border-pink-500/50 text-pink-300 hover:bg-pink-900/30 gap-1.5"
-            >
-              <RefreshCcw className="w-3.5 h-3.5" />
-              설문 하러 가기
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {/* 코드 배지 + 유형명 */}
-          <div className={`flex items-center gap-3 p-3 rounded-xl border ${theme.bg} ${theme.border}`}>
-            <div className={`w-16 h-16 rounded-xl ${theme.bar} flex flex-col items-center justify-center flex-shrink-0 shadow-lg ${theme.glow}`}>
-              <span className="text-white font-black text-xl tracking-widest">{code}</span>
-              <span className="text-white/70 text-[9px] mt-0.5">투자유형</span>
-            </div>
-            <div className="min-w-0">
-              <p className={`font-bold text-base leading-tight ${theme.text}`}>
-                {emoji} {name}
-              </p>
-              <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">{desc}</p>
-            </div>
+        /* ---------- 설문 미완료 / 생성 대기 ---------- */
+        <div className="p-6">
+          <div className="mb-6 flex items-center gap-2">
+            <Fingerprint className="h-4 w-4 text-pink-400" />
+            <h3 className="text-base font-semibold text-gray-100">투자 MBTI</h3>
           </div>
-
-          {/* 종합 설명 */}
-          {detail && (
-            <div className={`rounded-lg border p-3 ${theme.bg} ${theme.border}`}>
-              <p className="text-[11px] text-gray-300 leading-relaxed">{detail.fullDescription}</p>
-            </div>
-          )}
-
-          {/* 차원 진행 바 */}
-          <div className="space-y-2.5">
-            {dims.map((d, i) => (
-              <div key={i}>
-                <div className="flex justify-between text-[10px] mb-1">
-                  <span className={d.leftActive ? `font-bold ${theme.text}` : "text-gray-500"}>{d.left}</span>
-                  <span className={!d.leftActive ? `font-bold ${theme.text}` : "text-gray-500"}>{d.right}</span>
-                </div>
-                <div className="relative w-full h-2 bg-slate-600 rounded-full overflow-hidden">
-                  <div
-                    className={`absolute top-0 left-0 h-2 rounded-full ${theme.bar} opacity-80 transition-all duration-500`}
-                    style={{ width: `${d.score ?? 0}%` }}
-                  />
-                  <div className="absolute top-0 left-1/2 w-px h-2 bg-white/20" />
-                </div>
+          <div className="flex flex-col items-center justify-center gap-3 py-6 text-center">
+            <div className="relative">
+              <div className={`absolute inset-0 rounded-full bg-pink-500/30 blur-xl ${isBuilding ? "animate-pulse" : ""}`} />
+              <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-pink-500/30 bg-gradient-to-br from-pink-500/20 to-rose-600/10 text-4xl">
+                🧬
               </div>
-            ))}
-          </div>
-
-          {/* 성격 특성 */}
-          {detail && (
-            <div className={`rounded-lg border p-3 space-y-1.5 ${theme.bg} ${theme.border}`}>
-              <p className={`text-[11px] font-semibold mb-2 ${theme.text}`}>💡 성격 특성</p>
-              {detail.personality.map((c, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className={`mt-0.5 text-[10px] font-bold flex-shrink-0 ${theme.text}`}>·</span>
-                  <span className="text-[11px] text-gray-300 leading-relaxed">{c}</span>
-                </div>
-              ))}
             </div>
-          )}
-
-          {/* 투자 스타일 */}
-          {detail && (
-            <div className="rounded-lg bg-slate-600/50 border border-slate-500/50 p-3">
-              <p className={`text-[11px] font-semibold mb-1.5 ${theme.text}`}>📈 투자 스타일</p>
-              <p className="text-[11px] text-gray-300 leading-relaxed">{detail.investmentStyle}</p>
-            </div>
-          )}
-
-          {/* 상세 펼치기 */}
-          {detail && (
-            <>
-              <button
-                onClick={() => setShowDetail((v) => !v)}
-                className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-medium border transition-colors ${theme.bg} ${theme.border} ${theme.text}`}
-              >
-                {showDetail ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                {showDetail ? "접기" : "강점·약점·시장 환경·포트폴리오 예시 더 보기"}
-              </button>
-
-              {showDetail && (
-                <div className="space-y-3">
-                  {/* 강점 */}
-                  <div className="rounded-lg bg-emerald-900/20 border border-emerald-700/30 p-3">
-                    <p className="text-[11px] font-semibold text-emerald-400 mb-2">✅ 강점</p>
-                    {detail.strengths.map((s, i) => (
-                      <div key={i} className="flex items-start gap-2 mb-1">
-                        <span className="text-[10px] text-emerald-500 flex-shrink-0 mt-0.5">+</span>
-                        <p className="text-[11px] text-gray-300 leading-relaxed">{s}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* 주의 */}
-                  <div className="rounded-lg bg-red-900/20 border border-red-700/30 p-3">
-                    <p className="text-[11px] font-semibold text-red-400 mb-2">⚠️ 주의할 점</p>
-                    {detail.weaknesses.map((w, i) => (
-                      <div key={i} className="flex items-start gap-2 mb-1">
-                        <span className="text-[10px] text-red-500 flex-shrink-0 mt-0.5">-</span>
-                        <p className="text-[11px] text-gray-300 leading-relaxed">{w}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* 유리한 시장 환경 */}
-                  <div className="rounded-lg bg-slate-600/50 border border-slate-500/50 p-3">
-                    <p className={`text-[11px] font-semibold mb-1.5 ${theme.text}`}>🌍 유리한 시장 환경</p>
-                    <p className="text-[11px] text-gray-300 leading-relaxed">{detail.marketCondition}</p>
-                  </div>
-
-                  {/* 포트폴리오 예시 */}
-                  <div className={`rounded-lg border p-3 ${theme.bg} ${theme.border}`}>
-                    <p className={`text-[11px] font-semibold mb-1.5 ${theme.text}`}>📊 포트폴리오 구성 예시</p>
-                    <p className="text-[11px] text-gray-300 leading-relaxed font-mono">{detail.portfolioExample}</p>
-                  </div>
-
-                  {/* 실전 팁 */}
-                  <div className="rounded-lg bg-yellow-900/20 border border-yellow-700/30 p-3">
-                    <p className="text-[11px] font-semibold text-yellow-400 mb-2">🔑 실전 팁</p>
-                    {detail.tips.map((t, i) => (
-                      <div key={i} className="flex items-start gap-2 mb-1.5">
-                        <span className="text-[10px] text-yellow-500 flex-shrink-0 mt-0.5">{i + 1}.</span>
-                        <p className="text-[11px] text-gray-300 leading-relaxed">{t}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* 닮은 투자자 */}
-                  <div className={`rounded-lg border p-3 ${theme.bg} ${theme.border}`}>
-                    <p className={`text-[11px] font-semibold mb-1 ${theme.text}`}>🏆 닮은 투자 대가</p>
-                    <p className="text-[11px] text-gray-300">{detail.similarInvestor}</p>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          <div className="flex items-center justify-between pt-1">
-            <p className="text-[10px] text-gray-500">AI 분석 · 설문 점수 기반</p>
-            {onRetakeSurvey && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onRetakeSurvey}
-                className="h-7 text-[11px] text-pink-300 hover:text-pink-200 hover:bg-pink-900/30 gap-1 px-2"
-              >
-                <RefreshCcw className="w-3 h-3" />
-                다시 설문하기
-              </Button>
+            {isBuilding ? (
+              <>
+                <p className="flex items-center gap-2 text-base font-semibold text-gray-100">
+                  <RefreshCw className="h-3.5 w-3.5 animate-spin" /> 투자 MBTI 분석 중...
+                </p>
+                <p className="text-base leading-relaxed text-gray-400">
+                  설문 응답을 분석하고 있어요.
+                  <br />
+                  잠시만 기다려 주세요.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-base font-semibold text-gray-100">아직 나의 투자 유형을 몰라요</p>
+                <p className="text-base leading-relaxed text-gray-400">
+                  간단한 설문을 완료하면
+                  <br />
+                  8가지 투자 MBTI 중 내 유형을 알려드려요.
+                </p>
+                {onRetakeSurvey && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onRetakeSurvey}
+                    className="mt-2 gap-1.5 border-pink-500/50 text-base text-pink-300 hover:bg-pink-900/30"
+                  >
+                    <RefreshCcw className="h-3.5 w-3.5" />
+                    설문 하러 가기
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
+      ) : (
+        <>
+          {/* ---------- HERO ---------- */}
+          <div className={`relative overflow-hidden ${theme.hero}`}>
+            <div className={`pointer-events-none absolute -right-10 -top-14 h-44 w-44 rounded-full ${theme.bar} opacity-20 blur-3xl`} />
+            <div className="relative p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold tracking-wide text-gray-200/90">
+                  <Fingerprint className="h-3.5 w-3.5 text-pink-300" /> 투자 MBTI
+                </span>
+                {isBuilding && (
+                  <span className="inline-flex items-center gap-1.5 text-[13px] text-gray-300">
+                    <RefreshCw className="h-3 w-3 animate-spin" /> 갱신 중
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4">
+                <div className={`relative flex h-[78px] w-[78px] flex-shrink-0 flex-col items-center justify-center rounded-2xl ${theme.bar} shadow-xl ${theme.glow} ring-4 ${theme.ring}`}>
+                  <span className="text-[28px] font-black leading-none tracking-[0.12em] text-white drop-shadow-sm">{code}</span>
+                  <span className="mt-1 text-[11px] font-medium tracking-[0.2em] text-white/70">TYPE</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className={`text-2xl font-extrabold leading-tight ${theme.text}`}>
+                    <span className="mr-1">{emoji}</span>
+                    {name}
+                  </p>
+                  <p className="mt-1.5 text-base leading-relaxed text-gray-300/85">{desc}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ---------- BODY ---------- */}
+          <div className="space-y-4 p-5">
+            {/* 성향 게이지 */}
+            <div className="space-y-3.5">
+              {dims.map((d, i) => (
+                <div key={i}>
+                  <div className="mb-1.5 flex items-center justify-between text-[13px]">
+                    <span className={d.leftActive ? `font-bold ${theme.text}` : "text-gray-500"}>{d.left}</span>
+                    <span className={!d.leftActive ? `font-bold ${theme.text}` : "text-gray-500"}>{d.right}</span>
+                  </div>
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-700/70">
+                    <div
+                      className={`absolute inset-y-0 left-0 rounded-full ${theme.bar} opacity-90 transition-all duration-700`}
+                      style={{ width: `${d.score ?? 0}%` }}
+                    />
+                    <div className="absolute left-1/2 top-0 h-full w-px bg-white/15" />
+                    <div
+                      className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-slate-800 bg-white shadow-md transition-all duration-700"
+                      style={{ left: `${d.score ?? 0}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 종합 설명 */}
+            {detail && (
+              <div className="relative rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+                <div className={`absolute bottom-4 left-0 top-4 w-1 rounded-full ${theme.bar}`} />
+                <p className="pl-3 text-[14px] leading-relaxed text-gray-200">{detail.fullDescription}</p>
+              </div>
+            )}
+
+            {/* 성격 특성 */}
+            {detail && (
+              <div className={`rounded-xl border p-4 ${theme.bg} ${theme.border}`}>
+                <SectionHeader emoji="💡" title="성격 특성" className={theme.text} />
+                <div className="space-y-2">
+                  {detail.personality.map((c, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${theme.bar}`} />
+                      <span className="text-[14px] leading-relaxed text-gray-200">{c}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 투자 스타일 */}
+            {detail && (
+              <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+                <SectionHeader emoji="📈" title="투자 스타일" className={theme.text} />
+                <p className="text-[14px] leading-relaxed text-gray-200">{detail.investmentStyle}</p>
+              </div>
+            )}
+
+            {/* 상세 정보 */}
+            {detail && (
+              <div className="space-y-3">
+                {/* 강점 · 주의 2열 */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="rounded-xl border border-emerald-700/30 bg-emerald-900/20 p-4">
+                    <SectionHeader emoji="✅" title="강점" className="text-emerald-400" />
+                    <div className="space-y-1.5">
+                      {detail.strengths.map((s, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-emerald-500">+</span>
+                          <p className="text-[14px] leading-relaxed text-gray-200">{s}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-red-700/30 bg-red-900/20 p-4">
+                    <SectionHeader emoji="⚠️" title="주의할 점" className="text-red-400" />
+                    <div className="space-y-1.5">
+                      {detail.weaknesses.map((w, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-red-500">-</span>
+                          <p className="text-[14px] leading-relaxed text-gray-200">{w}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 유리한 시장 환경 */}
+                <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+                  <SectionHeader emoji="🌍" title="유리한 시장 환경" className={theme.text} />
+                  <p className="text-[14px] leading-relaxed text-gray-200">{detail.marketCondition}</p>
+                </div>
+
+                {/* 포트폴리오 예시 */}
+                <div className={`rounded-xl border p-4 ${theme.bg} ${theme.border}`}>
+                  <SectionHeader emoji="📊" title="포트폴리오 구성 예시" className={theme.text} />
+                  <p className="font-mono text-[14px] leading-relaxed text-gray-200">{detail.portfolioExample}</p>
+                </div>
+
+                {/* 실전 팁 */}
+                <div className="rounded-xl border border-yellow-700/30 bg-yellow-900/20 p-4">
+                  <SectionHeader emoji="🔑" title="실전 팁" className="text-yellow-400" />
+                  <div className="space-y-2">
+                    {detail.tips.map((t, i) => (
+                      <div key={i} className="flex items-start gap-2.5">
+                        <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-yellow-500/20 text-[12px] font-bold text-yellow-400">
+                          {i + 1}
+                        </span>
+                        <p className="text-[14px] leading-relaxed text-gray-200">{t}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 닮은 투자 대가 */}
+                <div className={`rounded-xl border p-4 ${theme.bg} ${theme.border}`}>
+                  <SectionHeader emoji="🏆" title="닮은 투자 대가" className={theme.text} />
+                  <p className="text-[14px] leading-relaxed text-gray-200">{detail.similarInvestor}</p>
+                </div>
+              </div>
+            )}
+
+            {/* footer */}
+            <div className="flex items-center justify-between border-t border-slate-700/60 pt-3">
+              <p className="text-[12px] text-gray-500">설문 점수 기반</p>
+              {onRetakeSurvey && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onRetakeSurvey}
+                  className="h-7 gap-1 px-2 text-[13px] text-pink-300 hover:bg-pink-900/30 hover:text-pink-200"
+                >
+                  <RefreshCcw className="h-3 w-3" />
+                  다시 설문하기
+                </Button>
+              )}
+            </div>
+          </div>
+        </>
       )}
-      </div>
     </Card>
   );
 }

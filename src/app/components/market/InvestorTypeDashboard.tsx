@@ -1,22 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { getGuruPortfolios, getPrevQuarter } from "@/app/services/guruService";
 import { getPortfoliosByUser } from "@/app/services/portfolioService";
 import { getPortfolioItems } from "@/app/services/portfolioItemService";
-import { getAllInsightResults } from "@/app/services/insightService";
-import { useInsightBuild } from "@/app/hooks/useInsightBuild";
+import { getAllInsightResults, generateStockMbti } from "@/app/services/insightService";
+import { getSurveyWithMyResponses } from "@/app/services/surveyService";
 import type {
   GuruPortfolioResponse,
   PortfolioResponse,
   PortfolioItemResponse,
   InsightResultResponse,
+  SurveyWithMyResponse,
   ApiResponse,
 } from "@/app/types";
 
 import { StockMbtiCard } from "./insights/StockMbtiCard";
 import { GuruMatchCard } from "./insights/GuruMatchCard";
+import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 
-type View = "landing" | "mbti" | "guru-match";
+type View = "landing" | "mbti" | "guru-match" | "survey";
 
 interface Props {
   onRetakeSurvey?: () => void;
@@ -27,17 +29,36 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItemResponse[]>([]);
   const [guruPortfolios, setGuruPortfolios] = useState<GuruPortfolioResponse[]>([]);
   const [insightResults, setInsightResults] = useState<InsightResultResponse[]>([]);
+  const [hasRiskProfileResponse, setHasRiskProfileResponse] = useState(false);
+  const [resultsLoaded, setResultsLoaded] = useState(false);
+  const [mbtiBuilding, setMbtiBuilding] = useState(false);
 
   const fetchResults = () => {
     getAllInsightResults()
       .then((res) => {
         const data = (res.data as ApiResponse<InsightResultResponse[]>).data;
         setInsightResults(Array.isArray(data) ? data : []);
+        setResultsLoaded(true);
       })
       .catch(() => {});
   };
 
-  const { isProcessing, trigger } = useInsightBuild(fetchResults);
+  // 투자 MBTI만 즉시 동기 생성 (설문 점수 기반, LLM/Kafka 미사용 → 대기 없음)
+  const generateMbtiNow = useCallback(() => {
+    setMbtiBuilding(true);
+    return generateStockMbti()
+      .then((res) => {
+        const result = (res.data as ApiResponse<InsightResultResponse>).data;
+        if (result) {
+          setInsightResults((prev) => [
+            ...prev.filter((r) => r.resultTypeCd !== "STOCK_MBTI"),
+            result,
+          ]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setMbtiBuilding(false));
+  }, []);
 
   useEffect(() => {
     getPortfoliosByUser()
@@ -63,31 +84,84 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
       })
       .catch(() => {});
 
+    getSurveyWithMyResponses()
+      .then((res) => {
+        const list = (res.data.data ?? []) as SurveyWithMyResponse[];
+        setHasRiskProfileResponse(
+          list.some(
+            (s) => s.surveyTypeCode === "RISK_PROFILE" &&
+                   (s.responseId != null || s.statusCode === "COMPLETED"),
+          ),
+        );
+      })
+      .catch(() => {});
+
     fetchResults();
   }, []);
 
   const findResult = (typeCd: string) =>
     insightResults.find((r) => r.resultTypeCd === typeCd) ?? null;
 
+  // 투자 MBTI: 설문 응답이 있으면 결과 뷰, 없으면 설문(나의 투자 성향 분석)으로 바로 이동
+  const handleMbtiStart = () => {
+    if (!hasRiskProfileResponse) setView("survey");
+    else setView("mbti");
+  };
+
+  // 인플레이스 설문 완료 → MBTI 뷰로 이동 + 최신 응답으로 즉시 재생성
+  const handleSurveyComplete = () => {
+    setHasRiskProfileResponse(true);
+    autoMbtiBuiltRef.current = true;   // 직접 재생성하므로 진입 effect 중복 방지
+    setView("mbti");
+    generateMbtiNow();
+  };
+
+  // MBTI 뷰 진입 시: 설문 응답은 있는데 결과가 없으면 즉시 생성 (LLM 없이 바로)
+  const autoMbtiBuiltRef = useRef(false);
+  useEffect(() => {
+    if (view !== "mbti") { autoMbtiBuiltRef.current = false; return; }
+    if (!resultsLoaded || !hasRiskProfileResponse || mbtiBuilding || autoMbtiBuiltRef.current) return;
+    const mbti = findResult("STOCK_MBTI");
+    const hasMbti = !!mbti && !(mbti.content ?? "").startsWith("설문 미완료");
+    if (!hasMbti) {
+      autoMbtiBuiltRef.current = true;
+      generateMbtiNow();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, resultsLoaded, hasRiskProfileResponse, mbtiBuilding, insightResults]);
+
   const BackButton = () => (
     <button
       onClick={() => setView("landing")}
-      className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-200 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-gray-200 transition-colors hover:border-slate-500 hover:bg-slate-700 hover:text-white"
     >
       <ArrowLeft className="w-4 h-4" />
       투자 놀이터로 돌아가기
     </button>
   );
 
+  if (view === "survey") {
+    return (
+      <div className="space-y-4 w-full max-w-4xl mx-auto">
+        <BackButton />
+        <InvestmentSurvey
+          keyword=""
+          autoOpenType="RISK_PROFILE"
+          onComplete={handleSurveyComplete}
+        />
+      </div>
+    );
+  }
+
   if (view === "mbti") {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 w-full max-w-4xl mx-auto">
         <BackButton />
         <StockMbtiCard
           insightResult={findResult("STOCK_MBTI")}
-          onRetakeSurvey={onRetakeSurvey}
-          onBuild={trigger}
-          building={isProcessing}
+          onRetakeSurvey={() => setView("survey")}
+          onBuild={generateMbtiNow}
+          building={mbtiBuilding}
         />
       </div>
     );
@@ -95,7 +169,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
 
   if (view === "guru-match") {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 w-full max-w-4xl mx-auto">
         <BackButton />
         <GuruMatchCard
           portfolioItems={portfolioItems}
@@ -106,26 +180,26 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-full max-w-4xl mx-auto">
       <div className="flex items-center gap-2">
         <Sparkles className="w-5 h-5 text-pink-400" />
-        <h2 className="text-lg font-semibold text-gray-100">투자 놀이터</h2>
+        <h2 className="text-xl font-semibold text-gray-100">투자 놀이터</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <button
-          onClick={() => setView("mbti")}
+          onClick={handleMbtiStart}
           className="group text-left rounded-xl border border-pink-700/40 bg-gradient-to-br from-pink-900/50 to-rose-900/30 p-6 hover:border-pink-500/60 hover:from-pink-900/70 hover:to-rose-900/50 transition-all duration-200"
         >
           <div className="text-4xl mb-4">🧬</div>
-          <h3 className="text-lg font-bold text-pink-200 mb-2 group-hover:text-pink-100 transition-colors">
+          <h3 className="text-xl font-bold text-pink-200 mb-2 group-hover:text-pink-100 transition-colors">
             투자 MBTI 알아보기!
           </h3>
-          <p className="text-sm text-gray-400 leading-relaxed mb-5">
+          <p className="text-base text-gray-400 leading-relaxed mb-5">
             설문 응답을 기반으로 나만의 투자 유형 코드를 확인해보세요. GRL, VST 등 8가지 유형 중 나는 어디에 속할까요?
           </p>
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-pink-300 group-hover:text-pink-200 group-hover:gap-3 transition-all duration-200">
-            시작하기 →
+          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-pink-300 group-hover:text-pink-200 group-hover:gap-3 transition-all duration-200">
+            {hasRiskProfileResponse ? "결과보기 →" : "시작하기 →"}
           </span>
         </button>
 
@@ -134,13 +208,13 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
           className="group text-left rounded-xl border border-indigo-700/40 bg-gradient-to-br from-indigo-900/50 to-purple-900/30 p-6 hover:border-indigo-500/60 hover:from-indigo-900/70 hover:to-purple-900/50 transition-all duration-200"
         >
           <div className="text-4xl mb-4">👑</div>
-          <h3 className="text-lg font-bold text-indigo-200 mb-2 group-hover:text-indigo-100 transition-colors">
+          <h3 className="text-xl font-bold text-indigo-200 mb-2 group-hover:text-indigo-100 transition-colors">
             내 포트폴리오와 맞는 투자 대가는?
           </h3>
-          <p className="text-sm text-gray-400 leading-relaxed mb-5">
+          <p className="text-base text-gray-400 leading-relaxed mb-5">
             내가 보유한 종목을 워런 버핏, 조지 소로스 등 전설적 투자자들의 포트폴리오와 비교해보세요.
           </p>
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-300 group-hover:text-indigo-200 group-hover:gap-3 transition-all duration-200">
+          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-indigo-300 group-hover:text-indigo-200 group-hover:gap-3 transition-all duration-200">
             알아보기 →
           </span>
         </button>

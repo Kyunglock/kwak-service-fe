@@ -1,24 +1,16 @@
 import { useState, useEffect } from "react";
 import { PieChart, RefreshCw } from "lucide-react";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
-import { getPortfoliosByUser } from "@/app/services/portfolioService";
-import { getPortfolioItems } from "@/app/services/portfolioItemService";
 import { getAllInsightResults } from "@/app/services/insightService";
 import type {
-  PortfolioResponse,
-  PortfolioItemResponse,
   InsightResultResponse,
   ApiResponse,
 } from "@/app/types";
 
-import { SectorAnalysisCard } from "./insights/SectorAnalysisCard";
-import { KeyInsightsCard } from "./insights/KeyInsightsCard";
-import { DivergenceInsightsCard } from "./insights/DivergenceInsightsCard";
 import { ProfileFitCard } from "./insights/ProfileFitCard";
 import { useInsightBuild } from "@/app/hooks/useInsightBuild";
 
 export function InsightsDashboard() {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItemResponse[]>([]);
   const [insightResults, setInsightResults] = useState<InsightResultResponse[]>([]);
 
   const fetchResults = () => {
@@ -33,22 +25,6 @@ export function InsightsDashboard() {
   const { isProcessing, trigger } = useInsightBuild(fetchResults);
 
   useEffect(() => {
-    getPortfoliosByUser()
-      .then(async (res) => {
-        const portfolios: PortfolioResponse[] = (
-          res.data as ApiResponse<PortfolioResponse[]>
-        ).data;
-        const itemResults = await Promise.all(
-          portfolios.map((p) =>
-            getPortfolioItems(p.portfolioId)
-              .then((r) => (r.data as ApiResponse<PortfolioItemResponse[]>).data)
-              .catch(() => [] as PortfolioItemResponse[]),
-          ),
-        );
-        setPortfolioItems(itemResults.flat());
-      })
-      .catch(() => {});
-
     fetchResults();
   }, []);
 
@@ -76,17 +52,8 @@ export function InsightsDashboard() {
         </div>
       </div>
 
-      {/* 프로필 적합도 + 주요 발견 — 2열 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <ProfileFitCard insightResult={findResult("PROFILE_FIT")} building={isProcessing} />
-        <KeyInsightsCard insightResult={findResult("KEY_FINDINGS")} />
-      </div>
-
-      {/* 재무 이상 징후 */}
-      <DivergenceInsightsCard portfolioItems={portfolioItems} />
-
-      {/* 섹터 분석 */}
-      <SectorAnalysisCard />
+      {/* 프로필 적합도 */}
+      <ProfileFitCard insightResult={findResult("PROFILE_FIT")} building={isProcessing} />
     </div>
   );
 }

@@ -3,12 +3,14 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { CurrencyProvider } from "@/app/contexts/CurrencyContext";
 import { logout as logoutApi } from "@/app/services/authService";
+import { logMenuMove } from "@/app/services/menuLogService";
 import { getSurveys, getMyResponses } from "@/app/services/surveyService";
 import type { SurveyResponse, UserSurveyResponseDto } from "@/app/types";
 import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 import { StockRecommendations } from "@/app/components/market/StockRecommendations";
 import { InsightsDashboard } from "@/app/components/market/InsightsDashboard";
 import { InvestorTypeDashboard } from "@/app/components/market/InvestorTypeDashboard";
+import { ActivityLog } from "@/app/components/activity/ActivityLog";
 import { Portfolio } from "@/app/components/portfolio/Portfolio";
 import { DividendDashboard } from "@/app/components/portfolio/DividendDashboard";
 import { SurveyStatistics } from "@/app/components/survey/SurveyStatistics";
@@ -31,15 +33,31 @@ export function MainLayout() {
   const activeTab = searchParams.get("tab") ?? "portfolio";
   const setActiveTab = useCallback(
     (tab: string) => {
+      if (tab !== activeTab) logMenuMove(tab, activeTab);
       setSearchParams({ tab }, { replace: true });
     },
-    [setSearchParams],
+    [setSearchParams, activeTab],
   );
+
+  // 최초 진입 시 현재 탭 1건 기록
+  useEffect(() => {
+    logMenuMove(activeTab, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [completedSurveyId, setCompletedSurveyId] = useState<number | null>(null);
   const [incompleteSurveyCount, setIncompleteSurveyCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [surveyInputKeyword, setSurveyInputKeyword] = useState("");
   const [surveyKeyword, setSurveyKeyword] = useState("");
+  const [autoOpenSurveyType, setAutoOpenSurveyType] = useState<string | null>(null);
+
+  // 투자 MBTI "시작하기" → 설문 탭 이동 + RISK_PROFILE 설문 자동 오픈
+  const goToRiskProfileSurvey = useCallback(() => {
+    setSurveyInputKeyword("");
+    setSurveyKeyword("");
+    setAutoOpenSurveyType("RISK_PROFILE");
+    setActiveTab("survey");
+  }, [setActiveTab]);
 
   useEffect(() => {
     const timer = setTimeout(() => setSurveyKeyword(surveyInputKeyword), 500);
@@ -142,7 +160,7 @@ export function MainLayout() {
               </TabsContent>
 
               <TabsContent value="survey" className="mt-0">
-                <div className="space-y-4">
+                <div className="space-y-4 w-full max-w-4xl mx-auto">
                   {/* 공유 검색창 */}
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -155,11 +173,21 @@ export function MainLayout() {
                     />
                   </div>
 
+                  <InvestmentSurvey
+                    keyword={surveyKeyword}
+                    onComplete={(surveyId) => setCompletedSurveyId(surveyId)}
+                    autoOpenType={autoOpenSurveyType}
+                    onAutoOpenHandled={() => setAutoOpenSurveyType(null)}
+                  />
+
+                  {/* 응답 내역(설문 통계) — 일단 숨김. 필요 시 아래 블록 복원
                   <div className="flex flex-col lg:flex-row lg:gap-5 lg:items-start">
                     <div className="lg:w-3/5">
                       <InvestmentSurvey
                         keyword={surveyKeyword}
                         onComplete={(surveyId) => setCompletedSurveyId(surveyId)}
+                        autoOpenType={autoOpenSurveyType}
+                        onAutoOpenHandled={() => setAutoOpenSurveyType(null)}
                       />
                     </div>
                     <div className="hidden lg:block w-px bg-slate-700 self-stretch" />
@@ -172,6 +200,7 @@ export function MainLayout() {
                       />
                     </div>
                   </div>
+                  */}
                 </div>
               </TabsContent>
 
@@ -193,13 +222,21 @@ export function MainLayout() {
               </TabsContent>
 
               <TabsContent value="competition" className="mt-0">
-                <GuruPortfolio />
+                <div className="w-full max-w-4xl mx-auto">
+                  <GuruPortfolio />
+                </div>
               </TabsContent>
 
               <TabsContent value="investor-type" className="mt-0">
                 <InvestorTypeDashboard
-                  onRetakeSurvey={() => setActiveTab("survey")}
+                  onRetakeSurvey={goToRiskProfileSurvey}
                 />
+              </TabsContent>
+
+              <TabsContent value="activity" className="mt-0">
+                <div className="w-full max-w-4xl mx-auto">
+                  <ActivityLog />
+                </div>
               </TabsContent>
             </Tabs>
           </main>

@@ -8,6 +8,7 @@ import {
   PieChart,
   Crown,
   Sparkles,
+  History,
   LogOut,
   LogIn,
   Shield,
@@ -169,6 +170,18 @@ export function SideMenu({
             >
               <Sparkles className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">투자 놀이터</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick("activity")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "activity"
+                  ? "bg-slate-600 text-white"
+                  : "text-gray-300 hover:bg-slate-800"
+              }`}
+            >
+              <History className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">활동 내역</span>
             </button>
           </div>
 

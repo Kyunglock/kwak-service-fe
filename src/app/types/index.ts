@@ -412,6 +412,18 @@ export interface SurveyWithMyResponse {
     regDt: string;
 }
 
+// 감사/활동 로그
+export interface ActivityLogResponse {
+  logId: number;
+  userId: string | null;
+  actionType: string;
+  targetType: string | null;
+  targetId: string | null;
+  detail: string | null;
+  ip: string | null;
+  regDt: string;
+}
+
 // 페이지네이션 공통 래퍼
 export interface PageResponse<T> {
   content: T[];

@@ -6,7 +6,6 @@ import type { ActivityLogResponse, PageResponse, ApiResponse } from "@/app/types
 import {
   getMyActivityLogs,
   getAllActivityLogs,
-  checkAdminAccess,
 } from "@/app/services/activityLogService";
 
 const PAGE_SIZE = 20;
@@ -27,8 +26,11 @@ const actionMeta = (a: string) =>
 
 const fmtDateTime = (s: string) => s.replace("T", " ").slice(0, 19);
 
-export function ActivityLog() {
-  const [isAdmin, setIsAdmin] = useState(false);
+interface ActivityLogProps {
+  isAdmin?: boolean;
+}
+
+export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
   const [tab, setTab] = useState<"me" | "all">("me");
 
   const [logs, setLogs] = useState<ActivityLogResponse[]>([]);
@@ -42,12 +44,6 @@ export function ActivityLog() {
   const [actionInput, setActionInput] = useState("");
   const [appliedUserId, setAppliedUserId] = useState("");
   const [appliedAction, setAppliedAction] = useState("");
-
-  useEffect(() => {
-    checkAdminAccess()
-      .then((res) => setIsAdmin(!!(res.data as ApiResponse<{ isAdmin: boolean }>).data?.isAdmin))
-      .catch(() => {});
-  }, []);
 
   const fetchLogs = useCallback(() => {
     setLoading(true);

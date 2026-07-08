@@ -13,7 +13,16 @@ function parseContent(content: string | undefined): DividendInsightContent | nul
   if (!content) return null;
   try {
     const obj = JSON.parse(content) as DividendInsightContent;
-    if (typeof obj.summary !== "string" || !Array.isArray(obj.monthlyFlow)) return null;
+    if (
+      typeof obj.summary !== "string" ||
+      typeof obj.annualDividendUsd !== "number" ||
+      typeof obj.annualDividendKrw !== "number" ||
+      typeof obj.portfolioYield !== "number" ||
+      typeof obj.dividendStockWeight !== "number" ||
+      !Array.isArray(obj.monthlyFlow) ||
+      !Array.isArray(obj.findings)
+    )
+      return null;
     return obj;
   } catch {
     return null;

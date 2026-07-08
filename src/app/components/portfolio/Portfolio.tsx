@@ -139,15 +139,15 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
 
   // TradeDialog는 전체 종목 검색이 필요 — 다이얼로그 첫 오픈 시에만 로드
   const handleAddClick = useCallback(() => {
+    if (tradeDialogStocks.length === 0) {
+      getStocksWithPrice()
+        .then((res) => setTradeDialogStocks(res.data.data))
+        .catch(() => {});
+    }
     if (!currentPortfolioId) {
       setOpenTradeAfterPortfolio(true);
       setIsManagePortfolioOpen(true);
     } else {
-      if (tradeDialogStocks.length === 0) {
-        getStocksWithPrice()
-          .then((res) => setTradeDialogStocks(res.data.data))
-          .catch(() => {});
-      }
       setIsAddDialogOpen(true);
     }
   }, [currentPortfolioId, tradeDialogStocks.length]);

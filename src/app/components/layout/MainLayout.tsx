@@ -5,7 +5,12 @@ import { CurrencyProvider } from "@/app/contexts/CurrencyContext";
 import { logout as logoutApi } from "@/app/services/authService";
 import { logMenuMove } from "@/app/services/menuLogService";
 import { getSurveys, getMyResponses } from "@/app/services/surveyService";
-import type { SurveyResponse, UserSurveyResponseDto } from "@/app/types";
+import { checkAdminAccess } from "@/app/services/activityLogService";
+import type {
+  SurveyResponse,
+  UserSurveyResponseDto,
+  ApiResponse,
+} from "@/app/types";
 import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 import { StockRecommendations } from "@/app/components/market/StockRecommendations";
 import { InsightsDashboard } from "@/app/components/market/InsightsDashboard";
@@ -46,6 +51,8 @@ export function MainLayout() {
   }, []);
   const [completedSurveyId, setCompletedSurveyId] = useState<number | null>(null);
   const [incompleteSurveyCount, setIncompleteSurveyCount] = useState(0);
+  // 관리자 여부 (null = 확인 중). 활동 내역 탭은 관리자 전용
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [surveyInputKeyword, setSurveyInputKeyword] = useState("");
   const [surveyKeyword, setSurveyKeyword] = useState("");
@@ -63,6 +70,34 @@ export function MainLayout() {
     const timer = setTimeout(() => setSurveyKeyword(surveyInputKeyword), 500);
     return () => clearTimeout(timer);
   }, [surveyInputKeyword]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setIsAdmin(false);
+      return;
+    }
+    let cancelled = false;
+    checkAdminAccess()
+      .then((res) => {
+        if (!cancelled)
+          setIsAdmin(
+            !!(res.data as ApiResponse<{ isAdmin: boolean }>).data?.isAdmin,
+          );
+      })
+      .catch(() => {
+        if (!cancelled) setIsAdmin(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn]);
+
+  // 관리자가 아닌데 URL로 활동 내역 탭 진입 시 기본 탭으로 이동
+  useEffect(() => {
+    if (activeTab === "activity" && isAdmin === false) {
+      setActiveTab("portfolio");
+    }
+  }, [activeTab, isAdmin, setActiveTab]);
 
   const { prices: stockPrices, connected: sseConnected } =
     useStockPrice(isLoggedIn);
@@ -113,6 +148,7 @@ export function MainLayout() {
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
           isLoggedIn={isLoggedIn}
+          isAdmin={isAdmin === true}
           activeTab={activeTab}
           incompleteSurveyCount={incompleteSurveyCount}
           surveyAnswers={surveyAnswers}
@@ -234,9 +270,11 @@ export function MainLayout() {
               </TabsContent>
 
               <TabsContent value="activity" className="mt-0">
-                <div className="w-full max-w-4xl mx-auto">
-                  <ActivityLog />
-                </div>
+                {isAdmin === true && (
+                  <div className="w-full max-w-4xl mx-auto">
+                    <ActivityLog isAdmin />
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </main>

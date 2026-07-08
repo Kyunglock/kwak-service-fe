@@ -8,6 +8,7 @@ import type {
 } from "@/app/types";
 
 import { ProfileFitCard } from "./insights/ProfileFitCard";
+import { DividendInsightCard } from "./insights/DividendInsightCard";
 import { useInsightBuild } from "@/app/hooks/useInsightBuild";
 
 export function InsightsDashboard() {
@@ -54,6 +55,9 @@ export function InsightsDashboard() {
 
       {/* 프로필 적합도 */}
       <ProfileFitCard insightResult={findResult("PROFILE_FIT")} building={isProcessing} />
+
+      {/* 배당 인사이트 */}
+      <DividendInsightCard insightResult={findResult("DIVIDEND_INSIGHT")} building={isProcessing} />
     </div>
   );
 }

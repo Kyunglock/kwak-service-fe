@@ -525,7 +525,8 @@ export type InsightResultTypeCd =
   | "PORTFOLIO_ALIGNMENT"
   | "INVESTMENT_RECOMMENDATION"
   | "STOCK_MBTI"
-  | "PROFILE_FIT";
+  | "PROFILE_FIT"
+  | "DIVIDEND_INSIGHT";
 
 export interface InsightResultResponse {
   resultId: number;
@@ -549,6 +550,18 @@ export interface ProfileFitItem {
 export interface ProfileFitContent {
   fit: ProfileFitItem[];
   rebalance: string[];
+}
+
+// DIVIDEND_INSIGHT content JSON (BE DividendInsightBuilder 생성)
+export interface DividendInsightContent {
+  summary: string;
+  annualDividendUsd: number;
+  annualDividendKrw: number;
+  portfolioYield: number;
+  dividendStockWeight: number;
+  profileContrast: string;
+  monthlyFlow: number[]; // 길이 12, 월별 배당 지급 종목 수
+  findings: string[];
 }
 
 // ========== Divergence API DTOs ==========

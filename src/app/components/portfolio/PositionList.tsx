@@ -23,10 +23,11 @@ interface PositionListProps {
 export function PositionList({ positions, loading, stockPrices, stocks = [], onAddClick }: PositionListProps) {
   const { convert, currency } = useCurrency();
 
-  const getCurrentPrice = (stockCd: string): number | null => {
-    if (!stockPrices) return null;
-    const live = stockPrices[stockCd];
-    return live ? live.currentPrice : null;
+  // 실시간(SSE) 시세가 있으면 우선, 없으면 포지션에 embed된 최근 종가 사용
+  const getCurrentPrice = (pos: PortfolioItemResponse): number | null => {
+    const live = stockPrices?.[pos.stockCd];
+    if (live) return live.currentPrice;
+    return pos.closePrice ?? null;
   };
 
   function getStockName(stockCd: string, posCurrency: string): { main: string; sub?: string } {
@@ -39,7 +40,7 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
   }
 
   const totalCurrentValue = positions.reduce((sum, pos) => {
-    const price = getCurrentPrice(pos.stockCd);
+    const price = getCurrentPrice(pos);
     const val = price ? price * pos.holdQty : pos.buyAmount;
     return sum + convert(val, pos.currency);
   }, 0);
@@ -52,7 +53,7 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
   const totalProfitPct = totalInvestment > 0 ? (totalProfit / totalInvestment) * 100 : 0;
 
   const stockDetails = positions.map((pos) => {
-    const price = getCurrentPrice(pos.stockCd);
+    const price = getCurrentPrice(pos);
     const currentValNative = price ? price * pos.holdQty : pos.buyAmount;
     const currentValConverted = convert(currentValNative, pos.currency);
     const buyAmountConverted = convert(pos.buyAmount, pos.currency);

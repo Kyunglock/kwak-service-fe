@@ -251,6 +251,8 @@ export interface PortfolioItemResponse {
   stockNmKo?: string;
   sector?: string;
   sectorKo?: string;
+  closePrice?: number;
+  priceDt?: string;
 }
 
 export interface PortfolioItemAddRequest {

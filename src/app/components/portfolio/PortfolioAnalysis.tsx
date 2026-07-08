@@ -291,9 +291,13 @@ export function PortfolioAnalysis({
     fetchTransactions();
   }, [fetchPositions, fetchTransactions]);
 
-  const getCurrentPrice = (stockCd: string): number | null => {
-    const priceData = stockPrices?.[stockCd];
-    return priceData ? priceData.currentPrice : null;
+  // 실시간(SSE) 시세 → 포지션 embed 종가 → stocks 목록 종가 순으로 fallback
+  const getCurrentPrice = (pos: PortfolioItemResponse): number | null => {
+    const live = stockPrices?.[pos.stockCd];
+    if (live) return live.currentPrice;
+    if (pos.closePrice != null) return pos.closePrice;
+    const stock = stocks.find((s) => s.stockCd === pos.stockCd);
+    return stock?.closePrice || null;
   };
 
   function getDisplayName(pos: PortfolioItemResponse): string {
@@ -340,7 +344,7 @@ export function PortfolioAnalysis({
 
   const totalInvestment = positions.reduce((sum, p) => sum + convert(p.buyAmount, p.currency), 0);
   const totalCurrent = positions.reduce((sum, p) => {
-    const price = getCurrentPrice(p.stockCd);
+    const price = getCurrentPrice(p);
     const val = price ? price * p.holdQty : p.buyAmount;
     return sum + convert(val, p.currency);
   }, 0);
@@ -351,11 +355,11 @@ export function PortfolioAnalysis({
   const krwCount = positions.filter((p) => p.currency === "KRW").length;
 
   const stockAllocation = useMemo<ChartItem[]>(() => positions.map((pos) => {
-    const price = getCurrentPrice(pos.stockCd);
+    const price = getCurrentPrice(pos);
     const rawValue = price ? price * pos.holdQty : pos.buyAmount;
     const convertedValue = convert(rawValue, pos.currency);
     return { name: getDisplayName(pos), value: convertedValue, rawValue: convertedValue, currency };
-  }).sort((a, b) => b.value - a.value), [positions, stockPrices, convert, currency]);
+  }).sort((a, b) => b.value - a.value), [positions, stocks, stockPrices, convert, currency]);
 
   const dividendAllocation = useMemo<ChartItem[]>(() => {
     return positions
@@ -381,7 +385,7 @@ export function PortfolioAnalysis({
     positions.forEach((pos) => {
       const stockInfo = stocks.find((s) => s.stockCd === pos.stockCd);
       const sector = (pos.sectorKo ?? stockInfo?.sectorKo) ?? "기타";
-      const price = getCurrentPrice(pos.stockCd);
+      const price = getCurrentPrice(pos);
       const rawValue = price ? price * pos.holdQty : pos.buyAmount;
       const convertedValue = convert(rawValue, pos.currency);
       if (map[sector]) {

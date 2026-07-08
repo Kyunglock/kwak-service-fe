@@ -48,11 +48,11 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
     stockNmKo: pos.stockNmKo,
     sector: pos.sector ?? '',
     sectorKo: pos.sectorKo ?? '',
-    priceDt: '',
+    priceDt: pos.priceDt ?? '',
     openPrice: 0,
     highPrice: 0,
     lowPrice: 0,
-    closePrice: 0,
+    closePrice: pos.closePrice ?? 0,
     volume: 0,
   }));
 

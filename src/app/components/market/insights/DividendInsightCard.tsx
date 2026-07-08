@@ -1,13 +1,12 @@
 import { Coins, RefreshCw } from "lucide-react";
 import { Card } from "@/app/components/ui/layout/card";
+import { useCurrency } from "@/app/contexts/CurrencyContext";
 import type { InsightResultResponse, DividendInsightContent } from "@/app/types";
 
 interface Props {
   insightResult: InsightResultResponse | null;
   building?: boolean;
 }
-
-const MONTH_LABELS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 function parseContent(content: string | undefined): DividendInsightContent | null {
   if (!content) return null;
@@ -29,16 +28,32 @@ function parseContent(content: string | undefined): DividendInsightContent | nul
   }
 }
 
-function fmtAnnual(usd: number, krw: number): string {
-  const parts: string[] = [];
-  if (usd > 0) parts.push(`$${usd.toLocaleString("en-US", { maximumFractionDigits: 2 })}`);
-  if (krw > 0) parts.push(`₩${Math.round(krw).toLocaleString("ko-KR")}`);
-  return parts.length > 0 ? parts.join(" + ") : "-";
-}
-
 export function DividendInsightCard({ insightResult, building }: Props) {
   const parsed = parseContent(insightResult?.content);
-  const maxFlow = parsed ? Math.max(...parsed.monthlyFlow, 1) : 1;
+  const { convert, currency } = useCurrency();
+
+  // ₩환산 월별 예상 배당금을 표시 통화로 변환해 막대 라벨용으로 축약 표기
+  const fmtMonthAmt = (krwEquiv: number): string => {
+    const v = convert(krwEquiv, "KRW");
+    if (currency === "KRW") {
+      if (v >= 10_000) return `${(v / 10_000).toFixed(v >= 100_000 ? 0 : 1)}만`;
+      if (v >= 1_000) return `${(v / 1_000).toFixed(1)}천`;
+      return `${Math.round(v)}`;
+    }
+    if (v >= 1_000) return `$${(v / 1_000).toFixed(1)}k`;
+    return v >= 100 ? `$${Math.round(v)}` : `$${v.toFixed(1)}`;
+  };
+
+  // 연 예상 배당 — USD+KRW 합산을 표시 통화 단일 값으로
+  const annualTotal = parsed
+    ? convert(parsed.annualDividendUsd, "USD") + convert(parsed.annualDividendKrw, "KRW")
+    : 0;
+  const fmtAnnualTotal =
+    currency === "KRW"
+      ? `₩${Math.round(annualTotal).toLocaleString("ko-KR")}`
+      : `$${annualTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const maxAmt = Math.max(...(parsed?.monthlyAmountsKrw ?? [0]), 0);
 
   return (
     <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
@@ -75,9 +90,7 @@ export function DividendInsightCard({ insightResult, building }: Props) {
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-lg bg-slate-600/40 p-2 text-center">
                 <p className="text-[10px] text-gray-400 mb-0.5">연 예상 배당</p>
-                <p className="text-[12px] font-bold text-gray-100">
-                  {fmtAnnual(parsed.annualDividendUsd, parsed.annualDividendKrw)}
-                </p>
+                <p className="text-[12px] font-bold text-gray-100">{fmtAnnualTotal}</p>
               </div>
               <div className="rounded-lg bg-slate-600/40 p-2 text-center">
                 <p className="text-[10px] text-gray-400 mb-0.5">배당수익률</p>
@@ -86,23 +99,45 @@ export function DividendInsightCard({ insightResult, building }: Props) {
               <div className="rounded-lg bg-slate-600/40 p-2 text-center">
                 <p className="text-[10px] text-gray-400 mb-0.5">배당주 비중</p>
                 <p className="text-[12px] font-bold text-gray-100">{parsed.dividendStockWeight.toFixed(0)}%</p>
+                <p className="text-[9px] text-gray-500 mt-0.5">수익률 2%+ 기준</p>
               </div>
             </div>
 
-            {/* 월별 배당 흐름 */}
+            {/* 월별 예상 배당금 — 1~12월 막대 그래프 (금액 라벨) */}
             <div>
-              <p className="text-[11px] font-semibold text-gray-400 mb-1.5">월별 배당 흐름</p>
-              <div className="flex items-end gap-1 h-10">
-                {parsed.monthlyFlow.slice(0, 12).map((v, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+              <p className="text-[11px] font-semibold text-gray-400 mb-1.5">월별 예상 배당금</p>
+              <div className="flex items-end gap-1 h-52">
+                {parsed.monthlyFlow.slice(0, 12).map((v, i) => {
+                  const amt = parsed.monthlyAmountsKrw?.[i] ?? 0;
+                  const paying = v > 0;
+                  const barH = paying
+                    ? maxAmt > 0
+                      ? Math.max((amt / maxAmt) * 150, 24)
+                      : 90
+                    : 4;
+                  return (
                     <div
-                      className={`w-full rounded-sm ${v > 0 ? "bg-amber-400/80" : "bg-slate-600"}`}
-                      style={{ height: `${v > 0 ? Math.max((v / maxFlow) * 28, 6) : 3}px` }}
-                    />
-                    <span className="text-[9px] text-gray-500">{MONTH_LABELS[i]}</span>
-                  </div>
-                ))}
+                      key={i}
+                      className="flex-1 flex flex-col items-center justify-end gap-1 min-w-0"
+                      title={paying ? `${i + 1}월 예상 배당 ${fmtMonthAmt(amt)}` : `${i + 1}월: 배당 없음`}
+                    >
+                      {paying && amt > 0 && (
+                        <span className="text-[11px] font-bold text-amber-300 whitespace-nowrap">
+                          {fmtMonthAmt(amt)}
+                        </span>
+                      )}
+                      <div
+                        className={`w-full rounded-t ${paying ? "bg-amber-400" : "bg-slate-600"}`}
+                        style={{ height: `${barH}px` }}
+                      />
+                      <span className="text-[10px] text-gray-500">{i + 1}</span>
+                    </div>
+                  );
+                })}
               </div>
+              <p className="text-[10px] text-gray-500 mt-1">
+                최근 1년 배당 이력 기준 예상 금액입니다.
+              </p>
             </div>
 
             {/* 성향 대조 */}

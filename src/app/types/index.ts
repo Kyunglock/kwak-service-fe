@@ -561,6 +561,7 @@ export interface DividendInsightContent {
   dividendStockWeight: number;
   profileContrast: string;
   monthlyFlow: number[]; // 길이 12, 월별 배당 지급 종목 수
+  monthlyAmountsKrw?: number[]; // 길이 12, 월별 예상 배당금(₩ 환산, 구버전 결과엔 없음)
   findings: string[];
 }
 

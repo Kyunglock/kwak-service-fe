@@ -53,11 +53,11 @@ export function InsightsDashboard() {
         </div>
       </div>
 
-      {/* 프로필 적합도 */}
-      <ProfileFitCard insightResult={findResult("PROFILE_FIT")} building={isProcessing} />
-
-      {/* 배당 인사이트 */}
-      <DividendInsightCard insightResult={findResult("DIVIDEND_INSIGHT")} building={isProcessing} />
+      {/* 성향 적합도 + 배당 인사이트 2열 (모바일은 1열) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+        <ProfileFitCard insightResult={findResult("PROFILE_FIT")} building={isProcessing} />
+        <DividendInsightCard insightResult={findResult("DIVIDEND_INSIGHT")} building={isProcessing} />
+      </div>
     </div>
   );
 }

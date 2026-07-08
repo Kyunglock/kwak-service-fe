@@ -91,7 +91,10 @@ export function TradeDialog({
       price: stock.closePrice.toString(),
       currency,
     });
-    setSearchQuery(stock.stockCd);
+    // 한국 종목은 코드 대신 종목명으로 표시
+    setSearchQuery(
+      currency === "KRW" ? stock.stockNmKo || stock.stockNm : stock.stockCd,
+    );
     setShowSearchResults(false);
   };
 
@@ -247,7 +250,9 @@ export function TradeDialog({
 
                   {showSearchResults && searchResults.length > 0 && (
                     <div className="absolute z-50 w-full mt-1 bg-slate-600 border border-slate-500 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {searchResults.map((stock) => (
+                      {searchResults.map((stock) => {
+                        const isKrw = detectCurrency(stock.stockCd) === "KRW";
+                        return (
                         <button
                           key={stock.stockCd}
                           type="button"
@@ -258,10 +263,14 @@ export function TradeDialog({
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-0.5">
                                 <span className="font-semibold text-sm text-gray-100">
-                                  {stock.stockCd}
+                                  {isKrw
+                                    ? stock.stockNmKo || stock.stockNm
+                                    : stock.stockCd}
                                 </span>
                                 <span className="text-xs text-cyan-400">
-                                  {stock.stockNmKo ?? stock.sectorKo}
+                                  {isKrw
+                                    ? stock.sectorKo
+                                    : (stock.stockNmKo ?? stock.sectorKo)}
                                 </span>
                               </div>
                               <div className="text-xs text-gray-300">
@@ -280,7 +289,8 @@ export function TradeDialog({
                             </div>
                           </div>
                         </button>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
@@ -388,15 +398,20 @@ export function TradeDialog({
                       <SelectContent className="bg-slate-600 border-slate-500">
                         {positions.map((pos) => {
                           const info = getStockInfo(pos.stockCd);
+                          const nameKr = pos.stockNmKo ?? info?.nameKr;
+                          const isKrw =
+                            (pos.currency || detectCurrency(pos.stockCd)) ===
+                            "KRW";
                           return (
                             <SelectItem
                               key={pos.itemId}
                               value={pos.stockCd}
                               className="text-gray-100 focus:bg-slate-500"
                             >
-                              {pos.stockCd}
-                              {info ? ` (${info.nameKr})` : ""} - {pos.holdQty}
-                              주
+                              {isKrw && nameKr
+                                ? nameKr
+                                : `${pos.stockCd}${nameKr ? ` (${nameKr})` : ""}`}{" "}
+                              - {pos.holdQty}주
                             </SelectItem>
                           );
                         })}

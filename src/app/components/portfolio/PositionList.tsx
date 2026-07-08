@@ -1,6 +1,5 @@
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
-import { Badge } from "@/app/components/ui/feedback/badge";
 import { Briefcase, Plus, Loader2, TrendingUp, TrendingDown } from "lucide-react";
 import type { StockPrice, PortfolioItemResponse } from "@/app/types";
 import type { StockWithPrice } from "@/app/services/stockService";
@@ -33,10 +32,11 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
   function getStockName(stockCd: string, posCurrency: string): { main: string; sub?: string } {
     const stock = stocks.find((s) => s.stockCd === stockCd);
     if (posCurrency === "KRW") {
+      // 한국 종목은 종목코드 없이 종목명만 표시
       const name = stock?.stockNmKo || stock?.stockNm;
-      return name ? { main: name, sub: stockCd } : { main: stockCd };
+      return { main: name ?? stockCd };
     }
-    return { main: stockCd, sub: stocks.find((s) => s.stockCd === stockCd)?.stockNmKo };
+    return { main: stockCd, sub: stock?.stockNmKo };
   }
 
   const totalCurrentValue = positions.reduce((sum, pos) => {
@@ -174,12 +174,14 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-700 bg-slate-800/80">
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 tracking-wide">종목</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden sm:table-cell">매수가</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden sm:table-cell">현재가</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide">평가금액</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide">손익</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden lg:table-cell">비중</th>
+                <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-400 tracking-wide">종목</th>
+                {/* 모바일: 현재가·매수가 합친 단일 컬럼 / sm 이상: 별도 컬럼 */}
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide whitespace-nowrap sm:hidden">현재가/매수</th>
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden sm:table-cell">매수가</th>
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden sm:table-cell">현재가</th>
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide">평가금액</th>
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide">손익</th>
+                <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-400 tracking-wide hidden lg:table-cell">비중</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/50">
@@ -187,7 +189,7 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
                 const { main: displayName, sub: displaySub } = getStockName(stock.stockCd, stock.nativeCurrency);
                 return (
                   <tr key={stock.stockCd} className="hover:bg-slate-700/30 transition-colors group">
-                    <td className="px-4 py-3.5">
+                    <td className="px-3 sm:px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         {/* 종목 색상 인디케이터 */}
                         <div
@@ -197,11 +199,6 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
                         <div>
                           <div className="flex items-center gap-1.5">
                             <span className="font-semibold text-sm text-gray-100">{displayName}</span>
-                            {stock.nativeCurrency === "KRW" ? (
-                              <Badge className="text-[9px] px-1 py-0 bg-rose-700/50 text-rose-300 border-0 leading-4">KRW</Badge>
-                            ) : (
-                              <Badge className="text-[9px] px-1 py-0 bg-blue-700/50 text-blue-300 border-0 leading-4">USD</Badge>
-                            )}
                           </div>
                           <div className="text-xs text-gray-500 mt-0.5">
                             {displaySub && <span className="mr-1.5">{displaySub}</span>}
@@ -210,21 +207,33 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3.5 text-right text-sm text-gray-400 hidden sm:table-cell">
+                    {/* 모바일: 현재가 위 + 매수가 아래로 합쳐 표시 */}
+                    <td className="px-3 sm:px-4 py-3.5 text-right whitespace-nowrap sm:hidden">
+                      <div className="text-sm">
+                        {stock.currentPriceConverted !== null
+                          ? <span className="text-gray-200">{fmtConverted(stock.currentPriceConverted)}</span>
+                          : <span className="text-gray-600">-</span>
+                        }
+                      </div>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {fmtConverted(stock.buyPriceConverted)}
+                      </div>
+                    </td>
+                    <td className="px-3 sm:px-4 py-3.5 text-right text-sm text-gray-400 whitespace-nowrap hidden sm:table-cell">
                       {fmtConverted(stock.buyPriceConverted)}
                     </td>
-                    <td className="px-4 py-3.5 text-right text-sm hidden sm:table-cell">
+                    <td className="px-3 sm:px-4 py-3.5 text-right text-sm whitespace-nowrap hidden sm:table-cell">
                       {stock.currentPriceConverted !== null
                         ? <span className="text-gray-300">{fmtConverted(stock.currentPriceConverted)}</span>
                         : <span className="text-gray-600">-</span>
                       }
                     </td>
-                    <td className="px-4 py-3.5 text-right">
+                    <td className="px-3 sm:px-4 py-3.5 text-right whitespace-nowrap">
                       <span className="text-sm font-semibold text-gray-100">
                         {fmtConverted(stock.currentValueConverted)}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 text-right">
+                    <td className="px-3 sm:px-4 py-3.5 text-right whitespace-nowrap">
                       <div className={`text-sm font-bold ${stock.profit >= 0 ? "text-green-400" : "text-red-400"}`}>
                         {stock.profit >= 0 ? "+" : ""}{stock.profitPercent.toFixed(2)}%
                       </div>
@@ -232,7 +241,7 @@ export function PositionList({ positions, loading, stockPrices, stocks = [], onA
                         {stock.profit >= 0 ? "+" : "-"}{fmtConverted(Math.abs(stock.profit))}
                       </div>
                     </td>
-                    <td className="px-4 py-3.5 text-right hidden lg:table-cell">
+                    <td className="px-3 sm:px-4 py-3.5 text-right hidden lg:table-cell">
                       <div className="flex flex-col items-end gap-1.5">
                         <span className="text-xs text-gray-400">{stock.weight.toFixed(1)}%</span>
                         <div className="w-16 bg-slate-700 rounded-full h-1">

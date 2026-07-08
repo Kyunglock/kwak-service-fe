@@ -73,6 +73,18 @@ export function DividendInsightCard({ insightResult, building }: Props) {
         </div>
 
         {!parsed ? (
+          building ? (
+            <div className="space-y-3 py-2 animate-pulse">
+              <div className="h-3 bg-slate-600/60 rounded w-4/5" />
+              <div className="grid grid-cols-3 gap-2">
+                <div className="h-12 bg-slate-600/40 rounded-lg" />
+                <div className="h-12 bg-slate-600/40 rounded-lg" />
+                <div className="h-12 bg-slate-600/40 rounded-lg" />
+              </div>
+              <div className="h-28 bg-slate-600/30 rounded-lg" />
+              <div className="h-3 bg-slate-600/50 rounded w-2/3" />
+            </div>
+          ) : (
           <div className="flex flex-col items-center justify-center py-6 gap-2 text-center">
             <span className="text-3xl">💰</span>
             <p className="text-sm text-gray-300 font-medium">배당 분석 전</p>
@@ -81,8 +93,9 @@ export function DividendInsightCard({ insightResult, building }: Props) {
               <br />투자 성향의 궁합을 분석해 드립니다.
             </p>
           </div>
+          )
         ) : (
-          <div className="space-y-4">
+          <div className={`space-y-4 ${building ? "opacity-50" : ""}`}>
             {/* 총평 */}
             <p className="text-[12px] text-gray-200 leading-relaxed">{parsed.summary}</p>
 

@@ -45,6 +45,15 @@ export function ProfileFitCard({ insightResult, building }: Props) {
         </div>
 
         {!parsed ? (
+          building ? (
+            <div className="space-y-3 py-2 animate-pulse">
+              <div className="h-3 bg-slate-600/60 rounded w-3/5" />
+              <div className="h-12 bg-slate-600/40 rounded-lg" />
+              <div className="h-12 bg-slate-600/40 rounded-lg" />
+              <div className="h-3 bg-slate-600/50 rounded w-4/5" />
+              <div className="h-10 bg-slate-600/30 rounded-lg" />
+            </div>
+          ) : (
           <div className="flex flex-col items-center justify-center py-6 gap-2 text-center">
             <span className="text-3xl">🎯</span>
             <p className="text-sm text-gray-300 font-medium">성향 적합도 분석 전</p>
@@ -53,8 +62,9 @@ export function ProfileFitCard({ insightResult, building }: Props) {
               <br />내 종목이 투자 성향에 맞는지 분석해 드립니다.
             </p>
           </div>
+          )
         ) : (
-          <div className="space-y-4">
+          <div className={`space-y-4 ${building ? "opacity-50" : ""}`}>
             {/* 종목별 적합도 */}
             <div>
               <p className="text-[11px] font-semibold text-gray-400 mb-2">종목별 성향 적합도</p>

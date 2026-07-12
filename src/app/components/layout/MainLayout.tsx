@@ -6,6 +6,8 @@ import { logout as logoutApi } from "@/app/services/authService";
 import { logMenuMove } from "@/app/services/menuLogService";
 import { getSurveys, getMyResponses } from "@/app/services/surveyService";
 import { checkAdminAccess } from "@/app/services/activityLogService";
+import { getMe } from "@/app/services/userService";
+import { NicknameModal } from "@/app/components/user/NicknameModal";
 import type {
   SurveyResponse,
   UserSurveyResponseDto,
@@ -92,6 +94,27 @@ export function MainLayout() {
     };
   }, [isLoggedIn]);
 
+  // 닉네임 미설정 유저에게 입력 모달 (게스트는 자동 닉네임이라 안 뜸)
+  const [needsNickname, setNeedsNickname] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setNeedsNickname(false);
+      return;
+    }
+    let cancelled = false;
+    getMe()
+      .then((res) => {
+        if (!cancelled) setNeedsNickname(res.data.data ? res.data.data.nickname == null : false);
+      })
+      .catch(() => {
+        // 조회 실패 시 앱 사용을 막지 않는다 — 다음 진입에서 재시도
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn]);
+
   // 관리자가 아닌데 URL로 활동 내역 탭 진입 시 기본 탭으로 이동
   useEffect(() => {
     if (activeTab === "activity" && isAdmin === false) {
@@ -142,6 +165,7 @@ export function MainLayout() {
   return (
     <CurrencyProvider>
       <MobileAlert />
+      {needsNickname && <NicknameModal onComplete={() => setNeedsNickname(false)} />}
       <div className="min-h-screen min-h-dvh bg-slate-800 lg:flex">
         {/* 사이드바 (PC: 항상 표시, 모바일: 햄버거 토글) */}
         <SideMenu

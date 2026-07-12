@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { onAuthExpired } from "@/app/utils/apiClient";
 import { getAuthFromCookie, removeAccessTokenCookie } from "@/app/utils/jwt";
+import { getMe } from "@/app/services/userService";
 
 interface AuthUser {
   userId: string;
@@ -21,11 +22,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 앱 시작 시 쿠키에서 JWT 읽어 유저 정보 복원
+  // 앱 시작 시 쿠키에서 JWT 읽어 유저 정보 복원 후 /me로 보정
+  // (JWT sub는 sessionId라 페이로드 디코딩으로는 userId/nickname을 알 수 없음)
   useEffect(() => {
     const auth = getAuthFromCookie();
     if (auth) {
       setUser({ userId: auth.userId, nickname: auth.nickname });
+      getMe()
+        .then((res) => {
+          const me = res.data.data;
+          if (me) setUser({ userId: me.userId, nickname: me.nickname ?? "" });
+        })
+        .catch(() => {
+          // 보정 실패 시 쿠키 기반 값 유지
+        });
     }
     setIsLoading(false);
   }, []);

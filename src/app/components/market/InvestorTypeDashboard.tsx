@@ -17,8 +17,9 @@ import type {
 import { StockMbtiCard } from "./insights/StockMbtiCard";
 import { GuruMatchCard } from "./insights/GuruMatchCard";
 import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
+import { StockFortuneCard } from "./fortune/StockFortuneCard";
 
-type View = "landing" | "mbti" | "guru-match" | "survey";
+type View = "landing" | "mbti" | "guru-match" | "survey" | "fortune";
 
 interface Props {
   onRetakeSurvey?: () => void;
@@ -181,6 +182,15 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
     );
   }
 
+  if (view === "fortune") {
+    return (
+      <div className="space-y-4 w-full max-w-4xl mx-auto">
+        <BackButton />
+        <StockFortuneCard />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5 w-full max-w-4xl mx-auto">
       <div className="flex items-center gap-2">
@@ -222,6 +232,22 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
           </p>
           <span className="inline-flex items-center gap-1.5 text-base font-semibold text-indigo-300 group-hover:text-indigo-200 group-hover:gap-3 transition-all duration-200">
             알아보기 →
+          </span>
+        </button>
+
+        <button
+          onClick={() => setView("fortune")}
+          className="group text-left rounded-xl border border-amber-700/40 bg-gradient-to-br from-amber-900/50 to-orange-900/30 p-6 hover:border-amber-500/60 hover:from-amber-900/70 hover:to-orange-900/50 transition-all duration-200"
+        >
+          <div className="text-4xl mb-4">🔮</div>
+          <h3 className="text-xl font-bold text-amber-200 mb-2 group-hover:text-amber-100 transition-colors">
+            오늘의 종목운세
+          </h3>
+          <p className="text-base text-gray-400 leading-relaxed mb-5">
+            궁금한 종목의 오늘 기운을 점쳐보세요. 별자리, 숫자 궁합, 로고 색상까지 총동원한 재미용 운세입니다.
+          </p>
+          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-amber-300 group-hover:text-amber-200 group-hover:gap-3 transition-all duration-200">
+            운세 보기 →
           </span>
         </button>
       </div>

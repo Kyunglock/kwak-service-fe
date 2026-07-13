@@ -590,3 +590,11 @@ export interface DivergenceInterpretationResponse {
   watchPoints: string[];
   cached: boolean;
 }
+
+// ---- 종목운세 ----
+export interface FortuneResponse {
+  ticker: string;       // 정식 티커 (US: AAPL, KR: 005930.KS)
+  fortuneDate: string;  // 운세 기준일 (KST, yyyy-MM-dd)
+  content: string;
+  regDt: string;
+}

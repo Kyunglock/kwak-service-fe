@@ -26,7 +26,7 @@ export function StockFortuneCard() {
       .catch((err: AxiosError<{ errorCode?: string; message?: string }>) => {
         const code = err.response?.data?.errorCode;
         if (code === "TICKER_NOT_FOUND") {
-          setError("지원하지 않는 종목입니다. 티커를 확인해주세요. (예: AAPL, 005930)");
+          setError("지원하지 않는 종목입니다. 티커 또는 정확한 종목명을 확인해주세요. (예: AAPL, 삼성전자)");
         } else {
           setError(
             err.response?.data?.message ??
@@ -52,7 +52,7 @@ export function StockFortuneCard() {
           value={ticker}
           onChange={(e) => setTicker(e.target.value.toUpperCase())}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          placeholder="티커 입력 (예: AAPL, 005930)"
+          placeholder="티커 또는 종목명 (예: AAPL, 삼성전자)"
           disabled={loading}
           className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-gray-100 placeholder-gray-500 focus:border-amber-500/60 focus:outline-none disabled:opacity-50"
         />

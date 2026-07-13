@@ -54,12 +54,12 @@ export function StockFortuneCard() {
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           placeholder="티커 또는 종목명 (예: AAPL, 삼성전자)"
           disabled={loading}
-          className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-gray-100 placeholder-gray-500 focus:border-amber-500/60 focus:outline-none disabled:opacity-50"
+          className="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-gray-100 placeholder-gray-500 focus:border-amber-500/60 focus:outline-none disabled:opacity-50"
         />
         <button
           onClick={handleSubmit}
           disabled={loading || !ticker.trim()}
-          className="rounded-lg bg-amber-700/80 px-4 py-2 font-semibold text-amber-50 transition-colors hover:bg-amber-600/80 disabled:cursor-not-allowed disabled:opacity-40"
+          className="shrink-0 whitespace-nowrap rounded-lg bg-amber-700/80 px-4 py-2 font-semibold text-amber-50 transition-colors hover:bg-amber-600/80 disabled:cursor-not-allowed disabled:opacity-40"
         >
           운세 보기
         </button>

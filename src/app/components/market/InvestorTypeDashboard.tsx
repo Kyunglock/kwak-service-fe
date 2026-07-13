@@ -29,7 +29,8 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItemResponse[]>([]);
   const [guruPortfolios, setGuruPortfolios] = useState<GuruPortfolioResponse[]>([]);
   const [insightResults, setInsightResults] = useState<InsightResultResponse[]>([]);
-  const [hasRiskProfileResponse, setHasRiskProfileResponse] = useState(false);
+  // null = 조회 중 (라벨 미표시로 시작하기→결과보기 깜빡임 방지)
+  const [hasRiskProfileResponse, setHasRiskProfileResponse] = useState<boolean | null>(null);
   const [resultsLoaded, setResultsLoaded] = useState(false);
   const [mbtiBuilding, setMbtiBuilding] = useState(false);
 
@@ -94,7 +95,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
           ),
         );
       })
-      .catch(() => {});
+      .catch(() => setHasRiskProfileResponse(false));
 
     fetchResults();
   }, []);
@@ -104,6 +105,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
 
   // 투자 MBTI: 설문 응답이 있으면 결과 뷰, 없으면 설문(나의 투자 성향 분석)으로 바로 이동
   const handleMbtiStart = () => {
+    if (hasRiskProfileResponse === null) return; // 조회 중엔 무시 (잘못된 분기 방지)
     if (!hasRiskProfileResponse) setView("survey");
     else setView("mbti");
   };
@@ -199,7 +201,11 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
             설문 응답을 기반으로 나만의 투자 유형 코드를 확인해보세요. GRL, VST 등 8가지 유형 중 나는 어디에 속할까요?
           </p>
           <span className="inline-flex items-center gap-1.5 text-base font-semibold text-pink-300 group-hover:text-pink-200 group-hover:gap-3 transition-all duration-200">
-            {hasRiskProfileResponse ? "결과보기 →" : "시작하기 →"}
+            {hasRiskProfileResponse === null
+              ? " "
+              : hasRiskProfileResponse
+                ? "결과보기 →"
+                : "시작하기 →"}
           </span>
         </button>
 

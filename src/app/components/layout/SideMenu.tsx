@@ -119,6 +119,30 @@ export function SideMenu({
             </button>
 
             <button
+              onClick={() => handleTabClick("investor-type")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "investor-type"
+                  ? "bg-pink-600 text-white"
+                  : "text-gray-300 hover:bg-slate-800"
+              }`}
+            >
+              <Sparkles className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">투자 놀이터</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick("insights")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "insights"
+                  ? "bg-teal-600 text-white"
+                  : "text-gray-300 hover:bg-slate-800"
+              }`}
+            >
+              <PieChart className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">인사이트</span>
+            </button>
+
+            <button
               onClick={() => handleTabClick("survey")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative ${
                 activeTab === "survey"
@@ -139,18 +163,6 @@ export function SideMenu({
             </button>
 
             <button
-              onClick={() => handleTabClick("insights")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                activeTab === "insights"
-                  ? "bg-teal-600 text-white"
-                  : "text-gray-300 hover:bg-slate-800"
-              }`}
-            >
-              <PieChart className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">인사이트</span>
-            </button>
-
-            <button
               onClick={() => handleTabClick("competition")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 activeTab === "competition"
@@ -160,18 +172,6 @@ export function SideMenu({
             >
               <Crown className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">투자 대가</span>
-            </button>
-
-            <button
-              onClick={() => handleTabClick("investor-type")}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                activeTab === "investor-type"
-                  ? "bg-pink-600 text-white"
-                  : "text-gray-300 hover:bg-slate-800"
-              }`}
-            >
-              <Sparkles className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">투자 놀이터</span>
             </button>
 
             {/* 활동 내역은 관리자 전용 */}
@@ -210,13 +210,16 @@ export function SideMenu({
             </button>
           )}
 
-          <button
-            onClick={handleAdminClick}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-indigo-400 transition-colors"
-          >
-            <Shield className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium">관리자</span>
-          </button>
+          {/* 관리자 버튼은 관리자 전용 */}
+          {isAdmin && (
+            <button
+              onClick={handleAdminClick}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-indigo-400 transition-colors"
+            >
+              <Shield className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">관리자</span>
+            </button>
+          )}
         </nav>
       </div>
     </>

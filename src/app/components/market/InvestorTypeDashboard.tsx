@@ -208,7 +208,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
             투자 MBTI 알아보기!
           </h3>
           <p className="text-base text-gray-400 leading-relaxed mb-5">
-            설문 응답을 기반으로 나만의 투자 유형 코드를 확인해보세요. GRL, VST 등 8가지 유형 중 나는 어디에 속할까요?
+            44문항 통합 설문으로 나의 성격 MBTI와 투자 MBTI를 함께 알아보세요. 일반 MBTI와 16가지 투자 성향 분석으로 당신의 투자 스타일을 찾아보세요.
           </p>
           <span className="inline-flex items-center gap-1.5 text-base font-semibold text-pink-300 group-hover:text-pink-200 group-hover:gap-3 transition-all duration-200">
             {hasRiskProfileResponse === null

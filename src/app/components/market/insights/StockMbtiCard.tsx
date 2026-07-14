@@ -196,6 +196,70 @@ const PERSONALITY_DETAIL: Record<string, PersonalityDetail> = {
   },
 };
 
+interface InvestDetail {
+  marketCondition: string;
+  portfolioExample: string;
+  similarInvestor: string;
+}
+
+// 투자 상세 — 앞 3글자(수익/리스크/기간) 기준 8종. 4번째 글자(D/F)는 divNote로 보정.
+const INVEST_DETAIL: Record<string, InvestDetail> = {
+  GRL: {
+    marketCondition: "저금리 유동성 장세와 기술 혁신 사이클 구간에서 폭발적 성과. 금리 인상기에는 성장주 밸류에이션 압박으로 고전.",
+    portfolioExample: "QQQ 35% / 성장 테마 ETF 25% / 개별 성장주 30% / 현금 10%",
+    similarInvestor: "캐시 우드(ARK) · 피터 린치(성장주 발굴)",
+  },
+  GRT: {
+    marketCondition: "변동성 높은 시장(VIX 20 이상)과 어닝 시즌·이벤트 구간이 주 무대.",
+    portfolioExample: "모멘텀 개별주 60% / 섹터 ETF 20% / 현금 20% (진입 대기)",
+    similarInvestor: "조지 소로스(반사성) · 폴 튜더 존스(추세추종)",
+  },
+  GSL: {
+    marketCondition: "전반적 우상향 장세와 배당 안정 구간에서 최고 성과. 10년 이상 장기에서 복리 효과 극대화.",
+    portfolioExample: "VTI·SPY 40% / 배당성장 ETF 30% / 개별 우량주 20% / 채권 ETF 10%",
+    similarInvestor: "워런 버핏(초기 스타일) · 존 보글(인덱스 장기)",
+  },
+  GST: {
+    marketCondition: "횡보장과 변동성 낮은 환경에서 상대적 강점. 배당·실적 발표 시즌에 기회 극대화.",
+    portfolioExample: "배당주·우량주 50% / 단기 국채 ETF 25% / 현금 25%",
+    similarInvestor: "제프리 건들락(리스크 대비 수익) · 빌 밀러(이벤트 활용)",
+  },
+  VRL: {
+    marketCondition: "성장주 버블 붕괴 후 가치주 리밸런싱 구간과 금리 상승 환경, 경기 회복 초입에서 두각.",
+    portfolioExample: "가치주 ETF(VTV) 40% / 저평가 개별주 35% / 현금 15% / 배당주 10%",
+    similarInvestor: "벤저민 그레이엄 · 세스 클라만",
+  },
+  VRT: {
+    marketCondition: "위기·공황 국면 직후의 V자 반등 구간에서 폭발적 수익.",
+    portfolioExample: "과매도 섹터 개별주 40% / 역발상 ETF 25% / 현금 35% (진입 대기)",
+    similarInvestor: "존 템플턴(위기 역매수) · 하워드 막스(2단계 사고)",
+  },
+  VSL: {
+    marketCondition: "금리 안정·하향 환경과 경기 확장 국면. 배당 재투자 복리는 10년 이상에서 극대화.",
+    portfolioExample: "배당귀족 ETF(NOBL) 40% / 리츠(VNQ) 20% / 장기채 25% / 개별 배당주 15%",
+    similarInvestor: "존 D. 록펠러(배당 인컴) · 켄 피셔(방어적 성장)",
+  },
+  VST: {
+    marketCondition: "고금리 환경(기준금리 4% 이상)에서 단기채 매력 극대화. 극도의 불확실성 구간에서 상대적 강점.",
+    portfolioExample: "MMF·CMA 35% / 단기채 ETF(SGOV) 35% / 초우량 배당주 20% / 금 ETF 10%",
+    similarInvestor: "하워드 막스(리스크 관리 철학)",
+  },
+};
+
+/** 성격 코드 × 투자 코드 조합에서 뽑는 맞춤 인사이트 (1~3줄) */
+function comboInsights(p: string, i: string): string[] {
+  const out: string[] = [];
+  if (p.includes("J") && i[2] === "L") out.push("계획형(J) 성격과 장기투자(L) 성향이 맞물려, 한번 세운 전략을 오래 끌고 가는 힘이 있어요.");
+  if (p.includes("P") && i[2] === "T") out.push("유연한(P) 기질에 단기 매매(T) 성향이 더해져 순발력은 좋지만, 매매 규칙을 문서로 못 박아두는 게 안전해요.");
+  if (p.includes("P") && i[2] === "L") out.push("즉흥적(P) 기질인데 투자만큼은 길게 보는 편 — 적립을 자동화하면 최고의 조합이 돼요.");
+  if (p.includes("J") && i[2] === "T") out.push("계획형(J)이 단기 매매(T)를 할 땐 진입·청산 규칙을 정교하게 — 절제된 트레이딩이 가능한 조합이에요.");
+  if (p.includes("T") && i[1] === "S") out.push("냉철한 사고(T)에 안전 중시(S)까지 — 검증된 기회에만 움직여 큰 실수가 드문 조합이에요.");
+  if (p.includes("F") && i[1] === "R") out.push("감정(F)형이 높은 리스크(R)를 안고 가면 급락기에 심리 소모가 커요 — 손실 한도를 미리 정해두세요.");
+  if (p.includes("E") && i[3] === "F") out.push("외향(E)형의 집중투자(F)는 주변 이야기에 확신이 증폭되기 쉬워요 — 매수 근거를 스스로 세 줄로 적어보세요.");
+  if (p.includes("I") && i[3] === "D") out.push("내향(I)형의 분산(D) 전략은 조용히 오래 가는 힘이 있어요 — 자동화하면 더 단단해져요.");
+  return out.slice(0, 3);
+}
+
 function SectionHeader({ emoji, title, className = "" }: { emoji: string; title: string; className?: string }) {
   return (
     <p className={`mb-2.5 flex items-center gap-1.5 text-[14px] font-bold ${className}`}>
@@ -445,7 +509,51 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
               <GaugeRow key={i} g={g} barClass="bg-pink-500" textClass="text-pink-300" />
             ))}
           </div>
+
+          {/* 투자 상세 (앞 3글자 기준 + 분산/집중 보정) */}
+          {INVEST_DETAIL[iCode.slice(0, 3)] && (
+            <div className="mt-4 space-y-3 border-t border-slate-600/50 pt-4">
+              <div>
+                <SectionHeader emoji="🌍" title="유리한 시장 환경" className="text-pink-300" />
+                <p className="text-[14px] leading-relaxed text-gray-200">
+                  {INVEST_DETAIL[iCode.slice(0, 3)].marketCondition}
+                </p>
+              </div>
+              <div>
+                <SectionHeader emoji="📊" title="포트폴리오 구성 예시" className="text-pink-300" />
+                <p className="font-mono text-[13px] leading-relaxed text-gray-200">
+                  {INVEST_DETAIL[iCode.slice(0, 3)].portfolioExample}
+                </p>
+                <p className="mt-1 text-[13px] text-gray-400">
+                  {iCode[3] === "D"
+                    ? "분산형(D)이라 예시보다 종목·자산을 더 여러 곳에 나눠 담는 편이 잘 맞아요."
+                    : "집중형(F)이라 예시보다 종목 수를 줄여 확신 자산에 집중하는 편이 잘 맞아요."}
+                </p>
+              </div>
+              <div>
+                <SectionHeader emoji="🏆" title="닮은 투자 대가" className="text-pink-300" />
+                <p className="text-[14px] leading-relaxed text-gray-200">
+                  {INVEST_DETAIL[iCode.slice(0, 3)].similarInvestor}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* 성격 × 투자 조합 인사이트 */}
+        {hasPersonality && comboInsights(pCode, iCode).length > 0 && (
+          <div className={`rounded-xl border p-4 border-slate-600/50 bg-gradient-to-br ${theme.hero} to-slate-800/40`}>
+            <SectionHeader emoji="🧩" title={`${pCode} × ${iName} 조합`} className={theme.text} />
+            <div className="space-y-2">
+              {comboInsights(pCode, iCode).map((line, idx) => (
+                <div key={idx} className="flex items-start gap-2.5">
+                  <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${theme.bar}`} />
+                  <p className="text-[14px] leading-relaxed text-gray-200">{line}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* footer */}
         <div className="flex items-center justify-between border-t border-slate-700/60 pt-3">

@@ -590,7 +590,9 @@ export interface FortuneResponse {
   regDt: string;
 }
 
-// ===== 시황 브리핑 (종목 탭 상단) =====
+// ===== 시황 브리핑 (종목 탭 모달) =====
+export type MarketSentiment = "POSITIVE" | "NEGATIVE" | "NEUTRAL";
+
 export interface MarketBriefingArticle {
   title: string;
   source: string;
@@ -601,5 +603,6 @@ export interface MarketBriefingArticle {
 export interface MarketBriefingResponse {
   summaryDt: string; // YYYY-MM-DD
   summary: string;
+  sentiment: MarketSentiment | null; // 구데이터/LLM 오출력은 null
   articles: MarketBriefingArticle[];
 }

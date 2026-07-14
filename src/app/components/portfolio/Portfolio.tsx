@@ -23,7 +23,7 @@ import { PositionList } from "@/app/components/portfolio/PositionList";
 import { TradeHistoryList } from "@/app/components/portfolio/TradeHistoryList";
 import { PortfolioAnalysis } from "@/app/components/portfolio/PortfolioAnalysis";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
-import { MarketBriefingCard } from "@/app/components/market/MarketBriefingCard";
+import { MarketBriefingModal } from "@/app/components/market/MarketBriefingModal";
 
 interface PortfolioProps {
   stockPrices?: Record<string, StockPrice>;
@@ -169,8 +169,8 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
 
   return (
     <div className="space-y-5">
-      {/* 시황 브리핑 — 자체 로딩/에러 처리, 데이터 없으면 미렌더링 */}
-      <MarketBriefingCard />
+      {/* 시황 브리핑 모달 — 탭 진입 시 자동, summaryDt당 1회. 데이터 없음/실패 시 안 뜸 */}
+      <MarketBriefingModal />
 
       {/* 헤더 */}
       <div className="flex items-center justify-between gap-3">

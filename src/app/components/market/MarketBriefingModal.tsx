@@ -3,7 +3,9 @@ import { TrendingUp, TrendingDown, Minus, X } from "lucide-react";
 import { getMarketBriefing } from "@/app/services/newsService";
 import type { MarketBriefingResponse, MarketSentiment } from "@/app/types";
 
-const SEEN_KEY = "marketBriefingSeenDt";
+// 키 이름 변경 이력: marketBriefingSeenDt → Dismissed — 구버전에선 일반 닫기도 기록했어서
+// 의미가 달라진 새 버전('다시 보지 않기'만 기록)에서 구 기록을 무효화하기 위해 키를 교체함
+const SEEN_KEY = "marketBriefingDismissedDt";
 
 // 감성별 테마 — 앱 관례(수익 green / 손실 red) 준수, 보합·미분류는 중립 슬레이트
 const THEMES: Record<

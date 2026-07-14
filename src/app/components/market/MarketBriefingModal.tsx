@@ -46,8 +46,9 @@ const THEMES: Record<
 
 /**
  * 종목 탭 진입 시 자동으로 뜨는 시황 브리핑 모달.
- * 같은 summaryDt는 닫으면 다시 뜨지 않는다(localStorage). 데이터 없음/API 실패 시 아무것도 안 뜬다.
- * 호재/악재/보합에 따라 헤더·아이콘 색이 달라진다.
+ * 일반 닫기(X·배경·확인)는 다음 진입 시 다시 뜨고, "다시 보지 않기"를 눌러야
+ * 해당 summaryDt가 숨겨진다(localStorage — 다음날 새 요약은 다시 표시).
+ * 데이터 없음/API 실패 시 아무것도 안 뜬다. 호재/악재/보합에 따라 색이 달라진다.
  */
 export function MarketBriefingModal() {
   const [briefing, setBriefing] = useState<MarketBriefingResponse | null>(null);
@@ -77,7 +78,9 @@ export function MarketBriefingModal() {
   const theme = THEMES[briefing.sentiment ?? "UNKNOWN"];
   const { Icon } = theme;
 
-  const close = () => {
+  const close = () => setOpen(false);
+
+  const dismissForToday = () => {
     localStorage.setItem(SEEN_KEY, briefing.summaryDt);
     setOpen(false);
   };
@@ -88,18 +91,18 @@ export function MarketBriefingModal() {
       onClick={close}
     >
       <div
-        className="w-full max-w-md rounded-xl overflow-hidden bg-slate-700 border border-slate-600 shadow-2xl"
+        className="w-full max-w-2xl rounded-xl overflow-hidden bg-slate-700 border border-slate-600 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 감성 컬러 헤더 */}
-        <div className={`flex items-center justify-between px-4 py-3 border-b ${theme.header}`}>
-          <div className="flex items-center gap-2.5">
-            <span className={`flex items-center justify-center w-8 h-8 rounded-lg ${theme.iconBox}`}>
+        <div className={`flex items-center justify-between px-5 py-3.5 border-b ${theme.header}`}>
+          <div className="flex items-center gap-3">
+            <span className={`flex items-center justify-center w-9 h-9 rounded-lg ${theme.iconBox}`}>
               <Icon className={`w-5 h-5 ${theme.iconColor}`} />
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-gray-100">오늘의 미국 증시</h2>
+                <h2 className="text-base font-semibold text-gray-100">오늘의 미국 증시</h2>
                 <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${theme.chip}`}>
                   {theme.label}
                 </span>
@@ -117,14 +120,20 @@ export function MarketBriefingModal() {
         </div>
 
         {/* AI 요약 */}
-        <p className="px-5 py-4 text-sm text-gray-200 leading-relaxed whitespace-pre-line">
+        <p className="px-6 py-5 text-[15px] text-gray-200 leading-relaxed whitespace-pre-line">
           {briefing.summary}
         </p>
 
-        <div className="px-5 pb-4 flex justify-end">
+        <div className="px-6 pb-5 flex items-center justify-between">
+          <button
+            onClick={dismissForToday}
+            className="text-xs text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors"
+          >
+            다시 보지 않기
+          </button>
           <button
             onClick={close}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-slate-600 text-gray-200 hover:bg-slate-500 transition-colors"
+            className="px-5 py-2 rounded-lg text-sm font-medium bg-slate-600 text-gray-200 hover:bg-slate-500 transition-colors"
           >
             확인
           </button>

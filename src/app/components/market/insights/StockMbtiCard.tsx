@@ -31,6 +31,10 @@ interface Gauge {
 }
 
 function GaugeRow({ g, barClass, textClass }: { g: Gauge; barClass: string; textClass: string }) {
+  // 왼쪽 글자(E/G 등) 성향이 강할수록 표시점이 왼쪽으로 — pos 0%=왼쪽 극단, 50%=경계, 100%=오른쪽 극단
+  const pos = 100 - g.score;
+  const fillLeft = Math.min(50, pos);
+  const fillWidth = Math.abs(pos - 50);
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[13px]">
@@ -38,9 +42,15 @@ function GaugeRow({ g, barClass, textClass }: { g: Gauge; barClass: string; text
         <span className={!g.leftActive ? `font-bold ${textClass}` : "text-gray-500"}>{g.right}</span>
       </div>
       <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-700/70">
-        <div className={`absolute inset-y-0 left-0 rounded-full ${barClass} opacity-90 transition-all duration-700`} style={{ width: `${g.score}%` }} />
+        <div
+          className={`absolute inset-y-0 rounded-full ${barClass} opacity-90 transition-all duration-700`}
+          style={{ left: `${fillLeft}%`, width: `${fillWidth}%` }}
+        />
         <div className="absolute left-1/2 top-0 h-full w-px bg-white/25" />
-        <div className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-slate-800 bg-white shadow-md transition-all duration-700" style={{ left: `${g.score}%` }} />
+        <div
+          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-slate-800 bg-white shadow-md transition-all duration-700"
+          style={{ left: `${pos}%` }}
+        />
       </div>
     </div>
   );

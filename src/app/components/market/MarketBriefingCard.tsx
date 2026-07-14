@@ -81,10 +81,11 @@ export function MarketBriefingCard() {
 
           {expanded && (
             <ul className="mt-2 space-y-1">
-              {briefing.articles.map((article) => (
-                <li key={article.url}>
+              {briefing.articles.map((article, idx) => (
+                <li key={`${article.url}-${idx}`}>
                   <a
-                    href={article.url}
+                    // 외부 RSS 출처 URL — http(s) 외 스킴(javascript: 등)은 링크로 걸지 않는다
+                    href={/^https?:\/\//.test(article.url) ? article.url : undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-start gap-2 p-2 rounded hover:bg-slate-600/50 transition-colors group"

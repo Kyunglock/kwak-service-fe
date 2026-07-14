@@ -195,15 +195,6 @@ export interface SurveyOptionAggregation {
   percentage: number;
 }
 
-export interface NewsItem {
-  id: string;
-  title: string;
-  summary: string;
-  sector: string;
-  impact: "positive" | "negative" | "neutral";
-  timestamp: string;
-}
-
 export interface StockPrice {
   stockCd: string;
   currentPrice: number;
@@ -597,4 +588,18 @@ export interface FortuneResponse {
   fortuneDate: string;  // 운세 기준일 (KST, yyyy-MM-dd)
   content: string;
   regDt: string;
+}
+
+// ===== 시황 브리핑 (종목 탭 상단) =====
+export interface MarketBriefingArticle {
+  title: string;
+  source: string;
+  url: string;
+  publishedAt: string; // ISO datetime
+}
+
+export interface MarketBriefingResponse {
+  summaryDt: string; // YYYY-MM-DD
+  summary: string;
+  articles: MarketBriefingArticle[];
 }

@@ -33,7 +33,7 @@ export function MarketBriefingCard() {
 
   if (loading) {
     return (
-      <Card className="p-4 bg-slate-700 border-slate-600 animate-pulse">
+      <Card className="w-full lg:w-1/2 p-4 bg-slate-700 border-slate-600 animate-pulse">
         <div className="h-4 bg-slate-600 rounded w-1/3 mb-3"></div>
         <div className="h-3 bg-slate-600 rounded w-full mb-1"></div>
         <div className="h-3 bg-slate-600 rounded w-5/6"></div>
@@ -44,7 +44,8 @@ export function MarketBriefingCard() {
   if (!briefing) return null;
 
   return (
-    <Card className="overflow-hidden bg-slate-700 border-slate-600">
+    // 가로 반폭(데스크톱) — 전체 폭이면 요약 줄이 너무 길어 가독성이 떨어진다 (모바일은 전체 폭)
+    <Card className="w-full lg:w-1/2 overflow-hidden bg-slate-700 border-slate-600">
       {/* 그라데이션 헤더 */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-blue-600/25 via-indigo-600/15 to-transparent border-b border-slate-600/60">
         <div className="flex items-center gap-2.5">

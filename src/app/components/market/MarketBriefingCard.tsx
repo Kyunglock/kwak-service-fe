@@ -28,7 +28,7 @@ export function MarketBriefingCard() {
         if (!cancelled) setBriefing(res.data.data ?? null);
       })
       .catch(() => {
-        // 실패 시 카드 미표시 (전역 인터셉터가 토스트 처리)
+        // 실패 시 카드 미표시 — 무간섭 클라이언트라 전역 토스트/리다이렉트도 없다
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

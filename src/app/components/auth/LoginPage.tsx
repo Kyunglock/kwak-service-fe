@@ -11,28 +11,132 @@ import { LoginButtons } from "./landing/LoginButtons";
 
 const TRUST_ITEMS = ["S&P 500 전 종목", "매일 새벽 AI 분석", "16가지 투자 성향"];
 
-// 스크롤을 내리면 하나씩 떠오르는 AI 투자 인사이트 설명 문구
-// (실제 인사이트 탭 기능 기준: 성향 적합도 · 배당 인사이트 · 선호 섹터 분석)
-const INSIGHT_STATEMENTS = [
+// 스크롤을 내리면 하나씩 나타나는 AI 투자 인사이트 설명 블록 (문구 + 미니 비주얼)
+// 실제 인사이트 탭 기능 기준: 성향 적합도 · 배당 인사이트 · 선호 섹터 분석
+const FIT_ROWS = [
+  { symbol: "AAPL", fit: 92 },
+  { symbol: "NVDA", fit: 68 },
+  { symbol: "KO", fit: 85 },
+];
+
+function FitVisual() {
+  return (
+    <VisualCard label="종목별 성향 적합도">
+      <div className="space-y-4">
+        {FIT_ROWS.map((row, i) => (
+          <div key={row.symbol} className="flex items-center gap-4">
+            <span className="w-14 shrink-0 text-sm font-bold text-white">{row.symbol}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-400"
+                initial={{ width: 0 }}
+                whileInView={{ width: `${row.fit}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2 + i * 0.15, ease: "easeOut" }}
+              />
+            </div>
+            <span className="w-10 shrink-0 text-right text-sm font-semibold text-teal-300">
+              {row.fit}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </VisualCard>
+  );
+}
+
+const DIVIDEND_BARS = [
+  { month: "1월", h: 35 },
+  { month: "2월", h: 20 },
+  { month: "3월", h: 55 },
+  { month: "4월", h: 20 },
+  { month: "5월", h: 40 },
+  { month: "6월", h: 70 },
+];
+
+function DividendVisual() {
+  return (
+    <VisualCard label="월별 예상 배당금">
+      <div className="flex h-32 items-end gap-3">
+        {DIVIDEND_BARS.map((bar, i) => (
+          <div key={bar.month} className="flex h-full flex-1 flex-col justify-end gap-2">
+            <motion.div
+              className="rounded-t-md bg-gradient-to-t from-teal-600/70 to-teal-400/80"
+              initial={{ height: 0 }}
+              whileInView={{ height: `${bar.h}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 + i * 0.08, ease: "easeOut" }}
+            />
+            <span className="text-center text-[11px] text-gray-500">{bar.month}</span>
+          </div>
+        ))}
+      </div>
+    </VisualCard>
+  );
+}
+
+const SECTOR_ROWS = [
+  { name: "기술", pct: 45 },
+  { name: "헬스케어", pct: 22 },
+  { name: "금융", pct: 18 },
+];
+
+function SectorVisual() {
+  return (
+    <VisualCard label="선호 섹터 분석">
+      <div className="space-y-4">
+        {SECTOR_ROWS.map((s, i) => (
+          <div key={s.name} className="flex items-center gap-4">
+            <span className="w-16 shrink-0 text-sm text-gray-300">{s.name}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
+              <motion.div
+                className="h-full rounded-full bg-teal-400/80"
+                initial={{ width: 0 }}
+                whileInView={{ width: `${s.pct}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2 + i * 0.15, ease: "easeOut" }}
+              />
+            </div>
+            <span className="w-10 shrink-0 text-right text-sm font-semibold text-gray-300">
+              {s.pct}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </VisualCard>
+  );
+}
+
+function VisualCard({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="relative">
+      <div className="absolute -inset-10 rounded-full bg-teal-500/[0.07] blur-3xl" aria-hidden />
+      <div className="relative mx-auto w-full max-w-md rounded-2xl border border-white/5 bg-white/[0.03] p-6 shadow-2xl backdrop-blur-sm md:p-7">
+        <p className="mb-5 text-[13px] font-semibold tracking-wide text-gray-400">{label}</p>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const INSIGHT_FEATURES = [
   {
     lead: "내 성향에 맞는 종목인지,",
     accent: "종목별로 진단해요",
     sub: "투자 성향 설문과 보유 종목을 비교한 성향 적합도",
+    visual: <FitVisual />,
   },
   {
     lead: "배당이 언제, 얼마나 들어오는지,",
     accent: "월별로 정리해요",
     sub: "보유 종목의 배당 데이터를 모은 월별 예상 배당금",
+    visual: <DividendVisual />,
   },
   {
     lead: "포트폴리오가 어디에 기울었는지,",
     accent: "한눈에 짚어드려요",
     sub: "섹터 분석으로 보는 내 계좌의 편중과 분산",
-  },
-  {
-    lead: "그리고 매일 새벽,",
-    accent: "AI가 다시 읽습니다",
-    sub: "장 마감 후 데이터로 매일 새로 생성되는 인사이트",
+    visual: <SectorVisual />,
   },
 ];
 
@@ -85,8 +189,8 @@ export function LoginPage() {
           </div>
         </nav>
 
-        {/* 히어로 */}
-        <section className="relative mx-auto w-full max-w-3xl px-6 pb-28 pt-24 text-center md:pb-36 md:pt-36">
+        {/* 히어로 — 첫 화면을 꽉 채워 아래 섹션은 스크롤 전엔 보이지 않는다 (네비 h-16 제외) */}
+        <section className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-3xl flex-col items-center justify-center px-6 text-center">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -152,27 +256,63 @@ export function LoginPage() {
           </motion.h2>
         </section>
 
-        {/* AI 투자 인사이트 설명 — 스크롤에 따라 문구가 하나씩 떠오른다 */}
-        <section className="mx-auto w-full max-w-3xl px-6 pb-16 text-center md:pb-24">
-          {INSIGHT_STATEMENTS.map((statement) => (
-            <motion.div
-              key={statement.accent}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ duration: 0.7 }}
-              className="py-20 md:py-28"
-            >
-              <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
-                {statement.lead}
-                <br />
-                <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                  {statement.accent}
-                </span>
-              </h3>
-              <p className="mt-5 text-base text-gray-500 md:text-lg">{statement.sub}</p>
-            </motion.div>
-          ))}
+        {/* AI 투자 인사이트 설명 — 문구 + 미니 비주얼, 좌우 교차로 하나씩 떠오른다 */}
+        <section className="mx-auto w-full max-w-5xl px-6 pb-10 md:pb-16">
+          {INSIGHT_FEATURES.map((feature, i) => {
+            const reverse = i % 2 === 1;
+            return (
+              <div
+                key={feature.accent}
+                className="grid items-center gap-10 py-16 md:grid-cols-2 md:gap-20 md:py-24"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: reverse ? 32 : -32 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.6 }}
+                  className={`text-center md:text-left ${reverse ? "md:order-2" : ""}`}
+                >
+                  <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
+                    {feature.lead}
+                    <br />
+                    <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                      {feature.accent}
+                    </span>
+                  </h3>
+                  <p className="mt-5 text-base text-gray-500 md:text-lg">{feature.sub}</p>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 32 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.15 }}
+                  className={reverse ? "md:order-1" : ""}
+                >
+                  {feature.visual}
+                </motion.div>
+              </div>
+            );
+          })}
+
+          {/* 마무리 문구 — 센터 단독 */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.7 }}
+            className="py-20 text-center md:py-28"
+          >
+            <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
+              그리고 매일 새벽,
+              <br />
+              <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                AI가 다시 읽습니다
+              </span>
+            </h3>
+            <p className="mt-5 text-base text-gray-500 md:text-lg">
+              장 마감 후 데이터로 매일 새로 생성되는 인사이트
+            </p>
+          </motion.div>
         </section>
 
         {/* 최종 CTA */}

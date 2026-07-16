@@ -316,7 +316,7 @@ export function LoginPage() {
             AI 투자 인사이트
           </motion.p>
           <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug tracking-tight md:text-[2.5rem]">
-            종목 뒤지는 시간은 줄이고,
+            정보 찾는 시간은 줄이고,
             <br />
             판단은 더 깊게
           </motion.h2>

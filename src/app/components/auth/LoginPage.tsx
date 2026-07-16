@@ -9,8 +9,6 @@ import { LoginButtons } from "./landing/LoginButtons";
 // 구성: 네비(로고+로그인) → 히어로(헤드라인+CTA 2개) → 신뢰 스트립
 //       → 가치 제안 → "기존에는 vs" 비교 3건 → 최종 CTA → 푸터
 
-const TRUST_ITEMS = ["S&P 500 전 종목", "매일 새벽 AI 분석", "16가지 투자 성향"];
-
 // 스크롤을 내리면 하나씩 나타나는 AI 투자 인사이트 설명 블록 (문구 + 미니 비주얼)
 // 실제 인사이트 탭 기능 기준: 성향 적합도 · 배당 인사이트 · 선호 섹터 분석
 const FIT_ROWS = [
@@ -190,7 +188,12 @@ export function LoginPage() {
         </nav>
 
         {/* 히어로 — 첫 화면을 꽉 채워 아래 섹션은 스크롤 전엔 보이지 않는다 (네비 h-16 제외) */}
-        <section className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-3xl flex-col items-center justify-center px-6 text-center">
+        <section className="relative mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-5xl flex-col items-center justify-center px-6 py-10 text-center">
+          {/* 옅은 도트 그리드 — 가장자리로 갈수록 사라진다 */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:26px_26px] [mask-image:radial-gradient(ellipse_65%_60%_at_50%_45%,black,transparent)]"
+            aria-hidden
+          />
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -224,24 +227,87 @@ export function LoginPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.36 }}
-            className="mt-11"
+            className="relative mt-11"
           >
             <LoginButtons actions={actions} row guestLabel="손님으로 미리 보기" />
           </motion.div>
-        </section>
 
-        {/* 신뢰 스트립 */}
-        <section className="border-y border-white/5 bg-white/[0.02]">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center gap-4 px-6 py-9 sm:flex-row sm:gap-0">
-            {TRUST_ITEMS.map((item, i) => (
-              <span key={item} className="flex items-center text-sm font-medium tracking-wide text-gray-400">
-                {i > 0 && (
-                  <span className="mx-8 hidden h-3.5 w-px bg-white/10 sm:block" aria-hidden />
-                )}
-                {item}
-              </span>
-            ))}
-          </div>
+          {/* 인사이트 대시보드 프리뷰 — 휑한 하단을 제품 미리보기로 채운다 */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="relative mt-16 hidden w-full max-w-4xl sm:block"
+          >
+            <div className="absolute -inset-8 rounded-[2rem] bg-teal-500/[0.08] blur-3xl" aria-hidden />
+            <div className="relative rounded-2xl border border-white/10 bg-slate-900/70 p-5 text-left shadow-2xl backdrop-blur-md">
+              <div className="mb-4 flex items-center justify-between px-1">
+                <span className="text-sm font-semibold text-gray-200">투자자 인사이트</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-400" aria-hidden />
+                  오늘 새벽 업데이트됨
+                </span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+                  <p className="mb-3 text-xs font-semibold text-gray-400">성향 적합도</p>
+                  <div className="space-y-2.5">
+                    {FIT_ROWS.map((row, i) => (
+                      <div key={row.symbol} className="flex items-center gap-2.5">
+                        <span className="w-11 shrink-0 text-xs font-bold text-white">{row.symbol}</span>
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                          <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-400"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${row.fit}%` }}
+                            transition={{ duration: 1, delay: 0.8 + i * 0.12, ease: "easeOut" }}
+                          />
+                        </div>
+                        <span className="w-8 shrink-0 text-right text-xs font-semibold text-teal-300">
+                          {row.fit}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+                  <p className="mb-3 text-xs font-semibold text-gray-400">월별 예상 배당금</p>
+                  <div className="flex h-[72px] items-end gap-1.5">
+                    {DIVIDEND_BARS.map((bar, i) => (
+                      <motion.div
+                        key={bar.month}
+                        className="flex-1 rounded-t bg-gradient-to-t from-teal-600/70 to-teal-400/80"
+                        initial={{ height: 0 }}
+                        animate={{ height: `${bar.h}%` }}
+                        transition={{ duration: 0.7, delay: 0.9 + i * 0.06, ease: "easeOut" }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+                  <p className="mb-3 text-xs font-semibold text-gray-400">선호 섹터 분석</p>
+                  <div className="space-y-2.5">
+                    {SECTOR_ROWS.map((s, i) => (
+                      <div key={s.name} className="flex items-center gap-2.5">
+                        <span className="w-12 shrink-0 text-xs text-gray-300">{s.name}</span>
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                          <motion.div
+                            className="h-full rounded-full bg-teal-400/80"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${s.pct}%` }}
+                            transition={{ duration: 1, delay: 1 + i * 0.12, ease: "easeOut" }}
+                          />
+                        </div>
+                        <span className="w-8 shrink-0 text-right text-xs font-semibold text-gray-300">
+                          {s.pct}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* 가치 제안 — 인사이트 설명 시퀀스의 인트로 */}

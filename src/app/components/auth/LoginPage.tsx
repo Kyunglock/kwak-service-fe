@@ -2,9 +2,7 @@ import { MotionConfig } from "motion/react";
 import { useLoginActions } from "./landing/useLoginActions";
 import { ErrorToast } from "./landing/ErrorToast";
 import { HeroSection } from "./landing/HeroSection";
-import { FeatureShowcase } from "./landing/FeatureShowcase";
-import { FEATURES } from "./landing/features";
-import { StatsStrip } from "./landing/StatsStrip";
+import { InsightShowcase } from "./landing/InsightShowcase";
 import { FinalCTA } from "./landing/FinalCTA";
 
 export function LoginPage() {
@@ -17,11 +15,7 @@ export function LoginPage() {
 
         <HeroSection actions={actions} />
 
-        {FEATURES.map((feature, i) => (
-          <FeatureShowcase key={feature.title} feature={feature} reverse={i % 2 === 1} />
-        ))}
-
-        <StatsStrip />
+        <InsightShowcase />
 
         <FinalCTA actions={actions} />
       </div>

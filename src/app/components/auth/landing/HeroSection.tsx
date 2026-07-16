@@ -1,7 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { TrendingUp, ChevronDown } from "lucide-react";
 import { LoginButtons } from "./LoginButtons";
-import { FEATURES } from "./features";
 import type { LoginActions } from "./useLoginActions";
 
 export function HeroSection({ actions }: { actions: LoginActions }) {
@@ -9,14 +8,6 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
   const { scrollY } = useScroll();
   // 스크롤 시 글로우가 콘텐츠보다 느리게 내려가는 패럴랙스
   const glowY = useTransform(scrollY, [0, 800], [0, 200]);
-
-  // 첫 화면의 기능 칩 → 해당 소개 섹션으로 이어서 스크롤
-  const scrollToFeature = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: shouldReduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
-  };
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-20">
@@ -32,13 +23,13 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-purple-600/20 blur-3xl"
+          className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-teal-600/20 blur-3xl"
           animate={shouldReduceMotion ? undefined : { x: [0, -50, 0], y: [0, -30, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
       </motion.div>
 
-      <div className="relative z-10 w-full max-w-xl space-y-8 text-center">
+      <div className="relative z-10 w-full max-w-md space-y-8 text-center">
         {/* 로고 스프링 팝인 */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -49,45 +40,26 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
           <TrendingUp className="h-10 w-10 text-white" />
         </motion.div>
 
-        {/* 캐치프레이즈 페이드업 */}
+        {/* 캐치프레이즈 — 핵심 기능(AI 투자 인사이트) 하나에 집중 */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          <h1 className="mb-3 text-4xl font-bold text-white">🧭 주식 나침반</h1>
-          <p className="text-gray-400">
-            매일 새벽 AI가 준비하는 나만의 미국 주식 나침반
+          <h1 className="mb-4 text-4xl font-bold text-white">🧭 주식 나침반</h1>
+          <p className="text-xl font-semibold text-gray-200">
+            내 포트폴리오, AI가 읽어드립니다
           </p>
-        </motion.div>
-
-        {/* 핵심 기능 칩 — 누르면 해당 소개 섹션으로 이어짐 */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
-          <p className="mb-3 text-sm text-gray-500">이런 걸 할 수 있어요 — 눌러서 살펴보세요</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {FEATURES.map((feature) => (
-              <button
-                key={feature.id}
-                onClick={() => scrollToFeature(feature.id)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all hover:scale-105 hover:brightness-125 ${feature.tagClass}`}
-              >
-                <span aria-hidden>{feature.emoji}</span>
-                {feature.shortTitle}
-              </button>
-            ))}
-          </div>
+          <p className="mt-2 text-gray-400">
+            보유 종목과 투자 성향을 종합한 나만의 투자 인사이트
+          </p>
         </motion.div>
 
         {/* 기존 사용자는 스크롤 없이 바로 로그인 */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="mx-auto w-full max-w-md"
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
           <LoginButtons actions={actions} />
         </motion.div>

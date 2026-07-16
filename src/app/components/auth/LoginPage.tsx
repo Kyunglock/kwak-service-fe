@@ -360,43 +360,35 @@ export function LoginPage() {
             );
           })}
 
-          {/* 마무리 문구 — 센터 단독 */}
+          {/* 마무리 문구 + 최종 로그인 CTA */}
           <motion.div
+            id="login-cta"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
+            viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.7 }}
-            className="py-20 text-center md:py-28"
+            className="relative py-24 text-center md:py-32"
           >
-            <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
-              당신이 잠든 사이,
-              <br />
-              <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                AI는 일합니다
-              </span>
-            </h3>
-            <p className="mt-5 text-base text-gray-500 md:text-lg">
-              매일 새벽, 장 마감 데이터로 오늘의 인사이트를 미리 준비해둬요
-            </p>
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-full bg-[radial-gradient(ellipse_50%_60%_at_50%_100%,rgba(45,212,191,0.07),transparent)]"
+              aria-hidden
+            />
+            <div className="relative">
+              <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
+                당신이 잠든 사이,
+                <br />
+                <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                  AI는 일합니다
+                </span>
+              </h3>
+              <p className="mt-5 text-base text-gray-500 md:text-lg">
+                매일 새벽, 장 마감 데이터로 오늘의 인사이트를 미리 준비해둬요
+              </p>
+              <div className="mx-auto mt-11 w-full max-w-md">
+                <LoginButtons actions={actions} />
+              </div>
+            </div>
           </motion.div>
-        </section>
-
-        {/* 최종 CTA */}
-        <section id="login-cta" className="relative border-t border-white/5">
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-96 bg-[radial-gradient(ellipse_50%_60%_at_50%_110%,rgba(45,212,191,0.08),transparent)]"
-            aria-hidden
-          />
-          <div className="relative mx-auto w-full max-w-md px-6 py-28 text-center md:py-36">
-            <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug tracking-tight md:text-4xl">
-              나의 투자 여정을
-              <br />
-              주식 나침반과 함께하세요
-            </motion.h2>
-            <motion.div {...fadeUp} className="mt-11">
-              <LoginButtons actions={actions} />
-            </motion.div>
-          </div>
         </section>
 
         {/* 푸터 */}

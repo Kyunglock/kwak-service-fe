@@ -5,6 +5,7 @@ import { ErrorToast } from "./landing/ErrorToast";
 import { HeroSection } from "./landing/HeroSection";
 import { FeatureShowcase } from "./landing/FeatureShowcase";
 import { FEATURES } from "./landing/features";
+import { StatsStrip } from "./landing/StatsStrip";
 
 export function LoginPage() {
   const actions = useLoginActions();
@@ -21,6 +22,8 @@ export function LoginPage() {
             <FeatureShowcase key={feature.title} feature={feature} reverse={i % 2 === 1} />
           ))}
         </div>
+
+        <StatsStrip />
 
         {/* 임시 푸터 — Task 5에서 FinalCTA로 대체 */}
         <div className="mx-auto max-w-md px-4 pb-8">

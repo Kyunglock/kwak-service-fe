@@ -510,9 +510,7 @@ export function LoginPage() {
               종목 대시보드
             </motion.p>
             <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug tracking-tight md:text-[2.5rem]">
-              시황부터 내 계좌까지,
-              <br />
-              한눈에
+              시황부터 내 계좌까지, 한눈에
             </motion.h2>
           </div>
           {STOCK_FEATURES.map((feature, i) => (

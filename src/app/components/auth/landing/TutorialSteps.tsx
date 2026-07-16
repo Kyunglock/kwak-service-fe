@@ -5,16 +5,23 @@ import type { ReactNode } from "react";
 // 튜토리얼 단계 콘텐츠 — AI 투자 인사이트(실제 인사이트 탭 구성:
 // 성향 적합도 · 배당 인사이트 · 선호 섹터 분석)를 한 단계씩 소개한다.
 // 각 단계는 AnimatePresence로 remount되므로 mount 애니메이션(animate)을 쓴다.
-// 레이아웃: 모바일=목업 위/텍스트 아래(센터), 데스크톱=텍스트 좌/목업 우 2컬럼.
+// controls(다음/이전/건너뛰기 + 진행 도트)는 텍스트 바로 아래에 붙여
+// 콘텐츠와 컨트롤이 한 덩어리로 읽히게 한다.
+
+export interface StepProps {
+  controls: ReactNode;
+}
 
 function StepLayout({
   title,
   desc,
   mockup,
+  controls,
 }: {
   title: string;
   desc: string;
   mockup: ReactNode;
+  controls: ReactNode;
 }) {
   return (
     <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
@@ -24,6 +31,7 @@ function StepLayout({
         </span>
         <h2 className="mb-4 mt-4 text-2xl font-bold text-white md:text-4xl">{title}</h2>
         <p className="leading-relaxed text-gray-400 md:text-lg">{desc}</p>
+        {controls}
       </div>
       <div className="relative order-1 md:order-2">
         <div className="absolute -inset-8 rounded-full bg-teal-600/15 blur-3xl" aria-hidden />
@@ -42,7 +50,7 @@ function MockupCard({ label, children }: { label: string; children: ReactNode })
   );
 }
 
-function IntroStep() {
+function IntroStep({ controls }: StepProps) {
   return (
     <div className="text-center">
       <motion.div
@@ -60,6 +68,7 @@ function IntroStep() {
       <p className="mt-3 text-gray-400 md:text-lg">
         보유 종목과 투자 성향을 종합한 나만의 투자 인사이트
       </p>
+      {controls}
     </div>
   );
 }
@@ -70,11 +79,12 @@ const FIT_ROWS = [
   { symbol: "KO", fit: 85 },
 ];
 
-function FitStep() {
+function FitStep({ controls }: StepProps) {
   return (
     <StepLayout
       title="내 성향에 맞는 종목일까?"
       desc="투자 성향 설문과 보유 종목을 비교해 종목 하나하나의 적합도를 진단해드려요."
+      controls={controls}
       mockup={
         <MockupCard label="종목별 성향 적합도">
           <div className="space-y-3 md:space-y-4">
@@ -112,11 +122,12 @@ const DIVIDEND_BARS = [
   { month: "6월", h: 70 },
 ];
 
-function DividendStep() {
+function DividendStep({ controls }: StepProps) {
   return (
     <StepLayout
       title="배당은 언제, 얼마나 들어올까?"
       desc="보유 종목의 배당 데이터를 모아 월별 예상 배당금 흐름을 미리 보여드려요."
+      controls={controls}
       mockup={
         <MockupCard label="월별 예상 배당금">
           <div className="flex h-28 items-end gap-2.5 md:h-36">
@@ -146,11 +157,12 @@ const SECTOR_ROWS = [
   { name: "금융", pct: 18 },
 ];
 
-function SectorStep() {
+function SectorStep({ controls }: StepProps) {
   return (
     <StepLayout
       title="내 포트폴리오, 어디에 기울어 있을까?"
       desc="섹터 분포를 분석해 편중된 부분을 짚어드려요. AI가 매일 새로 읽어드립니다."
+      controls={controls}
       mockup={
         <MockupCard label="선호 섹터 분석">
           <div className="space-y-3 md:space-y-4">
@@ -177,9 +189,12 @@ function SectorStep() {
   );
 }
 
-export const TUTORIAL_STEPS: { key: string; node: ReactNode }[] = [
-  { key: "intro", node: <IntroStep /> },
-  { key: "fit", node: <FitStep /> },
-  { key: "dividend", node: <DividendStep /> },
-  { key: "sector", node: <SectorStep /> },
+export const TUTORIAL_STEPS: {
+  key: string;
+  Component: (props: StepProps) => ReactNode;
+}[] = [
+  { key: "intro", Component: IntroStep },
+  { key: "fit", Component: FitStep },
+  { key: "dividend", Component: DividendStep },
+  { key: "sector", Component: SectorStep },
 ];

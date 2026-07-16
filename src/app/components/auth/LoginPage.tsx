@@ -369,14 +369,14 @@ export function LoginPage() {
             className="py-20 text-center md:py-28"
           >
             <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
-              그리고 매일 새벽,
+              당신이 잠든 사이,
               <br />
               <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                AI가 다시 읽습니다
+                AI는 일합니다
               </span>
             </h3>
             <p className="mt-5 text-base text-gray-500 md:text-lg">
-              장 마감 후 데이터로 매일 새로 생성되는 인사이트
+              매일 새벽, 장 마감 데이터로 오늘의 인사이트를 미리 준비해둬요
             </p>
           </motion.div>
         </section>

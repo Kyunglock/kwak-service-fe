@@ -2,12 +2,15 @@ import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
 export interface FeatureItem {
-  tag: string;      // 실제 앱에서 이 기능이 있는 메뉴 이름
-  tagClass: string; // 해당 메뉴의 아이덴티티 컬러 칩
+  id: string;         // 히어로 칩 → 섹션 앵커 스크롤용
+  emoji: string;      // 히어로 칩에 쓰는 기능 이모지
+  shortTitle: string; // 히어로 칩 라벨
+  tag: string;        // 실제 앱에서 이 기능이 있는 메뉴 이름
+  tagClass: string;   // 해당 메뉴의 아이덴티티 컬러 칩
   title: string;
   description: string;
   mockup: ReactNode;
-  glow: string;     // 목업 뒤 글로우 색
+  glow: string;       // 목업 뒤 글로우 색
 }
 
 // 기능 하나가 화면 하나를 가득 채운다(min-h-screen).
@@ -20,7 +23,7 @@ export function FeatureShowcase({
   reverse: boolean;
 }) {
   return (
-    <section className="flex min-h-screen items-center px-6 py-16">
+    <section id={feature.id} className="flex min-h-screen items-center px-6 py-16">
       <div className="mx-auto grid w-full max-w-5xl items-center gap-10 md:grid-cols-2 md:gap-16">
         <motion.div
           initial={{ opacity: 0, x: reverse ? 40 : -40 }}

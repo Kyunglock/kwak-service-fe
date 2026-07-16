@@ -1,6 +1,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { TrendingUp, ChevronDown } from "lucide-react";
 import { LoginButtons } from "./LoginButtons";
+import { FEATURES } from "./features";
 import type { LoginActions } from "./useLoginActions";
 
 export function HeroSection({ actions }: { actions: LoginActions }) {
@@ -9,8 +10,16 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
   // 스크롤 시 글로우가 콘텐츠보다 느리게 내려가는 패럴랙스
   const glowY = useTransform(scrollY, [0, 800], [0, 200]);
 
+  // 첫 화면의 기능 칩 → 해당 소개 섹션으로 이어서 스크롤
+  const scrollToFeature = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  };
+
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4">
+    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-20">
       {/* 배경 글로우 오브 */}
       <motion.div
         className="pointer-events-none absolute inset-0"
@@ -29,7 +38,7 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
         />
       </motion.div>
 
-      <div className="relative z-10 w-full max-w-md space-y-8 text-center">
+      <div className="relative z-10 w-full max-w-xl space-y-8 text-center">
         {/* 로고 스프링 팝인 */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -52,11 +61,33 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
           </p>
         </motion.div>
 
-        {/* 기존 사용자는 스크롤 없이 바로 로그인 */}
+        {/* 핵심 기능 칩 — 누르면 해당 소개 섹션으로 이어짐 */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          <p className="mb-3 text-sm text-gray-500">이런 걸 할 수 있어요 — 눌러서 살펴보세요</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {FEATURES.map((feature) => (
+              <button
+                key={feature.id}
+                onClick={() => scrollToFeature(feature.id)}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all hover:scale-105 hover:brightness-125 ${feature.tagClass}`}
+              >
+                <span aria-hidden>{feature.emoji}</span>
+                {feature.shortTitle}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 기존 사용자는 스크롤 없이 바로 로그인 */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="mx-auto w-full max-w-md"
         >
           <LoginButtons actions={actions} />
         </motion.div>
@@ -64,7 +95,7 @@ export function HeroSection({ actions }: { actions: LoginActions }) {
 
       {/* 스크롤 인디케이터 */}
       <motion.div
-        className="absolute bottom-8 text-gray-500"
+        className="absolute bottom-6 text-gray-500"
         animate={shouldReduceMotion ? undefined : { y: [0, 8, 0] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden

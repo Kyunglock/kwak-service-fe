@@ -12,6 +12,9 @@ import {
 // tag = 해당 기능이 실제로 있는 메뉴, tagClass = 그 메뉴의 아이덴티티 컬러.
 export const FEATURES: FeatureItem[] = [
   {
+    id: "portfolio",
+    emoji: "💼",
+    shortTitle: "포트폴리오",
     tag: "종목",
     tagClass: "border-indigo-700/60 bg-indigo-950/60 text-indigo-300",
     title: "포트폴리오 관리",
@@ -21,6 +24,9 @@ export const FEATURES: FeatureItem[] = [
     glow: "bg-indigo-600/20",
   },
   {
+    id: "briefing",
+    emoji: "📰",
+    shortTitle: "시황 브리핑",
     tag: "시황 브리핑",
     tagClass: "border-green-800 bg-green-950 text-green-400",
     title: "오늘의 미국 증시, AI 요약으로",
@@ -30,6 +36,9 @@ export const FEATURES: FeatureItem[] = [
     glow: "bg-emerald-600/20",
   },
   {
+    id: "insight",
+    emoji: "📊",
+    shortTitle: "AI 인사이트",
     tag: "인사이트",
     tagClass: "border-teal-700/60 bg-teal-950/60 text-teal-300",
     title: "AI 투자 인사이트",
@@ -39,6 +48,9 @@ export const FEATURES: FeatureItem[] = [
     glow: "bg-teal-600/20",
   },
   {
+    id: "mbti",
+    emoji: "🧬",
+    shortTitle: "투자 MBTI",
     tag: "투자 놀이터",
     tagClass: "border-pink-700/60 bg-pink-950/60 text-pink-300",
     title: "투자 MBTI 알아보기",
@@ -48,6 +60,9 @@ export const FEATURES: FeatureItem[] = [
     glow: "bg-pink-600/20",
   },
   {
+    id: "fortune",
+    emoji: "🔮",
+    shortTitle: "종목운세",
     tag: "투자 놀이터",
     tagClass: "border-amber-700/60 bg-amber-950/60 text-amber-300",
     title: "오늘의 종목운세",
@@ -57,6 +72,9 @@ export const FEATURES: FeatureItem[] = [
     glow: "bg-amber-600/20",
   },
   {
+    id: "guru",
+    emoji: "👑",
+    shortTitle: "투자 대가",
     tag: "투자 대가",
     tagClass: "border-orange-700/60 bg-orange-950/60 text-orange-300",
     title: "내 포트폴리오와 맞는 투자 대가는?",

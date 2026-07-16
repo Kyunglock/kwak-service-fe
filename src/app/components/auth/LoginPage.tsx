@@ -17,11 +17,9 @@ export function LoginPage() {
 
         <HeroSection actions={actions} />
 
-        <div className="py-8">
-          {FEATURES.map((feature, i) => (
-            <FeatureShowcase key={feature.title} feature={feature} reverse={i % 2 === 1} />
-          ))}
-        </div>
+        {FEATURES.map((feature, i) => (
+          <FeatureShowcase key={feature.title} feature={feature} reverse={i % 2 === 1} />
+        ))}
 
         <StatsStrip />
 

@@ -39,6 +39,34 @@ function clearAuthData() {
   authExpiredListeners.forEach((fn) => fn());
 }
 
+// 액세스 토큰 만료로 판단할 조건 (이 경우에만 refresh를 시도한다)
+const AUTH_EXPIRED_CODES = ["UNAUTHORIZED", "TOKEN_EXPIRED", "INVALID_TOKEN"];
+
+function isAuthExpired(status: number, errorCode?: string): boolean {
+  if (errorCode) return AUTH_EXPIRED_CODES.includes(errorCode);
+  return status === 401;
+}
+
+// refresh 동시성 제어: 여러 요청이 동시에 401을 받아도 refresh는 한 번만 호출
+let refreshPromise: Promise<void> | null = null;
+
+function refreshAccessToken(): Promise<void> {
+  if (!refreshPromise) {
+    // 인터셉터 재귀를 피하기 위해 client가 아닌 raw axios로 호출한다.
+    refreshPromise = axios
+      .post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`,
+        {},
+        { withCredentials: true },
+      )
+      .then(() => undefined)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
 // ✅ 에러 코드별 처리
 function handleErrorCode(errorCode: string, message: string, status: number) {
   switch (errorCode) {
@@ -137,7 +165,7 @@ export function createApiClient(config: CreateAxiosDefaults): AxiosInstance {
   // 응답 인터셉터
   client.interceptors.response.use(
     (response: AxiosResponse) => response,
-    (error: AxiosError<ErrorResponse>) => {
+    async (error: AxiosError<ErrorResponse>) => {
       if (!error.response) {
         console.error("Network error:", error.message);
         showToast("네트워크 오류가 발생했습니다.");
@@ -147,6 +175,24 @@ export function createApiClient(config: CreateAxiosDefaults): AxiosInstance {
       const { status, data } = error.response;
       const errorCode = data?.errorCode;
       const errorMessage = data?.message || "오류가 발생했습니다.";
+      const original = error.config as
+        | (InternalAxiosRequestConfig & { _retry?: boolean })
+        | undefined;
+
+      // 액세스 토큰 만료 → 리프레시 토큰으로 재발급 1회 시도 후 원 요청 재시도
+      if (original && !original._retry && isAuthExpired(status, errorCode)) {
+        original._retry = true;
+        try {
+          await refreshAccessToken();
+          return client(original); // 새 accessToken 쿠키로 원 요청 재시도
+        } catch {
+          // 리프레시도 실패(리프레시 토큰 만료/세션 소멸) → 로그아웃
+          clearAuthData();
+          showToast("로그인이 필요합니다.");
+          window.location.href = "/login";
+          return Promise.reject(error);
+        }
+      }
 
       if (errorCode) {
         handleErrorCode(errorCode, errorMessage, status);

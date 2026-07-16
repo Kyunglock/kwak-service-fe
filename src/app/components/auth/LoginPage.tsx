@@ -28,11 +28,17 @@ export function LoginPage() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="flex min-h-screen min-h-dvh flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="relative flex min-h-screen min-h-dvh flex-col overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        {/* 배경 글로우 오브 — 데스크톱 넓은 화면의 허전함을 채우는 장식 */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-blue-600/15 blur-3xl" />
+          <div className="absolute -bottom-24 right-1/5 h-80 w-80 rounded-full bg-teal-600/15 blur-3xl" />
+        </div>
+
         <ErrorToast message={actions.errorMessage} onClose={actions.clearError} />
 
         {/* 상단: 이전 / 진행 도트 / 건너뛰기 */}
-        <header className="flex h-14 shrink-0 items-center justify-between px-4">
+        <header className="relative z-10 mx-auto flex h-16 w-full max-w-5xl shrink-0 items-center justify-between px-6">
           <div className="w-20">
             {step > 0 && (
               <button
@@ -67,7 +73,7 @@ export function LoginPage() {
         </header>
 
         {/* 단계 콘텐츠 */}
-        <main className="flex flex-1 items-center justify-center overflow-hidden px-6 py-6">
+        <main className="relative z-10 flex flex-1 items-center justify-center px-6 py-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={isLoginStep ? "login" : TUTORIAL_STEPS[step].key}
@@ -75,12 +81,12 @@ export function LoginPage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-md"
+              className={`w-full ${isLoginStep ? "max-w-md" : "max-w-5xl"}`}
             >
               {isLoginStep ? (
                 <div className="space-y-8 text-center">
                   <div>
-                    <h2 className="mb-2 text-3xl font-bold text-white">
+                    <h2 className="mb-2 text-3xl font-bold text-white md:text-4xl">
                       지금 바로 시작해보세요
                     </h2>
                     <p className="text-gray-400">
@@ -104,10 +110,10 @@ export function LoginPage() {
 
         {/* 하단: 다음 버튼 (로그인 단계에선 숨김) */}
         {!isLoginStep && (
-          <footer className="shrink-0 px-6 pb-10">
+          <footer className="relative z-10 shrink-0 px-6 pb-10 md:pb-14">
             <button
               onClick={() => goTo(step + 1)}
-              className="mx-auto block h-12 w-full max-w-md rounded-md bg-teal-600 text-base font-semibold text-white shadow-lg transition-colors hover:bg-teal-500"
+              className="mx-auto block h-12 w-full max-w-md rounded-md bg-teal-600 text-base font-semibold text-white shadow-lg transition-colors hover:bg-teal-500 md:w-auto md:min-w-64 md:px-16"
             >
               {step === 0 ? "시작하기" : "다음"}
             </button>

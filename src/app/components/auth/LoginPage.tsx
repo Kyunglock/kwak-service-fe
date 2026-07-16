@@ -11,25 +11,28 @@ import { LoginButtons } from "./landing/LoginButtons";
 
 const TRUST_ITEMS = ["S&P 500 전 종목", "매일 새벽 AI 분석", "16가지 투자 성향"];
 
-// 비교 사례 — 실제 인사이트 탭 기능(성향 적합도·배당 인사이트·선호 섹터 분석) 기준
-const USE_CASES = [
+// 스크롤을 내리면 하나씩 떠오르는 AI 투자 인사이트 설명 문구
+// (실제 인사이트 탭 기능 기준: 성향 적합도 · 배당 인사이트 · 선호 섹터 분석)
+const INSIGHT_STATEMENTS = [
   {
-    no: "01",
-    title: "이 종목, 나랑 맞는 걸까?",
-    before: "기존에는 커뮤니티 분위기와 감으로 판단했다면,",
-    after: "투자 성향 설문과 보유 종목을 비교해 종목별 적합도를 진단해드려요.",
+    lead: "내 성향에 맞는 종목인지,",
+    accent: "종목별로 진단해요",
+    sub: "투자 성향 설문과 보유 종목을 비교한 성향 적합도",
   },
   {
-    no: "02",
-    title: "배당은 언제, 얼마나 들어오지?",
-    before: "기존에는 종목마다 배당 일정을 하나하나 검색했다면,",
-    after: "보유 종목의 배당 데이터를 모아 월별 예상 배당금으로 정리해드려요.",
+    lead: "배당이 언제, 얼마나 들어오는지,",
+    accent: "월별로 정리해요",
+    sub: "보유 종목의 배당 데이터를 모은 월별 예상 배당금",
   },
   {
-    no: "03",
-    title: "내 포트폴리오, 한쪽에 쏠려 있진 않을까?",
-    before: "기존에는 계좌만 봐서는 편중을 눈치채기 어려웠다면,",
-    after: "섹터 분석으로 어디에 기울어 있는지 짚고, AI가 매일 새로 읽어드려요.",
+    lead: "포트폴리오가 어디에 기울었는지,",
+    accent: "한눈에 짚어드려요",
+    sub: "섹터 분석으로 보는 내 계좌의 편중과 분산",
+  },
+  {
+    lead: "그리고 매일 새벽,",
+    accent: "AI가 다시 읽습니다",
+    sub: "장 마감 후 데이터로 매일 새로 생성되는 인사이트",
   },
 ];
 
@@ -137,8 +140,8 @@ export function LoginPage() {
           </div>
         </section>
 
-        {/* 가치 제안 */}
-        <section className="mx-auto w-full max-w-3xl px-6 py-28 text-center md:py-36">
+        {/* 가치 제안 — 인사이트 설명 시퀀스의 인트로 */}
+        <section className="mx-auto w-full max-w-3xl px-6 pt-28 text-center md:pt-36">
           <motion.p {...fadeUp} className="mb-4 text-sm font-semibold tracking-widest text-teal-400">
             AI 투자 인사이트
           </motion.p>
@@ -147,33 +150,27 @@ export function LoginPage() {
             <br />
             판단은 더 깊게
           </motion.h2>
-          <motion.p {...fadeUp} className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-gray-400">
-            성향 적합도, 월별 예상 배당금, 섹터 편중까지 — 흩어져 있는 내
-            포트폴리오 정보를 AI가 한 번에 정리해드립니다.
-          </motion.p>
         </section>
 
-        {/* 기존에는 vs 주식 나침반 — 에디토리얼 넘버링 카드 */}
-        <section className="mx-auto w-full max-w-4xl space-y-5 px-6 pb-28 md:pb-36">
-          {USE_CASES.map((useCase) => (
+        {/* AI 투자 인사이트 설명 — 스크롤에 따라 문구가 하나씩 떠오른다 */}
+        <section className="mx-auto w-full max-w-3xl px-6 pb-16 text-center md:pb-24">
+          {INSIGHT_STATEMENTS.map((statement) => (
             <motion.div
-              key={useCase.no}
-              {...fadeUp}
-              className="group grid gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-7 transition-colors duration-300 hover:border-teal-500/25 md:grid-cols-[5rem_1fr] md:gap-2 md:p-10"
+              key={statement.accent}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.7 }}
+              className="py-20 md:py-28"
             >
-              <p className="font-mono text-lg font-semibold text-white/20 transition-colors duration-300 group-hover:text-teal-400/70">
-                {useCase.no}
-              </p>
-              <div>
-                <h3 className="mb-4 text-xl font-bold tracking-tight md:text-2xl">
-                  {useCase.title}
-                </h3>
-                <p className="text-[15px] text-gray-500">{useCase.before}</p>
-                <p className="mt-2 text-lg leading-relaxed text-gray-200">
-                  <span className="font-semibold text-teal-300">주식 나침반에서는</span>{" "}
-                  {useCase.after}
-                </p>
-              </div>
+              <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
+                {statement.lead}
+                <br />
+                <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                  {statement.accent}
+                </span>
+              </h3>
+              <p className="mt-5 text-base text-gray-500 md:text-lg">{statement.sub}</p>
             </motion.div>
           ))}
         </section>

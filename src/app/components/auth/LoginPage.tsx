@@ -1,133 +1,184 @@
-import { useState } from "react";
-import { AnimatePresence, MotionConfig, motion } from "motion/react";
-import { ChevronLeft } from "lucide-react";
-import { Card } from "@/app/components/ui/layout/card";
+import { MotionConfig, motion, useReducedMotion } from "motion/react";
+import { Button } from "@/app/components/ui/form/button";
 import { useLoginActions } from "./landing/useLoginActions";
 import { ErrorToast } from "./landing/ErrorToast";
 import { LoginButtons } from "./landing/LoginButtons";
-import { TUTORIAL_STEPS } from "./landing/TutorialSteps";
 
-// 튜토리얼을 한 번 끝까지 본 사용자는 재방문 시 바로 로그인 화면부터 시작
-const SEEN_KEY = "landingTutorialSeen";
+// throneinvest.ai 스타일의 텍스트 중심 미니멀 스크롤 랜딩.
+// 구성: 네비(로고+로그인) → 히어로(헤드라인+CTA 2개) → 신뢰 스트립
+//       → 가치 제안 → "기존에는 vs" 비교 3건 → 최종 CTA → 푸터
 
-const LOGIN_STEP = TUTORIAL_STEPS.length; // 마지막 단계 = 로그인
-const TOTAL_STEPS = LOGIN_STEP + 1;
+const TRUST_ITEMS = ["S&P 500 전 종목", "매일 새벽 AI 분석", "16가지 투자 성향"];
+
+// 비교 사례 — 실제 인사이트 탭 기능(성향 적합도·배당 인사이트·선호 섹터 분석) 기준
+const USE_CASES = [
+  {
+    emoji: "🧐",
+    title: "이 종목, 나랑 맞는 걸까?",
+    before: "기존에는 커뮤니티 분위기와 감으로 판단했다면,",
+    after: "투자 성향 설문과 보유 종목을 비교해 종목별 적합도를 진단해드려요.",
+  },
+  {
+    emoji: "💰",
+    title: "배당은 언제, 얼마나 들어오지?",
+    before: "기존에는 종목마다 배당 일정을 하나하나 검색했다면,",
+    after: "보유 종목의 배당 데이터를 모아 월별 예상 배당금으로 정리해드려요.",
+  },
+  {
+    emoji: "📊",
+    title: "내 포트폴리오, 한쪽에 쏠려 있진 않을까?",
+    before: "기존에는 계좌만 봐서는 편중을 눈치채기 어려웠다면,",
+    after: "섹터 분석으로 어디에 기울어 있는지 짚고, AI가 매일 새로 읽어드려요.",
+  },
+];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.3 },
+  transition: { duration: 0.6 },
+} as const;
 
 export function LoginPage() {
   const actions = useLoginActions();
-  const [step, setStep] = useState(() =>
-    localStorage.getItem(SEEN_KEY) ? LOGIN_STEP : 0,
-  );
+  const shouldReduceMotion = useReducedMotion();
 
-  const goTo = (next: number) => {
-    if (next >= LOGIN_STEP) localStorage.setItem(SEEN_KEY, "1");
-    setStep(Math.max(0, Math.min(next, LOGIN_STEP)));
+  const scrollToLogin = () => {
+    document.getElementById("login-cta")?.scrollIntoView({
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+      block: "center",
+    });
   };
-
-  const isLoginStep = step === LOGIN_STEP;
-
-  const dots = (
-    <div className="flex items-center gap-2" aria-hidden>
-      {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-        <span
-          key={i}
-          className={`h-1.5 rounded-full transition-all duration-300 ${
-            i === step ? "w-6 bg-teal-400" : "w-1.5 bg-slate-600"
-          }`}
-        />
-      ))}
-    </div>
-  );
-
-  // 스텝 텍스트 바로 아래에 붙는 컨트롤 — 콘텐츠와 한 덩어리로 읽히게 한다.
-  // 인트로는 항상 센터, 기능 스텝은 데스크톱에서 텍스트와 같이 좌측 정렬.
-  const renderControls = (centered: boolean) => (
-    <div
-      className={`mt-10 flex flex-col gap-6 ${
-        centered ? "items-center" : "items-center md:items-start"
-      }`}
-    >
-      <div className="flex w-full max-w-md items-center gap-3 md:w-auto">
-        {step > 0 && (
-          <button
-            onClick={() => goTo(step - 1)}
-            aria-label="이전"
-            className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-600 text-gray-400 transition-colors hover:bg-slate-800 hover:text-gray-200"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-        )}
-        <button
-          onClick={() => goTo(step + 1)}
-          className="h-12 flex-1 rounded-lg bg-teal-600 px-8 text-base font-semibold text-white shadow-lg transition-colors hover:bg-teal-500 md:min-w-52 md:flex-none"
-        >
-          {step === 0 ? "시작하기" : "다음"}
-        </button>
-        <button
-          onClick={() => goTo(LOGIN_STEP)}
-          className="shrink-0 px-2 text-sm text-gray-500 transition-colors hover:text-gray-300"
-        >
-          건너뛰기
-        </button>
-      </div>
-      {dots}
-    </div>
-  );
-
-  const Step = isLoginStep ? null : TUTORIAL_STEPS[step].Component;
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="relative flex min-h-screen min-h-dvh flex-col overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* 배경 글로우 오브 */}
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-blue-600/15 blur-3xl" />
-          <div className="absolute -bottom-24 right-1/5 h-80 w-80 rounded-full bg-teal-600/15 blur-3xl" />
-        </div>
-
+      <div className="min-h-screen bg-slate-900 text-white">
         <ErrorToast message={actions.errorMessage} onClose={actions.clearError} />
 
-        {/* 단계 콘텐츠 — 컨트롤 포함 전부 한 덩어리 */}
-        <main className="relative z-10 flex flex-1 items-center justify-center px-6 py-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={isLoginStep ? "login" : TUTORIAL_STEPS[step].key}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.35 }}
-              className={`w-full ${isLoginStep ? "max-w-md" : "max-w-5xl"}`}
+        {/* 네비게이션 */}
+        <nav className="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-900/80 backdrop-blur">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
+            <span className="text-lg font-bold">🧭 주식 나침반</span>
+            <Button
+              onClick={scrollToLogin}
+              variant="outline"
+              size="sm"
+              className="border-slate-600 bg-transparent text-slate-200 hover:bg-slate-800"
             >
-              {isLoginStep ? (
-                <div className="space-y-8 text-center">
-                  <div>
-                    <h2 className="mb-2 text-3xl font-bold text-white md:text-4xl">
-                      지금 바로 시작해보세요
-                    </h2>
-                    <p className="text-gray-400">
-                      카카오 계정으로 3초 만에, 부담 없이 손님으로도.
-                    </p>
-                  </div>
-                  <LoginButtons actions={actions} />
-                  <Card className="p-3 bg-amber-900/20 border-amber-800/30">
-                    <p className="text-xs text-amber-400 text-center leading-relaxed">
-                      본 서비스는 투자 참고 목적이며, 실제 투자는 본인의 판단과 책임
-                      하에 이루어져야 합니다.
-                    </p>
-                  </Card>
-                  <button
-                    onClick={() => goTo(0)}
-                    className="text-sm text-gray-500 transition-colors hover:text-gray-300"
-                  >
-                    ← 서비스 소개 다시 보기
-                  </button>
-                </div>
-              ) : (
-                Step && <Step controls={renderControls(step === 0)} />
-              )}
+              로그인
+            </Button>
+          </div>
+        </nav>
+
+        {/* 히어로 */}
+        <section className="mx-auto w-full max-w-3xl px-6 pb-24 pt-24 text-center md:pb-32 md:pt-36">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl font-bold leading-tight md:text-6xl"
+          >
+            내 포트폴리오,
+            <br />
+            AI가 읽어드립니다
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-6 text-lg text-gray-300 md:text-xl"
+          >
+            보유 종목과 투자 성향으로 답하는 나만의 투자 AI 인사이트
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="mt-3 text-gray-500"
+          >
+            복잡한 시장 데이터를 내 포트폴리오 기준으로 풀어드려요
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-10"
+          >
+            <LoginButtons actions={actions} row guestLabel="손님으로 미리 보기" />
+          </motion.div>
+        </section>
+
+        {/* 신뢰 스트립 */}
+        <section className="border-y border-slate-800 bg-slate-950/40">
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center gap-3 px-6 py-8 text-sm text-gray-400 sm:flex-row sm:gap-12">
+            {TRUST_ITEMS.map((item) => (
+              <span key={item} className="font-medium tracking-wide">
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        {/* 가치 제안 */}
+        <section className="mx-auto w-full max-w-3xl px-6 py-24 text-center md:py-32">
+          <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug md:text-4xl">
+            종목 뒤지는 시간은 줄이고,
+            <br />
+            판단은 더 깊게
+          </motion.h2>
+          <motion.p {...fadeUp} className="mt-6 text-lg leading-relaxed text-gray-400">
+            성향 적합도, 월별 예상 배당금, 섹터 편중까지 — 흩어져 있는 내
+            포트폴리오 정보를 AI가 한 번에 정리해드립니다.
+          </motion.p>
+        </section>
+
+        {/* 기존에는 vs 주식 나침반 */}
+        <section className="mx-auto w-full max-w-4xl space-y-6 px-6 pb-24 md:pb-32">
+          {USE_CASES.map((useCase) => (
+            <motion.div
+              key={useCase.title}
+              {...fadeUp}
+              className="rounded-2xl border border-slate-800 bg-slate-800/40 p-7 md:p-9"
+            >
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-3xl" aria-hidden>
+                  {useCase.emoji}
+                </span>
+                <h3 className="text-xl font-bold md:text-2xl">{useCase.title}</h3>
+              </div>
+              <p className="text-gray-500">{useCase.before}</p>
+              <p className="mt-2 text-lg leading-relaxed text-gray-200">
+                <span className="font-semibold text-teal-300">주식 나침반에서는</span>{" "}
+                {useCase.after}
+              </p>
             </motion.div>
-          </AnimatePresence>
-        </main>
+          ))}
+        </section>
+
+        {/* 최종 CTA */}
+        <section id="login-cta" className="border-t border-slate-800 bg-slate-950/40">
+          <div className="mx-auto w-full max-w-md px-6 py-24 text-center md:py-32">
+            <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug md:text-4xl">
+              나의 투자 여정을
+              <br />
+              주식 나침반과 함께하세요
+            </motion.h2>
+            <motion.div {...fadeUp} className="mt-10">
+              <LoginButtons actions={actions} />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 푸터 */}
+        <footer className="border-t border-slate-800">
+          <div className="mx-auto w-full max-w-4xl space-y-3 px-6 py-10 text-center">
+            <p className="text-xs leading-relaxed text-gray-500">
+              본 서비스는 투자 참고 목적이며, 실제 투자는 본인의 판단과 책임 하에
+              이루어져야 합니다. AI가 생성한 분석에는 오류가 있을 수 있습니다.
+            </p>
+            <p className="text-xs text-gray-600">© 2026 주식 나침반</p>
+          </div>
+        </footer>
       </div>
     </MotionConfig>
   );

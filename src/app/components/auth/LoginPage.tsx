@@ -91,7 +91,7 @@ export function LoginPage() {
             className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[13px] font-medium text-gray-300"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-teal-400" aria-hidden />
-            매일 새벽, AI 포트폴리오 리서치
+            매일 새벽 업데이트
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
@@ -111,9 +111,7 @@ export function LoginPage() {
             transition={{ duration: 0.6, delay: 0.22 }}
             className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-gray-400 md:text-xl"
           >
-            보유 종목과 투자 성향으로 답하는 나만의 투자 AI 인사이트.
-            <br className="hidden md:block" />
-            복잡한 시장 데이터를 내 포트폴리오 기준으로 풀어드려요.
+            보유 종목과 투자 성향으로 답하는 나만의 투자 AI
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 24 }}

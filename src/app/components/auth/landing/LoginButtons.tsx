@@ -19,7 +19,7 @@ export function LoginButtons({
       onClick={handleKakaoLogin}
       disabled={isKakaoLoading || isGuestLoading}
       className={`h-12 bg-[#FEE500] hover:bg-[#FDD835] text-[#000000] font-semibold text-base shadow-lg disabled:opacity-50 ${
-        row ? "w-full sm:w-auto sm:px-8" : "w-full"
+        row ? "w-full rounded-full sm:w-auto sm:px-9" : "w-full"
       }`}
     >
       {isKakaoLoading ? (
@@ -43,8 +43,10 @@ export function LoginButtons({
       onClick={handleGuestLogin}
       disabled={isKakaoLoading || isGuestLoading}
       variant="outline"
-      className={`h-12 border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700 font-semibold text-base ${
-        row ? "w-full sm:w-auto sm:px-8" : "w-full"
+      className={`h-12 font-semibold text-base ${
+        row
+          ? "w-full rounded-full border-white/15 bg-white/5 text-slate-200 hover:border-white/30 hover:bg-white/10 sm:w-auto sm:px-9"
+          : "w-full border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700"
       }`}
     >
       {isGuestLoading ? (

@@ -1,5 +1,5 @@
 import { MotionConfig, motion, useReducedMotion } from "motion/react";
-import { Compass } from "lucide-react";
+import { Compass, TrendingUp, Dna, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/app/components/ui/form/button";
 import { useLoginActions } from "./landing/useLoginActions";
 import { ErrorToast } from "./landing/ErrorToast";
@@ -105,6 +105,51 @@ function SectorVisual() {
   );
 }
 
+// 문구 + 미니 비주얼 좌우 교차 블록 (인사이트·종목 섹션 공용)
+function FeatureBlock({
+  lead,
+  accent,
+  sub,
+  visual,
+  reverse,
+}: {
+  lead: string;
+  accent: string;
+  sub: string;
+  visual: React.ReactNode;
+  reverse: boolean;
+}) {
+  return (
+    <div className="grid items-center gap-10 py-16 md:grid-cols-2 md:gap-20 md:py-24">
+      <motion.div
+        initial={{ opacity: 0, x: reverse ? 32 : -32 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.6 }}
+        className={`text-center md:text-left ${reverse ? "md:order-2" : ""}`}
+      >
+        <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
+          {lead}
+          <br />
+          <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
+            {accent}
+          </span>
+        </h3>
+        <p className="mt-5 text-base text-gray-500 md:text-lg">{sub}</p>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.6, delay: 0.15 }}
+        className={reverse ? "md:order-1" : ""}
+      >
+        {visual}
+      </motion.div>
+    </div>
+  );
+}
+
 function VisualCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="relative">
@@ -116,6 +161,135 @@ function VisualCard({ label, children }: { label: string; children: React.ReactN
     </div>
   );
 }
+
+// 종목 탭 소개 비주얼 — 시황 브리핑(실제 MarketBriefingModal의 감성 컬러 헤더) 미니어처
+function BriefingVisual() {
+  return (
+    <div className="relative">
+      <div className="absolute -inset-10 rounded-full bg-emerald-500/[0.07] blur-3xl" aria-hidden />
+      <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03] shadow-2xl backdrop-blur-sm">
+        <div className="flex items-center gap-3 border-b border-emerald-500/20 bg-gradient-to-r from-emerald-500/15 to-transparent px-5 py-4">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15">
+            <TrendingUp className="h-4.5 w-4.5 text-emerald-400" />
+          </span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-gray-100">오늘의 미국 증시</span>
+              <span className="rounded border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-400">
+                호재
+              </span>
+            </div>
+            <p className="mt-0.5 text-[11px] text-gray-500">매일 새벽 · AI 요약</p>
+          </div>
+        </div>
+        <div className="space-y-2.5 px-5 py-5">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-sm leading-relaxed text-gray-300"
+          >
+            S&P 500이 기술주 강세에 힘입어 상승 마감했습니다. 반도체 업종이 지수
+            상승을 이끌었고…
+          </motion.p>
+          <div className="h-2 w-4/5 rounded bg-white/5" />
+          <div className="h-2 w-3/5 rounded bg-white/5" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 종목 탭 소개 비주얼 — 포트폴리오 현황(수익률 + 수익 곡선) 미니어처
+const POSITIONS = [
+  { symbol: "AAPL", name: "애플", change: "+2.1%", up: true },
+  { symbol: "NVDA", name: "엔비디아", change: "+4.3%", up: true },
+  { symbol: "KO", name: "코카콜라", change: "-0.6%", up: false },
+];
+
+function PortfolioVisual() {
+  return (
+    <VisualCard label="내 포트폴리오">
+      <div className="space-y-2">
+        {POSITIONS.map((p, i) => (
+          <motion.div
+            key={p.symbol}
+            initial={{ opacity: 0, x: -12 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }}
+            className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3.5 py-2.5"
+          >
+            <div className="flex items-baseline gap-2">
+              <span className="text-sm font-bold text-white">{p.symbol}</span>
+              <span className="text-xs text-gray-500">{p.name}</span>
+            </div>
+            <span
+              className={`text-sm font-semibold ${p.up ? "text-emerald-400" : "text-red-400"}`}
+            >
+              {p.change}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+      <svg viewBox="0 0 300 64" className="mt-4 w-full">
+        <motion.path
+          d="M 0 56 C 40 52, 60 34, 100 40 S 160 22, 200 26 S 260 6, 300 10"
+          fill="none"
+          stroke="#34d399"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4, ease: "easeInOut" }}
+        />
+      </svg>
+    </VisualCard>
+  );
+}
+
+// 종목 탭 소개 블록 (실제 종목 탭: 시황 브리핑 모달 + 포트폴리오 현황)
+const STOCK_FEATURES = [
+  {
+    lead: "오늘의 미국 증시,",
+    accent: "AI가 요약해드려요",
+    sub: "호재·악재·보합을 컬러로 구분하는 매일 새벽 시황 브리핑",
+    visual: <BriefingVisual />,
+  },
+  {
+    lead: "보유 종목 현황은,",
+    accent: "대시보드 한 화면에",
+    sub: "수익률과 실시간 시세, 매매 기록까지 한눈에 보는 포트폴리오",
+    visual: <PortfolioVisual />,
+  },
+];
+
+// 투자 놀이터 소개 — 실제 놀이터 카드 3종(인앱 카피 그대로)
+const PLAYGROUND_ITEMS = [
+  {
+    icon: <Dna className="h-5 w-5 text-pink-400" />,
+    iconBg: "bg-pink-500/10",
+    hover: "hover:border-pink-500/25",
+    title: "투자 MBTI 알아보기!",
+    desc: "44문항 통합 설문으로 성격 MBTI와 나의 투자 스타일을 함께 찾아보세요.",
+  },
+  {
+    icon: <Crown className="h-5 w-5 text-indigo-400" />,
+    iconBg: "bg-indigo-500/10",
+    hover: "hover:border-indigo-500/25",
+    title: "내 포트폴리오와 맞는 투자 대가는?",
+    desc: "워런 버핏, 조지 소로스 등 전설적 투자자들의 포트폴리오와 비교해보세요.",
+  },
+  {
+    icon: <Sparkles className="h-5 w-5 text-amber-400" />,
+    iconBg: "bg-amber-500/10",
+    hover: "hover:border-amber-500/25",
+    title: "오늘의 종목운세",
+    desc: "궁금한 종목의 오늘 기운을 점쳐보세요. 별자리부터 로고 색상까지, 재미용 운세예요.",
+  },
+];
 
 const INSIGHT_FEATURES = [
   {
@@ -324,42 +498,61 @@ export function LoginPage() {
 
         {/* AI 투자 인사이트 설명 — 문구 + 미니 비주얼, 좌우 교차로 하나씩 떠오른다 */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-10 md:pb-16">
-          {INSIGHT_FEATURES.map((feature, i) => {
-            const reverse = i % 2 === 1;
-            return (
-              <div
-                key={feature.accent}
-                className="grid items-center gap-10 py-16 md:grid-cols-2 md:gap-20 md:py-24"
-              >
-                <motion.div
-                  initial={{ opacity: 0, x: reverse ? 32 : -32 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{ duration: 0.6 }}
-                  className={`text-center md:text-left ${reverse ? "md:order-2" : ""}`}
-                >
-                  <h3 className="text-2xl font-bold leading-snug tracking-tight md:text-4xl">
-                    {feature.lead}
-                    <br />
-                    <span className="bg-gradient-to-r from-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                      {feature.accent}
-                    </span>
-                  </h3>
-                  <p className="mt-5 text-base text-gray-500 md:text-lg">{feature.sub}</p>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 32 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{ duration: 0.6, delay: 0.15 }}
-                  className={reverse ? "md:order-1" : ""}
-                >
-                  {feature.visual}
-                </motion.div>
-              </div>
-            );
-          })}
+          {INSIGHT_FEATURES.map((feature, i) => (
+            <FeatureBlock key={feature.accent} {...feature} reverse={i % 2 === 1} />
+          ))}
+        </section>
 
+        {/* 종목 탭 — 시황 브리핑 AI 요약 + 포트폴리오 현황 대시보드 */}
+        <section className="mx-auto w-full max-w-5xl px-6 pb-10 md:pb-16">
+          <div className="pt-16 text-center md:pt-24">
+            <motion.p {...fadeUp} className="mb-4 text-sm font-semibold tracking-widest text-teal-400">
+              종목 대시보드
+            </motion.p>
+            <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug tracking-tight md:text-[2.5rem]">
+              시황부터 내 계좌까지,
+              <br />
+              한눈에
+            </motion.h2>
+          </div>
+          {STOCK_FEATURES.map((feature, i) => (
+            <FeatureBlock key={feature.accent} {...feature} reverse={i % 2 === 0} />
+          ))}
+        </section>
+
+        {/* 투자 놀이터 — 투자 MBTI · 투자 대가 매치 · 종목운세 */}
+        <section className="mx-auto w-full max-w-5xl px-6 pb-16 md:pb-24">
+          <div className="pt-16 pb-14 text-center md:pt-24">
+            <motion.p {...fadeUp} className="mb-4 text-sm font-semibold tracking-widest text-teal-400">
+              투자 놀이터
+            </motion.p>
+            <motion.h2 {...fadeUp} className="text-3xl font-bold leading-snug tracking-tight md:text-[2.5rem]">
+              분석 사이사이,
+              <br />
+              가볍게 즐길 것들
+            </motion.h2>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {PLAYGROUND_ITEMS.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                className={`rounded-2xl border border-white/5 bg-white/[0.03] p-7 transition-colors duration-300 ${item.hover}`}
+              >
+                <span className={`mb-5 flex h-11 w-11 items-center justify-center rounded-xl ${item.iconBg}`}>
+                  {item.icon}
+                </span>
+                <h3 className="mb-2.5 text-lg font-bold tracking-tight">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-gray-500">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-5xl px-6">
           {/* 마무리 문구 + 최종 로그인 CTA */}
           <motion.div
             id="login-cta"

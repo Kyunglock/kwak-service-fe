@@ -32,7 +32,7 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
 const STATS = [
   { to: 500, suffix: "+", label: "S&P 500 분석 종목" },
   { to: 16, suffix: "", label: "투자 MBTI 유형" },
-  { to: 365, suffix: "일", label: "매일 새벽 AI 분석" },
+  { to: 44, suffix: "", label: "통합 설문 문항" },
 ];
 
 export function StatsStrip() {

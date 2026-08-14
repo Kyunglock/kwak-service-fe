@@ -13,6 +13,7 @@ import {
   getSurvey,
   submitSurvey,
   getMySurveyResponse,
+  getSurveyWithMyResponses,
   getSurveyWithMyResponsesPaged,
   getOptionStats,
 } from "@/app/services/surveyService";
@@ -101,6 +102,10 @@ export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpen
     surveys.filter((r) => r.statusCode === "COMPLETED").map((r) => r.surveyId),
   );
 
+  // 현재 페이지 밖의 설문(자동 오픈 대상)도 판정 가능하도록 응답 자체로 완료 여부 확인
+  const isSurveyCompleted = (survey: SurveyWithMyResponse) =>
+    survey.statusCode === "COMPLETED" || completedSurveyIds.has(survey.surveyId);
+
   // 완료 설문 → 통계 화면으로 이동
   const openStats = async (survey: SurveyWithMyResponse) => {
     if (!survey.responseId) return;
@@ -123,7 +128,7 @@ export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpen
 
   // 목록에서 설문 클릭: 완료 설문은 통계, 그 외는 답변/수정 화면
   const handleSelectSurvey = (survey: SurveyWithMyResponse) => {
-    const isCompleted = completedSurveyIds.has(survey.surveyId);
+    const isCompleted = isSurveyCompleted(survey);
     if (isCompleted && survey.responseId) {
       openStats(survey);
     } else {
@@ -133,7 +138,7 @@ export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpen
 
   // 문항 답변/수정 화면 열기
   const openEditor = async (survey: SurveyWithMyResponse) => {
-    const isCompleted = completedSurveyIds.has(survey.surveyId);
+    const isCompleted = isSurveyCompleted(survey);
     setDetailLoading(true);
 
     try {
@@ -189,16 +194,40 @@ export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpen
     setStatsDetail(null);
   };
 
-  // autoOpenType 지정 시 목록 로드 후 해당 유형 설문을 1회 자동 오픈
+  // autoOpenType 지정 시 목록 로드 후 해당 유형 설문을 1회 자동 오픈.
+  // 대상 설문(예: MBTI)이 현재 페이지에 없을 수 있으므로(뉴스 설문이 쌓여 뒷 페이지로 밀림)
+  // 페이지 목록에서 못 찾으면 전체 목록에서 다시 찾아 바로 진입한다.
   const autoOpenedRef = useRef(false);
   useEffect(() => {
     if (!autoOpenType) { autoOpenedRef.current = false; return; }
     if (autoOpenedRef.current || view !== "list" || listLoading) return;
-    const target = surveys.find((s) => s.surveyTypeCode === autoOpenType);
-    if (!target) return;
     autoOpenedRef.current = true;
-    onAutoOpenHandled?.();
-    openEditor(target);
+
+    const openTarget = (target: SurveyWithMyResponse) => {
+      onAutoOpenHandled?.();
+      openEditor(target);
+    };
+
+    const onCurrentPage = surveys.find((s) => s.surveyTypeCode === autoOpenType);
+    if (onCurrentPage) {
+      openTarget(onCurrentPage);
+      return;
+    }
+
+    getSurveyWithMyResponses()
+      .then((res) => {
+        const all = (res.data.data ?? []) as SurveyWithMyResponse[];
+        const target = all.find((s) => s.surveyTypeCode === autoOpenType);
+        // 전체 목록에도 없으면 자동 오픈 없이 목록을 그대로 보여준다
+        if (!target) {
+          onAutoOpenHandled?.();
+          return;
+        }
+        openTarget(target);
+      })
+      .catch(() => {
+        autoOpenedRef.current = false;
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoOpenType, surveys, listLoading, view]);
 

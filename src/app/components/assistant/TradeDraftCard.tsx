@@ -10,8 +10,15 @@ import type {
 } from "@/app/types";
 import { confirmTradeDraft } from "@/app/services/tradeCaptureService";
 
-/** 입력값이 placeholder 와 같은 톤이면 "읽어온 값"인지 "빈 칸"인지 구분되지 않는다. */
-const FIELD_CLASS = "text-gray-100 placeholder:text-gray-600";
+/**
+ * 입력칸 스타일.
+ *
+ * <p>Input 기본값은 밝은 배경(--input-background: #f3f3f5)이고 이 값은 .dark 에서도
+ * 재정의되지 않는다. 어두운 대화 화면 위에 밝은 칸만 동동 뜨고, 글자색을 밝게 잡으면
+ * 흰 배경에 흰 글씨가 된다. 같은 카드 안의 select 와 톤을 맞춰 배경까지 직접 지정한다.
+ */
+const FIELD_CLASS =
+  "bg-slate-900 border-slate-700 text-gray-100 placeholder:text-gray-500";
 
 /** 대화 안에서 수정 가능한 행. 초안 응답을 편집 가능한 형태로 펼친 것. */
 interface EditableRow {

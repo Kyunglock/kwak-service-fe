@@ -272,9 +272,6 @@ export function AiAssistant() {
       </div>
 
       {inputError && <p className="text-xs text-red-400 px-1">{inputError}</p>}
-      <p className="text-[11px] text-gray-500 px-1">
-        읽어온 내용은 저장 전에 직접 확인하실 수 있어요.
-      </p>
     </div>
   );
 

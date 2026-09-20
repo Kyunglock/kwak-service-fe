@@ -128,7 +128,7 @@ export function AiAssistant() {
         id: nextId(),
         role: "assistant",
         kind: "text",
-        text: "먼저 종목 메뉴에서 포트폴리오를 만들어 주세요. 기록을 담을 곳이 있어야 합니다.",
+        text: "기록을 담을 포트폴리오를 준비하지 못했어요. 화면을 새로고침한 뒤 다시 시도해 주세요.",
         tone: "error",
       });
       return;
@@ -309,7 +309,7 @@ export function AiAssistant() {
       {portfolioLoaded && portfolios.length === 0 && (
         <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-xs text-amber-400 flex-shrink-0">
           <TriangleAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          아직 포트폴리오가 없어요. 종목 메뉴에서 먼저 만들어 주세요.
+          포트폴리오를 불러오지 못했어요. 새로고침하면 기본 포트폴리오가 만들어집니다.
         </div>
       )}
 

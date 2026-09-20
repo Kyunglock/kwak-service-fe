@@ -1,6 +1,7 @@
 import { Badge } from "@/app/components/ui/feedback/badge";
 import { Button } from "@/app/components/ui/form/button";
 import {
+  Bot,
   Briefcase,
   DollarSign,
   ClipboardList,
@@ -116,6 +117,18 @@ export function SideMenu({
             >
               <Briefcase className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">종목</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick("assistant")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "assistant"
+                  ? "bg-violet-600 text-white"
+                  : "text-gray-300 hover:bg-slate-800"
+              }`}
+            >
+              <Bot className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">AI 어시스턴트</span>
             </button>
 
             <button

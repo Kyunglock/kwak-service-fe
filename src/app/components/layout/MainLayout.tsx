@@ -19,6 +19,7 @@ import { InsightsDashboard } from "@/app/components/market/InsightsDashboard";
 import { InvestorTypeDashboard } from "@/app/components/market/InvestorTypeDashboard";
 import { ActivityLog } from "@/app/components/activity/ActivityLog";
 import { Portfolio } from "@/app/components/portfolio/Portfolio";
+import { AiAssistant } from "@/app/components/assistant/AiAssistant";
 import { DividendDashboard } from "@/app/components/portfolio/DividendDashboard";
 import { SurveyStatistics } from "@/app/components/survey/SurveyStatistics";
 import { GuruPortfolio } from "@/app/components/guru/GuruPortfolio";
@@ -217,6 +218,10 @@ export function MainLayout() {
             >
               <TabsContent value="portfolio" className="mt-0">
                 <Portfolio stockPrices={stockPrices} />
+              </TabsContent>
+
+              <TabsContent value="assistant" className="mt-0">
+                <AiAssistant />
               </TabsContent>
 
               <TabsContent value="survey" className="mt-0">

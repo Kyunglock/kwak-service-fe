@@ -30,6 +30,9 @@ import { useStockPrice } from "@/app/hooks/useStockPrice";
 import { MobileAlert } from "@/app/components/ui/feedback/mobile-alert";
 import { SideMenu } from "./SideMenu";
 
+/** URL 에 tab 이 없을 때 보여줄 화면. 서비스의 첫 인상을 AI 어시스턴트로 잡는다. */
+const DEFAULT_TAB = "assistant";
+
 export function MainLayout() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +41,7 @@ export function MainLayout() {
     string,
     string
   > | null>(null);
-  const activeTab = searchParams.get("tab") ?? "portfolio";
+  const activeTab = searchParams.get("tab") ?? DEFAULT_TAB;
   const setActiveTab = useCallback(
     (tab: string) => {
       if (tab !== activeTab) logMenuMove(tab, activeTab);
@@ -119,7 +122,7 @@ export function MainLayout() {
   // 관리자가 아닌데 URL로 활동 내역 탭 진입 시 기본 탭으로 이동
   useEffect(() => {
     if (activeTab === "activity" && isAdmin === false) {
-      setActiveTab("portfolio");
+      setActiveTab(DEFAULT_TAB);
     }
   }, [activeTab, isAdmin, setActiveTab]);
 

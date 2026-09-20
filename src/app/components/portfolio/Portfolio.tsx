@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Briefcase, Plus, FolderOpen, Settings } from "lucide-react";
+import { Briefcase, Plus, FolderOpen, Settings, Sparkles } from "lucide-react";
 import type {
   PortfolioResponse,
   StockPrice,
@@ -17,6 +17,7 @@ import {
   type StockWithPrice,
 } from "@/app/services/stockService";
 import { TradeDialog } from "@/app/components/portfolio/TradeDialog";
+import { TradeCaptureDialog } from "@/app/components/portfolio/TradeCaptureDialog";
 import { EditTradeDialog } from "@/app/components/portfolio/EditTradeDialog";
 import { ManagePortfolioDialog } from "@/app/components/portfolio/ManagePortfolioDialog";
 import { PositionList } from "@/app/components/portfolio/PositionList";
@@ -37,6 +38,7 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
   const [tradeDialogStocks, setTradeDialogStocks] = useState<StockWithPrice[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isCaptureDialogOpen, setIsCaptureDialogOpen] = useState(false);
   const [isManagePortfolioOpen, setIsManagePortfolioOpen] = useState(false);
   const [openTradeAfterPortfolio, setOpenTradeAfterPortfolio] = useState(false);
   const [editingTransaction, setEditingTransaction] =
@@ -139,6 +141,14 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
   };
 
   // TradeDialog는 전체 종목 검색이 필요 — 다이얼로그 첫 오픈 시에만 로드
+  const handleCaptureClick = useCallback(() => {
+    if (!currentPortfolioId) {
+      setIsManagePortfolioOpen(true);
+      return;
+    }
+    setIsCaptureDialogOpen(true);
+  }, [currentPortfolioId]);
+
   const handleAddClick = useCallback(() => {
     if (tradeDialogStocks.length === 0) {
       getStocksWithPrice()
@@ -180,6 +190,13 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <CurrencyToggleButton />
+          <button
+            onClick={handleCaptureClick}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-gray-200 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Sparkles className="w-4 h-4 text-indigo-400" />
+            AI로 기록
+          </button>
           <button
             onClick={handleAddClick}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors"
@@ -223,6 +240,12 @@ export function Portfolio({ stockPrices }: PortfolioProps) {
         currentPortfolioId={currentPortfolioId}
         onPortfolioChange={handlePortfolioChange}
         onPortfolioDeleted={handlePortfolioDeleted}
+      />
+      <TradeCaptureDialog
+        open={isCaptureDialogOpen}
+        onOpenChange={setIsCaptureDialogOpen}
+        currentPortfolioId={currentPortfolioId}
+        onCaptureComplete={handleTradeComplete}
       />
       <TradeDialog
         open={isAddDialogOpen}

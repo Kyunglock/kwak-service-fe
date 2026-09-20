@@ -606,3 +606,65 @@ export interface MarketBriefingResponse {
   sentiment: MarketSentiment | null; // 구데이터/LLM 오출력은 null
   articles: MarketBriefingArticle[];
 }
+
+// ── AI 매매기록 (POST /api/v1/trades/capture/*) ──────────────────────────────
+
+/** 초안 한 줄의 상태. READY 만 바로 저장 가능하다. */
+export type TradeDraftStatus = "READY" | "NEEDS_STOCK" | "NEEDS_INPUT";
+
+export interface StockCandidate {
+  stockCd: string;
+  stockNm: string;
+}
+
+export interface TradeDraftItem {
+  lineNo: number;
+  /** AI가 원문에서 읽어낸 종목 표기 */
+  rawName: string;
+  /** DB에서 검증된 티커. 해석 실패 시 null */
+  stockCd: string | null;
+  stockNm: string | null;
+  transType: "BUY" | "SELL";
+  transDt: string | null;
+  qty: number | null;
+  price: number | null;
+  currency: string | null;
+  status: TradeDraftStatus;
+  /** 사용자에게 보여줄 확인 요청 사유 */
+  issue: string | null;
+  candidates: StockCandidate[];
+}
+
+export interface TradeDraftResponse {
+  draftId: string;
+  portfolioId: number;
+  items: TradeDraftItem[];
+  readyCount: number;
+  needsReviewCount: number;
+  notice: string;
+}
+
+export interface TradeConfirmItem {
+  lineNo: number;
+  stockCd: string;
+  transType: "BUY" | "SELL";
+  transDt: string;
+  qty: number;
+  price: number;
+  currency?: string;
+  memo?: string;
+}
+
+export interface TradeConfirmResult {
+  lineNo: number;
+  stockCd: string;
+  saved: boolean;
+  transId: number | null;
+  message: string | null;
+}
+
+export interface TradeConfirmResponse {
+  savedCount: number;
+  failedCount: number;
+  results: TradeConfirmResult[];
+}

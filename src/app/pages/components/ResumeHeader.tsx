@@ -16,7 +16,6 @@ export function ResumeHeader({
   email,
   phone,
   birthYear,
-  photoUrl,
   summary,
 }: ResumeHeaderProps) {
   return (

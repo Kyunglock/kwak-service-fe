@@ -52,7 +52,7 @@ export function useStockPrice(enabled: boolean) {
       }
     });
 
-    eventSource.onerror = (e) => {
+    eventSource.onerror = () => {
       setConnected(false);
       eventSource.close();
       eventSourceRef.current = null;

@@ -1,9 +1,8 @@
-import { Briefcase, FileText } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import { ResumeHeader } from "@/app/pages/components/ResumeHeader";
 import { Section } from "@/app/pages/components/Section";
 
 import { Project } from "@/app/pages/components/Project";
-import { CoverLetter } from "@/app/pages/components/CoverLetter";
 
 export default function Career() {
   return (

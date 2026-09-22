@@ -206,7 +206,7 @@ export function InvestmentCompetition() {
     const savedEntries = localStorage.getItem("competitionEntries");
     if (savedEntries) {
       const entriesList = JSON.parse(savedEntries);
-      const existingIndex = entriesList.findIndex((e: any) => e.id.startsWith("user_"));
+      const existingIndex = entriesList.findIndex((e: { id: string }) => e.id.startsWith("user_"));
       if (existingIndex !== -1) {
         entriesList[existingIndex] = competitionEntry;
       } else {
@@ -431,7 +431,6 @@ export function InvestmentCompetition() {
               <h4 className="text-sm font-semibold text-gray-200 mb-2">보유 종목 ({myPositions.length}개)</h4>
               <div className="space-y-1.5 max-h-60 overflow-y-auto">
                 {myPositions.map((position) => {
-                  const profit = (position.currentPrice - position.buyPrice) * position.quantity;
                   const profitPercent = ((position.currentPrice - position.buyPrice) / position.buyPrice) * 100;
                   
                   return (

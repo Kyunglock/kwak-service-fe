@@ -6,7 +6,6 @@ import {
   TrendingUp,
   BookOpen,
   Quote,
-  DollarSign,
   Loader2,
 } from "lucide-react";
 import {

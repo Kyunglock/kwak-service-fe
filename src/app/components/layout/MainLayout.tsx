@@ -20,7 +20,7 @@ import { InvestorTypeDashboard } from "@/app/components/market/InvestorTypeDashb
 import { ActivityLog } from "@/app/components/activity/ActivityLog";
 import { Portfolio } from "@/app/components/portfolio/Portfolio";
 import { AiAssistant } from "@/app/components/assistant/AiAssistant";
-import { DividendDashboard } from "@/app/components/portfolio/DividendDashboard";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- 아래 숨긴 "응답 내역" 블록 복원용
 import { SurveyStatistics } from "@/app/components/survey/SurveyStatistics";
 import { GuruPortfolio } from "@/app/components/guru/GuruPortfolio";
 import { Tabs, TabsContent } from "@/app/components/ui/layout/tabs";
@@ -36,7 +36,7 @@ const DEFAULT_TAB = "assistant";
 export function MainLayout() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
   const [surveyAnswers, setSurveyAnswers] = useState<Record<
     string,
     string
@@ -55,6 +55,7 @@ export function MainLayout() {
     logMenuMove(activeTab, null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- completedSurveyId 는 숨긴 "응답 내역" 블록에서만 읽는다
   const [completedSurveyId, setCompletedSurveyId] = useState<number | null>(null);
   const [incompleteSurveyCount, setIncompleteSurveyCount] = useState(0);
   // 관리자 여부 (null = 확인 중). 활동 내역 탭은 관리자 전용
@@ -126,8 +127,7 @@ export function MainLayout() {
     }
   }, [activeTab, isAdmin, setActiveTab]);
 
-  const { prices: stockPrices, connected: sseConnected } =
-    useStockPrice(isLoggedIn);
+  const { prices: stockPrices } = useStockPrice(isLoggedIn);
 
   const fetchSurveyCounts = useCallback(async () => {
     try {

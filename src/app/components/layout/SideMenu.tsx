@@ -3,9 +3,7 @@ import { Button } from "@/app/components/ui/form/button";
 import {
   Bot,
   Briefcase,
-  DollarSign,
   ClipboardList,
-  TrendingUp,
   PieChart,
   Crown,
   Sparkles,

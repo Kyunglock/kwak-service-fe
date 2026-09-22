@@ -85,7 +85,9 @@ export function DividendDashboard() {
       const res = await getPortfoliosByUser();
       const list = res.data.data ?? [];
       if (list.length > 0) setPortfolioId((prev) => prev || list[0].portfolioId);
-    } catch {}
+    } catch {
+      // apiClient 인터셉터에서 에러 처리됨
+    }
   }, []);
 
   useEffect(() => { fetchPortfolio(); }, [fetchPortfolio]);
@@ -140,6 +142,7 @@ export function DividendDashboard() {
         setNextDividendInfo(null);
       }
     } catch {
+      // apiClient 인터셉터에서 에러 처리됨
     } finally {
       setLoading(false);
     }

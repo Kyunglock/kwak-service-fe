@@ -1,7 +1,6 @@
-import { Award, GraduationCap, FileText, Briefcase, Code } from "lucide-react";
+import { Award, GraduationCap, Briefcase, Code } from "lucide-react";
 import { ResumeHeader } from "@/app/pages/components/ResumeHeader";
 import { Section } from "@/app/pages/components/Section";
-import { Experience } from "@/app/pages/components/Experience";
 export default function Resume() {
   return (
     <>

@@ -4,7 +4,7 @@ import { Card } from "@/app/components/ui/layout/card";
 import { AlertTriangle, Home, ArrowLeft } from "lucide-react";
 
 export function ErrorPage() {
-  const error = useRouteError() as any;
+  const error = useRouteError() as { status?: number; message?: string } | null;
   const navigate = useNavigate();
 
   const is404 = error?.status === 404;

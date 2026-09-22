@@ -3,7 +3,7 @@ import { Brain, RefreshCw, AlertTriangle, Target, Lightbulb, ChevronDown, Chevro
 import { Card } from "@/app/components/ui/layout/card";
 import { Badge } from "@/app/components/ui/feedback/badge";
 import { requestInsightBuild } from "@/app/services/insightService";
-import type { InsightResultResponse, InsightResultTypeCd } from "@/app/types";
+import type { InsightResultResponse } from "@/app/types";
 
 const RESULT_CARD_TYPES = ["RISK_ASSESSMENT", "PORTFOLIO_ALIGNMENT", "INVESTMENT_RECOMMENDATION"];
 

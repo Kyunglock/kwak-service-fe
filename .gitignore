@@ -7,7 +7,6 @@ dist
 .env.development
 .env.*.local
 
-vite.config.ts
 .understand-anything/
 docs/
 .superpowers/

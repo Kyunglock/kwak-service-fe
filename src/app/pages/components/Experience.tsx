@@ -1,5 +1,3 @@
-import { Briefcase } from 'lucide-react';
-
 interface ExperienceProps {
   company: string;
   position: string;

@@ -32,7 +32,7 @@ interface SurveyProps {
 }
 
 export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpenHandled }: SurveyProps) {
-  const [mySurveyResponses, setMySurveyResponses] = useState<UserSurveyResponseDto>();
+  const [, setMySurveyResponses] = useState<UserSurveyResponseDto>();
   const [surveys, setSurveys] = useState<SurveyWithMyResponse[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);

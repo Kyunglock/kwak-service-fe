@@ -1,7 +1,7 @@
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
 import { Badge } from "@/app/components/ui/feedback/badge";
-import { BarChart3, Users, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Users, CheckCircle2, ArrowLeft } from "lucide-react";
 import type { SurveyStatsDetailResponse } from "@/app/types";
 
 interface SurveyResultProps {

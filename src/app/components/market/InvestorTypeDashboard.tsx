@@ -25,6 +25,8 @@ interface Props {
   onRetakeSurvey?: () => void;
 }
 
+// TODO: MainLayout 이 onRetakeSurvey(설문 다시하기)를 넘기지만 아직 연결돼 있지 않다.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   const [view, setView] = useState<View>("landing");
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItemResponse[]>([]);

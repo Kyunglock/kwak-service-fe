@@ -283,7 +283,9 @@ export function PortfolioAnalysis({
     try {
       const response = await getTransactionsByPortfolio(currentPortfolioId);
       setTransactionsInternal(response.data.data ?? []);
-    } catch {}
+    } catch {
+      // apiClient 인터셉터에서 에러 처리됨
+    }
   }, [isControlled, currentPortfolioId]);
 
   useEffect(() => {

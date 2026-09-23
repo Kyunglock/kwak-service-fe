@@ -1,0 +1,12 @@
+# Playwright E2E 스모크 — 수동 실행 전용.
+# Actions 탭 → E2E → Run workflow 로 돌린다.
+#
+# 검사 로직은 kwak-service-infra 에 있다.
+name: E2E
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    uses: Kyunglock/kwak-service-infra/.github/workflows/e2e-frontend.yml@main

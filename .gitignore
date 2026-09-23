@@ -11,3 +11,7 @@ dist
 docs/
 .superpowers/
 bash.exe.stackdump
+
+# Playwright
+test-results
+playwright-report

@@ -17,6 +17,8 @@ import {
   captureTradeImage,
   captureTradeText,
 } from "@/app/services/tradeCaptureService";
+import { askMarketQuestion } from "@/app/services/marketQuestionService";
+import { detectQuestionIntent } from "./questionIntent";
 import { TradeDraftCard } from "./TradeDraftCard";
 
 /** 서버 상한(4MB)과 맞춘다 — 올리기 전에 걸러 왕복을 줄인다. */
@@ -33,6 +35,7 @@ const EXAMPLES = [
   "어제 애플 10주를 230달러에 샀어",
   "삼성전자 5주 71,000원에 매도했어",
   "엔비디아 2주 매수, 단가는 180.5",
+  "올해 애플 가장 많이 하락했던 날 무슨 일이 있었는지 알려줘",
 ];
 
 type Message =
@@ -123,7 +126,11 @@ export function AiAssistant() {
     const file = imageFile;
     if (!text && !file) return;
 
-    if (!portfolioId) {
+    // 이미지가 있으면 항상 매매기록 경로(스크린샷은 질문일 수 없다).
+    // 질문 경로는 포트폴리오가 필요 없으므로 아래 포트폴리오 가드보다 먼저 갈린다.
+    const isQuestion = !file && detectQuestionIntent(text);
+
+    if (!isQuestion && !portfolioId) {
       push({
         id: nextId(),
         role: "assistant",
@@ -149,6 +156,17 @@ export function AiAssistant() {
     setPending(true);
 
     try {
+      if (isQuestion) {
+        const res = await askMarketQuestion(text);
+        push({
+          id: nextId(),
+          role: "assistant",
+          kind: "text",
+          text: res.data.data.answer,
+        });
+        return;
+      }
+
       // 이미지가 있으면 이미지를 우선한다 — 스크린샷 쪽이 정보량이 많다
       const res = file
         ? await captureTradeImage(portfolioId, file)
@@ -235,7 +253,7 @@ export function AiAssistant() {
           rows={2}
           maxLength={2000}
           disabled={pending}
-          placeholder="무엇을 사고 파셨는지 알려주세요. 증권사 화면을 캡처해 올려도 됩니다."
+          placeholder="무엇을 사고 파셨는지, 혹은 시황을 물어보세요. 증권사 화면을 캡처해 올려도 됩니다."
           className="w-full bg-transparent px-4 pt-3 pb-1 text-sm text-gray-100 placeholder-gray-500 resize-none focus:outline-none disabled:opacity-60"
         />
         <div className="flex items-center justify-between px-3 pb-2">
@@ -315,10 +333,10 @@ export function AiAssistant() {
         <div className="flex-1 flex flex-col justify-center min-h-0">
           <div className="text-center mb-6">
             <h3 className="text-xl sm:text-2xl font-semibold text-gray-100">
-              무엇을 기록할까요?
+              무엇을 도와드릴까요?
             </h3>
             <p className="mt-2 text-sm text-gray-500">
-              말로 알려주시거나 증권사 화면을 캡처해 올려주세요.
+              매매기록을 말이나 화면 캡처로 알려주시거나, 시황을 물어보세요.
             </p>
           </div>
 

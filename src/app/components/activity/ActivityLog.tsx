@@ -19,6 +19,8 @@ const ACTION_META: Record<string, { label: string; cls: string }> = {
   SURVEY_SUBMIT: { label: "설문 제출", cls: "bg-purple-600/80 text-white" },
   PORTFOLIO_CREATE: { label: "포트폴리오 생성", cls: "bg-indigo-600/80 text-white" },
   PORTFOLIO_DELETE: { label: "포트폴리오 삭제", cls: "bg-orange-600/80 text-white" },
+  AI_QA_ASK: { label: "AI 질문", cls: "bg-fuchsia-600/80 text-white" },
+  AI_TRADE_CAPTURE: { label: "AI 매매입력", cls: "bg-teal-600/80 text-white" },
 };
 
 const actionMeta = (a: string) =>
@@ -177,7 +179,10 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
                   {meta.label}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-gray-200">
+                  <p
+                    className="truncate text-sm text-gray-200"
+                    title={log.detail ?? undefined}
+                  >
                     {log.detail ?? log.targetType ?? "-"}
                     {log.targetId && (
                       <span className="ml-1 text-gray-500">({log.targetId})</span>

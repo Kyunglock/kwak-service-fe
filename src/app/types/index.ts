@@ -644,6 +644,14 @@ export interface TradeDraftResponse {
   notice: string;
 }
 
+// 시황 질의응답 (AiAssistant 의 질문 모드)
+export interface MarketQuestionResponse {
+  questionType: string;
+  stockNm: string | null;
+  /** 자연어 답변. JSON 아님 */
+  answer: string;
+}
+
 export interface TradeConfirmItem {
   lineNo: number;
   stockCd: string;

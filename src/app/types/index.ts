@@ -610,7 +610,12 @@ export interface MarketBriefingResponse {
 // ── AI 매매기록 (POST /api/v1/trades/capture/*) ──────────────────────────────
 
 /** 초안 한 줄의 상태. READY 만 바로 저장 가능하다. */
-export type TradeDraftStatus = "READY" | "NEEDS_STOCK" | "NEEDS_INPUT";
+export type TradeDraftStatus =
+  | "READY"
+  | "NEEDS_STOCK"
+  | "NEEDS_INPUT"
+  /** 화면 캡처에 매입일이 없어 날짜를 물어야 하는 상태 */
+  | "NEEDS_DATE";
 
 export interface StockCandidate {
   stockCd: string;

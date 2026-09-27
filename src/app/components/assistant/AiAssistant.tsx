@@ -18,11 +18,18 @@ import {
   captureTradeText,
 } from "@/app/services/tradeCaptureService";
 import { askMarketQuestion } from "@/app/services/marketQuestionService";
+import { prepareImageForUpload } from "@/app/utils/imageResize";
 import { detectQuestionIntent } from "./questionIntent";
 import { TradeDraftCard } from "./TradeDraftCard";
 
-/** 서버 상한(4MB)과 맞춘다 — 올리기 전에 걸러 왕복을 줄인다. */
+/** 서버 상한(4MB)과 맞춘다 — 축소를 거친 뒤의 크기로 잰다. */
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+
+/**
+ * 고르는 시점의 상한. 휴대폰 스크린샷 PNG 는 쉽게 3~5MB 가 되는데, 어차피 축소해서
+ * 보내므로 여기서 미리 막을 이유가 없다. 브라우저가 감당 못 할 정도만 걸러낸다.
+ */
+const MAX_PICKED_IMAGE_BYTES = 20 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = [
   "image/png",
   "image/jpeg",
@@ -94,23 +101,33 @@ export function AiAssistant() {
     setMessages((prev) => [...prev, message]);
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
     setInputError(null);
     if (!file) return;
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       setInputError("png, jpg, webp, gif 이미지만 올릴 수 있어요.");
-      e.target.value = "";
+      input.value = "";
       return;
     }
-    if (file.size > MAX_IMAGE_BYTES) {
-      setInputError("이미지는 4MB 이하만 올릴 수 있어요.");
-      e.target.value = "";
+    if (file.size > MAX_PICKED_IMAGE_BYTES) {
+      setInputError("이미지가 너무 큽니다. 20MB 이하로 올려주세요.");
+      input.value = "";
       return;
     }
-    const url = URL.createObjectURL(file);
+
+    // 보낼 파일을 여기서 확정한다 — 미리보기가 실제로 올라가는 이미지와 같아야 한다
+    const prepared = await prepareImageForUpload(file);
+    if (prepared.size > MAX_IMAGE_BYTES) {
+      setInputError("이미지를 줄여도 4MB가 넘어요. 필요한 부분만 잘라서 올려주세요.");
+      input.value = "";
+      return;
+    }
+
+    const url = URL.createObjectURL(prepared);
     objectUrlsRef.current.push(url);
-    setImageFile(file);
+    setImageFile(prepared);
     setImagePreview(url);
   };
 
@@ -261,7 +278,9 @@ export function AiAssistant() {
             ref={fileInputRef}
             type="file"
             accept={ALLOWED_IMAGE_TYPES.join(",")}
-            onChange={handleFileChange}
+            onChange={(e) => {
+              void handleFileChange(e);
+            }}
             className="hidden"
           />
           <button

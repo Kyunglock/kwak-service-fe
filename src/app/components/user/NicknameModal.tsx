@@ -57,10 +57,10 @@ export function NicknameModal({ onComplete }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-sm rounded-xl bg-slate-800 p-6 shadow-xl">
-        <h2 className="text-lg font-semibold text-white">닉네임을 정해주세요</h2>
-        <p className="mt-1 text-sm text-gray-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#3B2F26]/30">
+      <div className="w-full max-w-sm rounded-xl bg-card border border-border p-6 shadow-float">
+        <h2 className="text-lg font-semibold text-foreground">닉네임을 정해주세요</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
           다른 사용자에게 표시될 이름입니다. (2~12자, 한글/영문/숫자)
         </p>
         <div className="mt-4 flex gap-2">
@@ -70,24 +70,24 @@ export function NicknameModal({ onComplete }: Props) {
             onKeyDown={(e) => e.key === "Enter" && (checked ? handleSave() : handleCheck())}
             maxLength={12}
             placeholder="닉네임 입력"
-            className="flex-1 rounded-lg bg-slate-700 px-3 py-2 text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 rounded-lg bg-input-background border border-border px-3 py-2 text-foreground placeholder-faint-foreground outline-none focus:ring-2 focus:ring-ring/50"
           />
           <button
             onClick={handleCheck}
             disabled={busy || value.length < 2}
-            className="rounded-lg bg-slate-600 px-3 py-2 text-sm text-white hover:bg-slate-500 disabled:opacity-50"
+            className="rounded-lg bg-secondary px-3 py-2 text-sm text-secondary-foreground hover:bg-accent disabled:opacity-50"
           >
             중복확인
           </button>
         </div>
-        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
         {checked && !error && (
-          <p className="mt-2 text-sm text-green-400">사용 가능한 닉네임입니다.</p>
+          <p className="mt-2 text-sm text-success">사용 가능한 닉네임입니다.</p>
         )}
         <button
           onClick={handleSave}
           disabled={!checked || busy}
-          className="mt-4 w-full rounded-lg bg-blue-600 py-2 font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+          className="mt-4 w-full rounded-lg bg-primary py-2 font-medium text-primary-foreground hover:bg-primary-strong disabled:opacity-50"
         >
           저장
         </button>

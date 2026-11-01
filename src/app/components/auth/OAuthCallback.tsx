@@ -21,10 +21,10 @@ export function OAuthCallback() {
   }, [login, navigate]);
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
-        <Loader2 className="w-10 h-10 text-indigo-400 mx-auto mb-4 animate-spin" />
-        <p className="text-gray-300 text-sm">로그인 처리 중...</p>
+        <Loader2 className="w-10 h-10 text-primary mx-auto mb-4 animate-spin" />
+        <p className="text-muted-foreground text-sm">로그인 처리 중...</p>
       </div>
     </div>
   );

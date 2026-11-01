@@ -94,31 +94,31 @@ export function GuruMatchCard({ portfolioItems, guruPortfolios }: Props) {
   const hasPortfolio = portfolioItems.length > 0;
 
   return (
-    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
-      <div className="h-1 bg-gradient-to-r from-indigo-400/90 to-purple-400/60" />
+    <Card className="p-0 gap-0 bg-card border-border overflow-hidden">
+      <div className="h-1 bg-accent" />
       <div className="p-4">
-      <h3 className="font-semibold text-sm mb-1 flex items-center gap-2 text-gray-100">
-        <Crown className="w-4 h-4 text-indigo-400" />
+      <h3 className="font-semibold text-sm mb-1 flex items-center gap-2 text-foreground">
+        <Crown className="w-4 h-4 text-primary" />
         투자 대가 포트폴리오 일치도
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-faint-foreground mb-3">
         내 포트폴리오와 가장 비슷한 투자 대가를 분석합니다
       </p>
 
       {!hasPortfolio ? (
-        <div className="rounded-xl bg-slate-600/40 border border-slate-500/30 p-5 text-center">
-          <Crown className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-          <p className="text-xs text-gray-400">
+        <div className="rounded-xl bg-muted border border-border p-5 text-center">
+          <Crown className="w-8 h-8 text-faint-foreground mx-auto mb-2" />
+          <p className="text-xs text-muted-foreground">
             포트폴리오에 종목을 추가하면
             <br />
             투자 대가와의 일치도를 확인할 수 있습니다
           </p>
         </div>
       ) : legendMatches.length === 0 ? (
-        <div className="rounded-xl bg-slate-600/40 border border-slate-500/30 p-5 text-center">
-          <Crown className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-          <p className="text-xs text-gray-400">
+        <div className="rounded-xl bg-muted border border-border p-5 text-center">
+          <Crown className="w-8 h-8 text-faint-foreground mx-auto mb-2" />
+          <p className="text-xs text-muted-foreground">
             보유 종목과 일치하는 투자 대가가 없습니다
           </p>
         </div>
@@ -129,73 +129,73 @@ export function GuruMatchCard({ portfolioItems, guruPortfolios }: Props) {
             return (
               <div
                 key={inv.id}
-                className={`rounded-xl p-3 border ${isTop ? "bg-indigo-500/10 border-indigo-500/30" : "bg-slate-600/30 border-slate-500/20"}`}
+                className={`rounded-xl p-3 border ${isTop ? "bg-accent border-primary/40" : "bg-muted border-border"}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {isTop && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 border border-indigo-500/30">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-accent text-primary border border-primary/40">
                         최고 일치
                       </span>
                     )}
                     <span
-                      className={`text-sm font-bold ${isTop ? "text-white" : "text-gray-200"}`}
+                      className={`text-sm font-bold ${isTop ? "text-foreground" : "text-foreground"}`}
                     >
                       {inv.nameKo}
                     </span>
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-faint-foreground">
                       {inv.style}
                     </span>
                   </div>
                   <span
-                    className={`text-sm font-bold ${inv.score >= 30 ? "text-indigo-300" : "text-gray-400"}`}
+                    className={`text-sm font-bold ${inv.score >= 30 ? "text-primary" : "text-muted-foreground"}`}
                   >
                     {inv.score}%
                   </span>
                 </div>
 
-                <div className="h-1.5 rounded-full bg-slate-600/60 overflow-hidden mb-2">
+                <div className="h-1.5 rounded-full bg-muted overflow-hidden mb-2">
                   <div
-                    className={`h-full rounded-full transition-all duration-700 ${isTop ? "bg-indigo-400" : "bg-slate-400/50"}`}
+                    className={`h-full rounded-full transition-all duration-700 ${isTop ? "bg-primary" : "bg-muted"}`}
                     style={{ width: `${inv.score}%` }}
                   />
                 </div>
 
                 {inv.matchedHoldings.length > 0 ? (
                   <div className="flex items-center gap-1 flex-wrap">
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-faint-foreground">
                       공통 보유:
                     </span>
                     {inv.matchedHoldings.map((sym) => (
                       <span
                         key={sym}
-                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isTop ? "bg-indigo-500/20 text-indigo-300" : "bg-slate-500/30 text-gray-300"}`}
+                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isTop ? "bg-accent text-primary" : "bg-muted text-muted-foreground"}`}
                       >
                         {sym}
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[10px] text-gray-600">
+                  <p className="text-[10px] text-faint-foreground">
                     공통 보유 종목 없음
                   </p>
                 )}
 
                 {isTop && (inv.philosophy || inv.quote) && (
-                  <div className="mt-3 space-y-2 border-t border-indigo-500/20 pt-3">
+                  <div className="mt-3 space-y-2 border-t border-primary/40 pt-3">
                     {inv.philosophy && (
                       <div>
-                        <p className="text-[10px] font-semibold text-indigo-400 mb-0.5">
+                        <p className="text-[10px] font-semibold text-primary mb-0.5">
                           투자 철학
                         </p>
-                        <p className="text-[11px] text-gray-300 leading-relaxed">
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
                           {inv.philosophy}
                         </p>
                       </div>
                     )}
                     {inv.quote && (
-                      <div className="bg-indigo-500/10 rounded-lg px-3 py-2">
-                        <p className="text-[11px] text-indigo-200 leading-relaxed italic">
+                      <div className="bg-accent rounded-lg px-3 py-2">
+                        <p className="text-[11px] text-primary leading-relaxed italic">
                           "{inv.quote}"
                         </p>
                       </div>

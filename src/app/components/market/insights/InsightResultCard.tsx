@@ -24,10 +24,10 @@ const TYPE_META: Record<
   RISK_ASSESSMENT: {
     icon: "⚠️",
     Icon: AlertTriangle,
-    colorClass: "bg-orange-900/30",
-    borderClass: "border-orange-700/40",
-    titleClass: "text-orange-400",
-    badgeClass: "bg-orange-700/60",
+    colorClass: "bg-warning/5",
+    borderClass: "border-warning/30",
+    titleClass: "text-warning",
+    badgeClass: "bg-warning/15",
     label: "리스크 평가",
     subtitle: "포트폴리오의 위험 수준을 분석합니다",
     guide: {
@@ -43,10 +43,10 @@ const TYPE_META: Record<
   PORTFOLIO_ALIGNMENT: {
     icon: "🎯",
     Icon: Target,
-    colorClass: "bg-purple-900/30",
-    borderClass: "border-purple-700/40",
-    titleClass: "text-purple-400",
-    badgeClass: "bg-purple-700/60",
+    colorClass: "bg-accent",
+    borderClass: "border-primary/40",
+    titleClass: "text-primary",
+    badgeClass: "bg-accent",
     label: "포트폴리오 정합성",
     subtitle: "투자 성향과 현재 구성의 일치도를 측정합니다",
     guide: {
@@ -62,10 +62,10 @@ const TYPE_META: Record<
   INVESTMENT_RECOMMENDATION: {
     icon: "💡",
     Icon: Lightbulb,
-    colorClass: "bg-blue-900/30",
-    borderClass: "border-blue-700/40",
-    titleClass: "text-blue-400",
-    badgeClass: "bg-blue-700/60",
+    colorClass: "bg-accent",
+    borderClass: "border-primary/40",
+    titleClass: "text-primary",
+    badgeClass: "bg-accent",
     label: "투자 추천",
     subtitle: "현재 성향과 시장 상황에 맞는 액션을 제시합니다",
     guide: {
@@ -103,7 +103,7 @@ function InsightSection({ item }: { item: InsightResultResponse }) {
           <span className="text-base">{meta.icon}</span>
           <div>
             <p className={`text-xs font-bold ${meta.titleClass}`}>{meta.label}</p>
-            <p className="text-[10px] text-gray-500">{meta.subtitle}</p>
+            <p className="text-[10px] text-faint-foreground">{meta.subtitle}</p>
           </div>
         </div>
         {expanded ? (
@@ -116,30 +116,30 @@ function InsightSection({ item }: { item: InsightResultResponse }) {
       {expanded && (
         <div className="px-3 pb-3 space-y-3">
           {/* AI 분석 내용 */}
-          <div className="bg-black/20 rounded-lg p-3">
+          <div className="bg-muted rounded-lg p-3">
             <p className={`text-[10px] font-semibold mb-2 ${meta.titleClass}`}>🤖 AI 분석 결과</p>
             {contentLines.length > 0 ? (
               <ul className="space-y-1.5">
                 {contentLines.map((line, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className={`mt-0.5 text-xs flex-shrink-0 ${meta.titleClass}`}>▸</span>
-                    <p className="text-xs text-gray-200 leading-relaxed">{line}</p>
+                    <p className="text-xs text-foreground leading-relaxed">{line}</p>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-gray-400 leading-relaxed whitespace-pre-line">{item.content}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">{item.content}</p>
             )}
           </div>
 
           {/* 가이드 포인트 */}
-          <div className="rounded-lg bg-black/10 border border-white/5 p-3">
+          <div className="rounded-lg bg-muted border border-border p-3">
             <p className={`text-[10px] font-semibold mb-2 ${meta.titleClass}`}>📌 {meta.guide.title}</p>
             <ul className="space-y-1.5">
               {meta.guide.points.map((point, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="mt-0.5 text-[10px] text-gray-500 flex-shrink-0">{i + 1}.</span>
-                  <p className="text-[11px] text-gray-400 leading-relaxed">{point}</p>
+                  <span className="mt-0.5 text-[10px] text-faint-foreground flex-shrink-0">{i + 1}.</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{point}</p>
                 </li>
               ))}
             </ul>
@@ -175,26 +175,26 @@ export function InsightResultCard({ results }: Props) {
     : null;
 
   return (
-    <Card className="p-4 bg-slate-700 border-slate-600">
+    <Card className="p-4 bg-card border-border">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-sm flex items-center gap-2 text-gray-100">
-            <Brain className="w-4 h-4 text-emerald-400" />
+          <h3 className="font-semibold text-sm flex items-center gap-2 text-foreground">
+            <Brain className="w-4 h-4 text-primary" />
             AI 인사이트 분석
             {displayResults.length > 0 && (
-              <Badge className="ml-1 text-white text-[10px] bg-emerald-600/80">
+              <Badge className="ml-1 text-primary text-[10px] bg-accent">
                 {displayResults.length}개 섹션
               </Badge>
             )}
           </h3>
-          <p className="text-[10px] text-gray-500 mt-0.5 ml-6">
+          <p className="text-[10px] text-faint-foreground mt-0.5 ml-6">
             포트폴리오 + 설문 데이터를 종합 분석합니다
           </p>
         </div>
         <button
           onClick={handleBuildContext}
           disabled={building}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-500 text-white transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary hover:bg-primary-strong disabled:bg-muted text-primary-foreground transition-colors flex-shrink-0"
         >
           <RefreshCw className={`w-3 h-3 ${building ? "animate-spin" : ""}`} />
           {building ? "분석 중..." : "결과보기"}
@@ -207,7 +207,7 @@ export function InsightResultCard({ results }: Props) {
             <InsightSection key={item.resultTypeCd} item={item} />
           ))}
           {latestAt && (
-            <p className="text-[10px] text-gray-500 text-right pt-1">
+            <p className="text-[10px] text-faint-foreground text-right pt-1">
               마지막 분석: {new Date(latestAt).toLocaleString("ko-KR")}
             </p>
           )}
@@ -216,9 +216,9 @@ export function InsightResultCard({ results }: Props) {
         <div className="space-y-3">
           {/* 빈 상태 안내 */}
           <div className="flex flex-col items-center justify-center py-4 gap-2 text-center">
-            <Brain className="w-10 h-10 text-slate-500" />
-            <p className="text-sm text-gray-300 font-medium">분석 전</p>
-            <p className="text-xs text-gray-400">
+            <Brain className="w-10 h-10 text-faint-foreground" />
+            <p className="text-sm text-muted-foreground font-medium">분석 전</p>
+            <p className="text-xs text-muted-foreground">
               설문을 완료하고 포트폴리오를 등록한 후
               <br />
               결과보기 버튼을 눌러 AI 분석을 시작하세요.
@@ -232,14 +232,14 @@ export function InsightResultCard({ results }: Props) {
                   <span className="text-sm">{meta.icon}</span>
                   <div>
                     <p className={`text-xs font-bold ${meta.titleClass}`}>{meta.label}</p>
-                    <p className="text-[10px] text-gray-500">{meta.subtitle}</p>
+                    <p className="text-[10px] text-faint-foreground">{meta.subtitle}</p>
                   </div>
                 </div>
                 <ul className="space-y-1">
                   {meta.guide.points.slice(0, 2).map((point, i) => (
                     <li key={i} className="flex items-start gap-1.5">
-                      <span className="text-[10px] text-gray-600 flex-shrink-0 mt-0.5">{i + 1}.</span>
-                      <p className="text-[10px] text-gray-500 leading-relaxed">{point}</p>
+                      <span className="text-[10px] text-faint-foreground flex-shrink-0 mt-0.5">{i + 1}.</span>
+                      <p className="text-[10px] text-faint-foreground leading-relaxed">{point}</p>
                     </li>
                   ))}
                 </ul>

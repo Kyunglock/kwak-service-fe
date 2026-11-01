@@ -15,28 +15,28 @@ export function SentimentIndexCard({ score }: Props) {
     : "😱 극도의 공포";
 
   return (
-    <Card className="p-4 bg-gradient-to-br from-indigo-600 to-purple-700 text-white border-0">
+    <Card className="p-4 bg-card text-foreground border border-border shadow-paper">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5" />
+          <Activity className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-sm">투자 심리 지수</h3>
         </div>
-        <Badge className="bg-white/20 text-white border-0">실시간</Badge>
+        <Badge className="bg-accent text-primary border-0">실시간</Badge>
       </div>
 
       <div className="text-center mb-3">
         <div className="text-5xl font-bold mb-1">{score}</div>
-        <div className="text-xs opacity-90">{label}</div>
+        <div className="text-xs text-muted-foreground">{label}</div>
       </div>
 
-      <div className="relative h-3 bg-white/20 rounded-full overflow-hidden">
+      <div className="relative h-3 bg-muted rounded-full overflow-hidden">
         <div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all"
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-down via-warning to-up transition-all"
           style={{ width: `${score}%` }}
         />
       </div>
 
-      <div className="flex justify-between text-xs mt-2 opacity-75">
+      <div className="flex justify-between text-xs mt-2 text-faint-foreground">
         <span>공포</span>
         <span>탐욕</span>
       </div>

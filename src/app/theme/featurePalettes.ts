@@ -27,3 +27,23 @@ export const FORTUNE_TONES = {
   focus: 'focus:border-[#94660F]/60',
   surface: 'bg-[#F5EAD2]/60',
 } as const;
+
+/**
+ * 성격 MBTI 4기질 색 (NT 보라 / NF 초록 / SJ 파랑 / SP 호박). 예전 그라데이션 히어로를 같은 계열의 단색 틴트로 바꿨다.
+ * hero=히어로·강조 면, text=강조 글자, bar=게이지 막대, ring=선택 링, border=테두리.
+ */
+export const MBTI_TYPE_TONES: Record<'NT' | 'NF' | 'SJ' | 'SP', { hero: string; text: string; bar: string; ring: string; border: string }> = {
+  NT: { hero: 'bg-[#F1E8F3]', text: 'text-[#764A88]', bar: 'bg-[#764A88]', ring: 'ring-[#764A88]/30', border: 'border-[#764A88]/25' },
+  NF: { hero: 'bg-[#E8F0E6]', text: 'text-[#4F6F50]', bar: 'bg-[#4F6F50]', ring: 'ring-[#4F6F50]/30', border: 'border-[#4F6F50]/25' },
+  SJ: { hero: 'bg-[#E5ECF4]', text: 'text-[#3F6290]', bar: 'bg-[#3F6290]', ring: 'ring-[#3F6290]/30', border: 'border-[#3F6290]/25' },
+  SP: { hero: 'bg-[#F6ECD6]', text: 'text-[#8A5E0D]', bar: 'bg-[#8A5E0D]', ring: 'ring-[#8A5E0D]/30', border: 'border-[#8A5E0D]/25' },
+};
+
+/** 투자 MBTI(투자 성향) 정체성 색 — 분홍 계열을 크림에 맞춘 톤. */
+export const INVEST_MBTI_TONE = {
+  text: 'text-[#9A4A61]',
+  bar: 'bg-[#9A4A61]',
+  surface: 'bg-[#F5E3E7]',
+  border: 'border-[#9A4A61]/30',
+  hover: 'hover:bg-[#F5E3E7]',
+} as const;

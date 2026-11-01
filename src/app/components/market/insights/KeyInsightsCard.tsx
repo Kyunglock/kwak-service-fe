@@ -22,31 +22,31 @@ export function KeyInsightsCard({ insightResult }: Props) {
   const displayLines = !content || isStatusMessage ? FALLBACK_INSIGHTS : lines;
 
   return (
-    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
-      <div className="h-1 bg-gradient-to-r from-amber-400/90 to-yellow-400/60" />
+    <Card className="p-0 gap-0 bg-card border-border overflow-hidden">
+      <div className="h-1 bg-accent" />
       <div className="p-4">
-        <h3 className="font-semibold text-sm mb-3 flex items-center justify-between text-gray-100">
+        <h3 className="font-semibold text-sm mb-3 flex items-center justify-between text-foreground">
           <span className="flex items-center gap-2">
-            <span className="text-amber-400">💡</span>
+            <span>💡</span>
             주요 발견
           </span>
           {insightResult && !isStatusMessage && (
-            <span className="text-[10px] font-normal text-gray-500">AI 분석</span>
+            <span className="text-[10px] font-normal text-faint-foreground">AI 분석</span>
           )}
         </h3>
 
         {isStatusMessage ? (
           <div className="flex flex-col items-center justify-center py-3 gap-1.5 text-center">
-            <p className="text-xs text-amber-300">{content}</p>
-            <p className="text-[11px] text-gray-500">
+            <p className="text-xs text-foreground">{content}</p>
+            <p className="text-[11px] text-faint-foreground">
               결과보기 버튼을 다시 눌러 분석을 갱신하세요.
             </p>
           </div>
         ) : (
           <ul className="space-y-2.5 text-xs">
             {displayLines.map((text, i) => (
-              <li key={i} className="flex items-start gap-2 text-gray-300">
-                <span className="text-amber-400/80 mt-0.5 flex-shrink-0">•</span>
+              <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                 <span className="leading-relaxed">{text}</span>
               </li>
             ))}

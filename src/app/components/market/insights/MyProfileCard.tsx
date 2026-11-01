@@ -28,14 +28,14 @@ export function MyProfileCard({ insightResult }: Props) {
   const profileDescription = lines.slice(1).join(" · ");
 
   return (
-    <Card className="p-4 bg-slate-700 border-slate-600">
-      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
-        <UserCircle className="w-4 h-4 text-indigo-400" />
+    <Card className="p-4 bg-card border-border">
+      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-foreground">
+        <UserCircle className="w-4 h-4 text-primary" />
         나의 투자 성향
         {!loading && (
           <Badge
-            className={`ml-auto text-white text-[10px] ${
-              items.length > 0 ? "bg-green-600/80" : "bg-slate-500/80"
+            className={`ml-auto text-foreground text-[10px] ${
+              items.length > 0 ? "bg-success/15 text-success" : "bg-muted"
             }`}
           >
             {items.length > 0 ? "설문 완료" : "설문 미완료"}
@@ -45,28 +45,28 @@ export function MyProfileCard({ insightResult }: Props) {
 
       {/* 투자 성향 요약 */}
       {insightResult ? (
-        <div className="flex items-center gap-3 p-3 bg-indigo-900/40 rounded-lg border border-indigo-700/50">
-          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-5 h-5 text-white" />
+        <div className="flex items-center gap-3 p-3 bg-accent rounded-lg border border-primary/40">
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <p className="font-bold text-sm text-indigo-300">
+            <p className="font-bold text-sm text-primary">
               {profileType}
-              <span className="ml-1.5 text-[10px] font-normal text-indigo-400">AI 분석</span>
+              <span className="ml-1.5 text-[10px] font-normal text-primary">AI 분석</span>
             </p>
             {profileDescription && (
-              <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                 {profileDescription}
               </p>
             )}
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-3 p-3 bg-slate-600/40 rounded-lg border border-slate-500/50">
-          <div className="w-10 h-10 rounded-full bg-slate-500 flex items-center justify-center flex-shrink-0">
-            <UserCircle className="w-5 h-5 text-slate-300" />
+        <div className="flex items-center gap-3 p-3 bg-muted rounded-lg border border-border">
+          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+            <UserCircle className="w-5 h-5 text-muted-foreground" />
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             결과보기를 눌러 포트폴리오 분석을 실행하면
             <br />나의 투자 성향을 확인할 수 있습니다.
           </p>
@@ -76,15 +76,15 @@ export function MyProfileCard({ insightResult }: Props) {
       {/* 설문 점수 바 */}
       {loading ? (
         <div className="space-y-2.5 mt-3 animate-pulse">
-          <div className="h-4 bg-slate-600 rounded w-full" />
-          <div className="h-4 bg-slate-600 rounded w-5/6" />
-          <div className="h-4 bg-slate-600 rounded w-4/6" />
+          <div className="h-4 bg-muted rounded w-full" />
+          <div className="h-4 bg-muted rounded w-5/6" />
+          <div className="h-4 bg-muted rounded w-4/6" />
         </div>
       ) : items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-4 gap-2 text-center">
-          <UserCircle className="w-10 h-10 text-slate-500" />
-          <p className="text-sm text-gray-300 font-medium">나의 투자 성향 분석</p>
-          <p className="text-xs text-gray-400">
+          <UserCircle className="w-10 h-10 text-faint-foreground" />
+          <p className="text-sm text-muted-foreground font-medium">나의 투자 성향 분석</p>
+          <p className="text-xs text-muted-foreground">
             투자 성향 설문을 완료하면
             <br />
             나의 투자 프로필을 확인할 수 있습니다.
@@ -95,12 +95,12 @@ export function MyProfileCard({ insightResult }: Props) {
           {items.map((item) => (
             <div key={item.description}>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs text-gray-300">{item.description}</span>
-                <span className="text-xs font-semibold text-gray-100">{item.score}</span>
+                <span className="text-xs text-muted-foreground">{item.description}</span>
+                <span className="text-xs font-semibold text-foreground">{item.score}</span>
               </div>
-              <div className="w-full bg-slate-600 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
-                  className="h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
+                  className="h-2 rounded-full bg-primary transition-all"
                   style={{ width: `${item.score}%` }}
                 />
               </div>

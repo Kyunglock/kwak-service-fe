@@ -46,4 +46,5 @@ export const INVEST_MBTI_TONE = {
   surface: 'bg-[#F5E3E7]',
   border: 'border-[#9A4A61]/30',
   hover: 'hover:bg-[#F5E3E7]',
+  hoverBorder: 'hover:border-[#9A4A61]/50',
 } as const;

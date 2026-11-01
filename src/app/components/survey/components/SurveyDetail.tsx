@@ -48,21 +48,21 @@ export function SurveyDetail({
           variant="ghost"
           size="sm"
           onClick={onBackToList}
-          className="gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm font-medium text-gray-200 hover:border-slate-500 hover:bg-slate-700 hover:text-white"
+          className="gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-foreground hover:border-border hover:bg-accent hover:text-foreground"
         >
           <ArrowLeft className="w-4 h-4" />
           목록
         </Button>
-        <h2 className="text-lg font-semibold text-gray-100 flex-1">
+        <h2 className="text-lg font-semibold text-foreground flex-1">
           {surveyDetail.surveyName}
         </h2>
         {isEditMode && (
-          <Badge className="bg-amber-600 text-white text-xs">수정</Badge>
+          <Badge className="bg-warning text-primary-foreground text-xs">수정</Badge>
         )}
       </div>
 
       <div
-        className={`border rounded-lg p-3 text-sm ${isEditMode ? "bg-amber-950 border-amber-800 text-amber-300" : "bg-cyan-950 border-cyan-800 text-cyan-300"}`}
+        className={`border rounded-lg p-3 text-sm ${isEditMode ? "bg-warning/10 border-warning/30 text-warning" : "bg-accent border-primary/40 text-primary"}`}
       >
         <p className="font-medium mb-1">
           {isEditMode ? "응답 수정" : "AI가 생성한 설문"}
@@ -74,13 +74,13 @@ export function SurveyDetail({
         </p>
       </div>
 
-      <Card className="p-4 bg-slate-700 border-slate-600">
+      <Card className="p-4 bg-card border-border">
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-gray-300">
+            <span className="text-xs text-muted-foreground">
               질문 {currentStep + 1} / {surveyDetail.questions.length}
             </span>
-            <span className="text-xs font-medium text-cyan-400">
+            <span className="text-xs font-medium text-primary">
               {Math.round(progress)}%
             </span>
           </div>
@@ -89,7 +89,7 @@ export function SurveyDetail({
 
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-sm mb-4 leading-relaxed text-gray-100">
+            <h3 className="font-semibold text-sm mb-4 leading-relaxed text-foreground">
               {currentQuestion.questionText}
             </h3>
 
@@ -110,10 +110,10 @@ export function SurveyDetail({
                       key={option.optionId}
                       className={`flex items-start space-x-3 p-3 rounded-lg border-2 transition-colors ${
                         isSelected
-                          ? "border-cyan-500 bg-cyan-950/50"
+                          ? "border-primary/40 bg-accent"
                           : isOriginal
-                            ? "border-amber-600/50 bg-amber-950/20"
-                            : "border-slate-600 bg-slate-600/30"
+                            ? "border-warning/40 bg-warning/5"
+                            : "border-border bg-muted"
                       }`}
                     >
                       <RadioGroupItem
@@ -123,17 +123,17 @@ export function SurveyDetail({
                       />
                       <Label
                         htmlFor={`option-${option.optionId}`}
-                        className="flex-1 text-sm cursor-pointer leading-relaxed text-gray-100"
+                        className="flex-1 text-sm cursor-pointer leading-relaxed text-foreground"
                       >
                         <span className="flex items-center gap-2">
                           {option.optionText}
                           {isOriginal && !isSelected && (
-                            <span className="text-[10px] text-amber-400 bg-amber-900/40 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] text-warning bg-warning/15 px-1.5 py-0.5 rounded">
                               이전 선택
                             </span>
                           )}
                           {isOriginal && isSelected && (
-                            <span className="text-[10px] text-cyan-400 bg-cyan-900/40 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] text-primary bg-accent px-1.5 py-0.5 rounded">
                               현재 선택
                             </span>
                           )}
@@ -152,7 +152,7 @@ export function SurveyDetail({
         {currentStep > 0 && (
           <Button
             onClick={onPrevious}
-            className="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-semibold"
+            className="flex-1 bg-muted hover:bg-accent text-foreground font-semibold"
           >
             이전
           </Button>
@@ -160,7 +160,7 @@ export function SurveyDetail({
         <Button
           onClick={onNext}
           disabled={!currentAnswer || submitting}
-          className="flex-1 bg-cyan-600 hover:bg-cyan-700"
+          className="flex-1 bg-primary hover:bg-primary-strong"
         >
           {submitting
             ? "제출 중..."

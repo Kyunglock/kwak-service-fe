@@ -2,6 +2,7 @@ import { Fingerprint, RefreshCcw, RefreshCw, Sparkles } from "lucide-react";
 import { Card } from "@/app/components/ui/layout/card";
 import { Button } from "@/app/components/ui/form/button";
 import type { InsightResultResponse } from "@/app/types";
+import { INVEST_MBTI_TONE, MBTI_TYPE_TONES } from "@/app/theme/featurePalettes";
 
 interface Props {
   insightResult: InsightResultResponse | null;
@@ -13,14 +14,10 @@ interface Props {
 /** 원점수(25~100) → 강도 %(0~100). 50%가 판정 경계(원점수 62.5). */
 const strength = (raw: number) => Math.min(100, Math.max(0, ((raw - 25) / 75) * 100));
 
-// 성격 MBTI 4그룹 컬러 (NT 보라 / NF 초록 / SJ 파랑 / SP 앰버)
+// 성격 MBTI 4그룹 컬러 (NT 보라 / NF 초록 / SJ 파랑 / SP 앰버) — 색은 featurePalettes.ts
 function personalityTheme(code: string) {
-  const nt = { hero: "from-purple-500/25 via-purple-700/10", text: "text-purple-300", bar: "bg-purple-500", ring: "ring-purple-400/30" };
-  const nf = { hero: "from-emerald-500/25 via-emerald-700/10", text: "text-emerald-300", bar: "bg-emerald-500", ring: "ring-emerald-400/30" };
-  const sj = { hero: "from-blue-500/25 via-blue-700/10", text: "text-blue-300", bar: "bg-blue-500", ring: "ring-blue-400/30" };
-  const sp = { hero: "from-amber-500/25 via-amber-700/10", text: "text-amber-300", bar: "bg-amber-500", ring: "ring-amber-400/30" };
-  if (code.includes("N")) return code.includes("T") ? nt : nf;
-  return code.includes("J") ? sj : sp;
+  if (code.includes("N")) return code.includes("T") ? MBTI_TYPE_TONES.NT : MBTI_TYPE_TONES.NF;
+  return code.includes("J") ? MBTI_TYPE_TONES.SJ : MBTI_TYPE_TONES.SP;
 }
 
 interface Gauge {
@@ -38,17 +35,17 @@ function GaugeRow({ g, barClass, textClass }: { g: Gauge; barClass: string; text
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[13px]">
-        <span className={g.leftActive ? `font-bold ${textClass}` : "text-gray-500"}>{g.left}</span>
-        <span className={!g.leftActive ? `font-bold ${textClass}` : "text-gray-500"}>{g.right}</span>
+        <span className={g.leftActive ? `font-bold ${textClass}` : "text-faint-foreground"}>{g.left}</span>
+        <span className={!g.leftActive ? `font-bold ${textClass}` : "text-faint-foreground"}>{g.right}</span>
       </div>
-      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-slate-700/70">
+      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-card">
         <div
           className={`absolute inset-y-0 rounded-full ${barClass} opacity-90 transition-all duration-700`}
           style={{ left: `${fillLeft}%`, width: `${fillWidth}%` }}
         />
-        <div className="absolute left-1/2 top-0 h-full w-px bg-white/25" />
+        <div className="absolute left-1/2 top-0 h-full w-px bg-muted" />
         <div
-          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-slate-800 bg-white shadow-md transition-all duration-700"
+          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-border bg-card shadow-paper transition-all duration-700"
           style={{ left: `${pos}%` }}
         />
       </div>
@@ -382,36 +379,36 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
   /* ---------- 설문 미완료 ---------- */
   if (isSurveyMissing) {
     return (
-      <Card className="p-6 gap-0 border-slate-700/60 bg-slate-800/80 shadow-xl">
+      <Card className="p-6 gap-0 border-border bg-card shadow-paper">
         <div className="mb-6 flex items-center gap-2">
-          <Fingerprint className="h-4 w-4 text-pink-400" />
-          <h3 className="text-base font-semibold text-gray-100">나의 MBTI</h3>
+          <Fingerprint className={`h-4 w-4 ${INVEST_MBTI_TONE.text}`} />
+          <h3 className="text-base font-semibold text-foreground">나의 MBTI</h3>
         </div>
         <div className="flex flex-col items-center justify-center gap-3 py-6 text-center">
           <div className="relative">
-            <div className={`absolute inset-0 rounded-full bg-pink-500/30 blur-xl ${isBuilding ? "animate-pulse" : ""}`} />
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-pink-500/30 bg-gradient-to-br from-pink-500/20 to-rose-600/10 text-4xl">
+            <div className={`absolute inset-0 rounded-full ${INVEST_MBTI_TONE.surface} ${isBuilding ? "animate-pulse" : ""}`} />
+            <div className={`relative flex h-20 w-20 items-center justify-center rounded-full border ${INVEST_MBTI_TONE.border} ${INVEST_MBTI_TONE.surface} text-4xl`}>
               🧬
             </div>
           </div>
           {isBuilding ? (
             <>
-              <p className="flex items-center gap-2 text-base font-semibold text-gray-100">
+              <p className="flex items-center gap-2 text-base font-semibold text-foreground">
                 <RefreshCw className="h-3.5 w-3.5 animate-spin" /> MBTI 분석 중...
               </p>
-              <p className="text-base leading-relaxed text-gray-400">설문 응답을 분석하고 있어요.<br />잠시만 기다려 주세요.</p>
+              <p className="text-base leading-relaxed text-muted-foreground">설문 응답을 분석하고 있어요.<br />잠시만 기다려 주세요.</p>
             </>
           ) : (
             <>
-              <p className="text-base font-semibold text-gray-100">아직 나의 유형을 몰라요</p>
-              <p className="text-base leading-relaxed text-gray-400">
+              <p className="text-base font-semibold text-foreground">아직 나의 유형을 몰라요</p>
+              <p className="text-base leading-relaxed text-muted-foreground">
                 통합 설문(44문항)을 완료하면
                 <br />
                 일반 MBTI와 투자 MBTI를 함께 알려드려요.
               </p>
               {onRetakeSurvey && (
                 <Button variant="outline" size="sm" onClick={onRetakeSurvey}
-                        className="mt-2 gap-1.5 border-pink-500/50 text-base text-pink-300 hover:bg-pink-900/30">
+                        className={`mt-2 gap-1.5 ${INVEST_MBTI_TONE.border} text-base ${INVEST_MBTI_TONE.text} ${INVEST_MBTI_TONE.hover}`}>
                   <RefreshCcw className="h-3.5 w-3.5" /> 설문 하러 가기
                 </Button>
               )}
@@ -425,22 +422,22 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
   /* ---------- 구포맷 결과 — 새 문항 반영 전 ---------- */
   if (isLegacy) {
     return (
-      <Card className="p-6 gap-0 border-slate-700/60 bg-slate-800/80 shadow-xl">
+      <Card className="p-6 gap-0 border-border bg-card shadow-paper">
         <div className="mb-4 flex items-center gap-2">
-          <Fingerprint className="h-4 w-4 text-pink-400" />
-          <h3 className="text-base font-semibold text-gray-100">나의 MBTI</h3>
+          <Fingerprint className={`h-4 w-4 ${INVEST_MBTI_TONE.text}`} />
+          <h3 className="text-base font-semibold text-foreground">나의 MBTI</h3>
         </div>
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <span className="text-4xl">✨</span>
-          <p className="text-base font-semibold text-gray-100">검사가 새로워졌어요</p>
-          <p className="text-base leading-relaxed text-gray-400">
+          <p className="text-base font-semibold text-foreground">검사가 새로워졌어요</p>
+          <p className="text-base leading-relaxed text-muted-foreground">
             성격 MBTI 문항이 추가되어 44문항 통합 검사가 됐어요.
             <br />
             다시 검사하면 일반 MBTI와 투자 MBTI를 함께 볼 수 있어요.
           </p>
           {onRetakeSurvey && (
             <Button variant="outline" size="sm" onClick={onRetakeSurvey}
-                    className="mt-2 gap-1.5 border-pink-500/50 text-base text-pink-300 hover:bg-pink-900/30">
+                    className={`mt-2 gap-1.5 ${INVEST_MBTI_TONE.border} text-base ${INVEST_MBTI_TONE.text} ${INVEST_MBTI_TONE.hover}`}>
               <RefreshCcw className="h-3.5 w-3.5" /> 새 검사 하러 가기
             </Button>
           )}
@@ -451,40 +448,40 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
 
   /* ---------- V2 결과 ---------- */
   return (
-    <Card className="p-0 gap-0 overflow-hidden border-slate-700/60 bg-slate-800/80 shadow-xl">
+    <Card className="p-0 gap-0 overflow-hidden border-border bg-card shadow-paper">
       {/* HERO — 일반 MBTI (주) */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${theme.hero} to-slate-800/70`}>
+      <div className={`relative overflow-hidden ${theme.hero}`}>
         <div className="relative p-5">
           <div className="mb-4 flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold tracking-wide text-gray-200/90">
-              <Fingerprint className="h-3.5 w-3.5 text-pink-300" /> 나의 MBTI
+            <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold tracking-wide text-foreground">
+              <Fingerprint className={`h-3.5 w-3.5 ${INVEST_MBTI_TONE.text}`} /> 나의 MBTI
             </span>
             {isBuilding && (
-              <span className="inline-flex items-center gap-1.5 text-[13px] text-gray-300">
+              <span className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
                 <RefreshCw className="h-3 w-3 animate-spin" /> 갱신 중
               </span>
             )}
           </div>
           {hasPersonality ? (
             <div className="flex items-center gap-4">
-              <div className={`flex h-[84px] w-[112px] flex-shrink-0 items-center justify-center rounded-2xl ${theme.bar} shadow-xl ring-4 ${theme.ring}`}>
-                <span className="text-[34px] font-black tracking-[0.08em] text-white drop-shadow-sm">{pCode}</span>
+              <div className={`flex h-[84px] w-[112px] flex-shrink-0 items-center justify-center rounded-2xl ${theme.bar} shadow-paper ring-4 ${theme.ring}`}>
+                <span className="text-[34px] font-black tracking-[0.08em] text-primary-foreground">{pCode}</span>
               </div>
               <div className="min-w-0 flex-1">
                 <p className={`text-2xl font-extrabold leading-tight ${theme.text}`}>{pAlias}</p>
-                <p className="mt-1.5 text-base text-gray-300/85">나의 성격 유형이에요. 아래에서 투자 성향과 함께 확인해 보세요.</p>
+                <p className="mt-1.5 text-base text-muted-foreground">나의 성격 유형이에요. 아래에서 투자 성향과 함께 확인해 보세요.</p>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-4 rounded-xl border border-pink-500/30 bg-pink-500/10 p-4">
+            <div className={`flex items-center gap-4 rounded-xl border ${INVEST_MBTI_TONE.border} ${INVEST_MBTI_TONE.surface} p-4`}>
               <span className="text-3xl">✨</span>
               <div className="min-w-0 flex-1">
-                <p className="text-base font-semibold text-gray-100">성격 MBTI 문항이 새로 추가됐어요</p>
-                <p className="mt-0.5 text-[14px] text-gray-300/85">다시 검사하면 일반 MBTI까지 함께 볼 수 있어요.</p>
+                <p className="text-base font-semibold text-foreground">성격 MBTI 문항이 새로 추가됐어요</p>
+                <p className="mt-0.5 text-[14px] text-muted-foreground">다시 검사하면 일반 MBTI까지 함께 볼 수 있어요.</p>
               </div>
               {onRetakeSurvey && (
                 <Button variant="outline" size="sm" onClick={onRetakeSurvey}
-                        className="flex-shrink-0 gap-1.5 border-pink-500/50 text-pink-300 hover:bg-pink-900/30">
+                        className={`flex-shrink-0 gap-1.5 ${INVEST_MBTI_TONE.border} ${INVEST_MBTI_TONE.text} ${INVEST_MBTI_TONE.hover}`}>
                   <RefreshCcw className="h-3.5 w-3.5" /> 재검사
                 </Button>
               )}
@@ -506,50 +503,50 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
         {/* 성격 상세 — 주 콘텐츠 */}
         {pDetail && (
           <>
-            <div className="relative rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+            <div className="relative rounded-xl border border-border bg-card p-4">
               <div className={`absolute bottom-4 left-0 top-4 w-1 rounded-full ${theme.bar}`} />
-              <p className="pl-3 text-[14px] leading-relaxed text-gray-200">{pDetail.summary}</p>
+              <p className="pl-3 text-[14px] leading-relaxed text-foreground">{pDetail.summary}</p>
               {pMore && (
-                <p className="mt-2.5 pl-3 text-[14px] leading-relaxed text-gray-300">{pMore.deepDive}</p>
+                <p className="mt-2.5 pl-3 text-[14px] leading-relaxed text-muted-foreground">{pMore.deepDive}</p>
               )}
             </div>
 
-            <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+            <div className="rounded-xl border border-border bg-card p-4">
               <SectionHeader emoji="💡" title="이런 사람이에요" className={theme.text} />
               <div className="space-y-2">
                 {pDetail.traits.map((t, i) => (
                   <div key={i} className="flex items-start gap-2.5">
                     <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${theme.bar}`} />
-                    <span className="text-[14px] leading-relaxed text-gray-200">{t}</span>
+                    <span className="text-[14px] leading-relaxed text-foreground">{t}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+            <div className="rounded-xl border border-border bg-card p-4">
               <SectionHeader emoji="📈" title="투자할 때 이런 모습" className={theme.text} />
-              <p className="text-[14px] leading-relaxed text-gray-200">{pDetail.investStyle}</p>
+              <p className="text-[14px] leading-relaxed text-foreground">{pDetail.investStyle}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-emerald-700/30 bg-emerald-900/20 p-4">
-                <SectionHeader emoji="✅" title="강점" className="text-emerald-400" />
+              <div className="rounded-xl border border-success/25 bg-success/5 p-4">
+                <SectionHeader emoji="✅" title="강점" className="text-success" />
                 <div className="space-y-1.5">
                   {pDetail.strengths.map((s, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-emerald-500">+</span>
-                      <p className="text-[14px] leading-relaxed text-gray-200">{s}</p>
+                      <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-success">+</span>
+                      <p className="text-[14px] leading-relaxed text-foreground">{s}</p>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="rounded-xl border border-red-700/30 bg-red-900/20 p-4">
-                <SectionHeader emoji="⚠️" title="주의할 점" className="text-red-400" />
+              <div className="rounded-xl border border-destructive/25 bg-destructive/5 p-4">
+                <SectionHeader emoji="⚠️" title="주의할 점" className="text-destructive" />
                 <div className="space-y-1.5">
                   {pDetail.cautions.map((c, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-red-500">-</span>
-                      <p className="text-[14px] leading-relaxed text-gray-200">{c}</p>
+                      <span className="mt-0.5 flex-shrink-0 text-[13px] font-bold text-destructive">-</span>
+                      <p className="text-[14px] leading-relaxed text-foreground">{c}</p>
                     </div>
                   ))}
                 </div>
@@ -557,28 +554,28 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
             </div>
 
             {pMore && (
-              <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <SectionHeader emoji="📉" title="손실 앞에서 나는" className={theme.text} />
-                <p className="text-[14px] leading-relaxed text-gray-200">{pMore.stress}</p>
+                <p className="text-[14px] leading-relaxed text-foreground">{pMore.stress}</p>
               </div>
             )}
 
             {pMore && (
-              <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+              <div className="rounded-xl border border-border bg-card p-4">
                 <SectionHeader emoji="🤝" title="함께 투자하면 좋은 유형" className={theme.text} />
-                <p className="text-[14px] leading-relaxed text-gray-200">{pMore.chemistry}</p>
+                <p className="text-[14px] leading-relaxed text-foreground">{pMore.chemistry}</p>
               </div>
             )}
 
-            <div className="rounded-xl border border-yellow-700/30 bg-yellow-900/20 p-4">
-              <SectionHeader emoji="🔑" title="실전 팁" className="text-yellow-400" />
+            <div className="rounded-xl border border-warning/25 bg-warning/5 p-4">
+              <SectionHeader emoji="🔑" title="실전 팁" className="text-warning" />
               <div className="space-y-2">
                 {pDetail.tips.map((t, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-yellow-500/20 text-[12px] font-bold text-yellow-400">
+                    <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-warning/15 text-[12px] font-bold text-warning">
                       {i + 1}
                     </span>
-                    <p className="text-[14px] leading-relaxed text-gray-200">{t}</p>
+                    <p className="text-[14px] leading-relaxed text-foreground">{t}</p>
                   </div>
                 ))}
               </div>
@@ -587,34 +584,34 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
         )}
 
         {/* 투자 MBTI — 보조 섹션 */}
-        <div className="rounded-xl border border-slate-600/50 bg-slate-700/40 p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-pink-300" />
-            <p className="text-[14px] font-bold text-gray-100">나의 투자 MBTI</p>
-            <span className="ml-auto rounded-md bg-slate-600/70 px-2 py-0.5 font-mono text-[13px] font-bold tracking-widest text-gray-100">
+            <Sparkles className={`h-4 w-4 ${INVEST_MBTI_TONE.text}`} />
+            <p className="text-[14px] font-bold text-foreground">나의 투자 MBTI</p>
+            <span className="ml-auto rounded-md bg-muted px-2 py-0.5 font-mono text-[13px] font-bold tracking-widest text-foreground">
               {iCode}
             </span>
           </div>
-          <p className="text-lg font-extrabold text-pink-300">{iName}</p>
-          <p className="mt-1 text-[14px] leading-relaxed text-gray-300">{iDesc}</p>
+          <p className={`text-lg font-extrabold ${INVEST_MBTI_TONE.text}`}>{iName}</p>
+          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">{iDesc}</p>
           <div className="mt-4 space-y-3.5">
             {investGauges.map((g, i) => (
-              <GaugeRow key={i} g={g} barClass="bg-pink-500" textClass="text-pink-300" />
+              <GaugeRow key={i} g={g} barClass={INVEST_MBTI_TONE.bar} textClass="${INVEST_MBTI_TONE.text}" />
             ))}
           </div>
 
           {/* 투자 상세 (앞 3글자 기준 + 분산/집중 보정) */}
           {INVEST_DETAIL[iCode.slice(0, 3)] && (
-            <div className="mt-4 space-y-3 border-t border-slate-600/50 pt-4">
+            <div className="mt-4 space-y-3 border-t border-border pt-4">
               <div>
-                <SectionHeader emoji="🌍" title="유리한 시장 환경" className="text-pink-300" />
-                <p className="text-[14px] leading-relaxed text-gray-200">
+                <SectionHeader emoji="🌍" title="유리한 시장 환경" className={`${INVEST_MBTI_TONE.text}`} />
+                <p className="text-[14px] leading-relaxed text-foreground">
                   {INVEST_DETAIL[iCode.slice(0, 3)].marketCondition}
                 </p>
               </div>
               <div>
-                <SectionHeader emoji="🏆" title="닮은 투자 대가" className="text-pink-300" />
-                <p className="text-[14px] leading-relaxed text-gray-200">
+                <SectionHeader emoji="🏆" title="닮은 투자 대가" className={`${INVEST_MBTI_TONE.text}`} />
+                <p className="text-[14px] leading-relaxed text-foreground">
                   {INVEST_DETAIL[iCode.slice(0, 3)].similarInvestor}
                 </p>
               </div>
@@ -624,13 +621,13 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
 
         {/* 성격 × 투자 조합 인사이트 */}
         {hasPersonality && comboInsights(pCode, iCode).length > 0 && (
-          <div className={`rounded-xl border p-4 border-slate-600/50 bg-gradient-to-br ${theme.hero} to-slate-800/40`}>
+          <div className={`rounded-xl border p-4 ${theme.border} ${theme.hero}`}>
             <SectionHeader emoji="🧩" title={`${pCode} × ${iName} 조합`} className={theme.text} />
             <div className="space-y-2">
               {comboInsights(pCode, iCode).map((line, idx) => (
                 <div key={idx} className="flex items-start gap-2.5">
                   <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${theme.bar}`} />
-                  <p className="text-[14px] leading-relaxed text-gray-200">{line}</p>
+                  <p className="text-[14px] leading-relaxed text-foreground">{line}</p>
                 </div>
               ))}
             </div>
@@ -638,11 +635,11 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
         )}
 
         {/* footer */}
-        <div className="flex items-center justify-between border-t border-slate-700/60 pt-3">
-          <p className="text-[12px] text-gray-500">설문 점수 기반 · 게이지 50%가 성향 경계</p>
+        <div className="flex items-center justify-between border-t border-border pt-3">
+          <p className="text-[12px] text-faint-foreground">설문 점수 기반 · 게이지 50%가 성향 경계</p>
           {onRetakeSurvey && (
             <Button variant="ghost" size="sm" onClick={onRetakeSurvey}
-                    className="h-7 gap-1 px-2 text-[13px] text-pink-300 hover:bg-pink-900/30 hover:text-pink-200">
+                    className={`h-7 gap-1 px-2 text-[13px] ${INVEST_MBTI_TONE.text} ${INVEST_MBTI_TONE.hover} hover:${INVEST_MBTI_TONE.text}`}>
               <RefreshCcw className="h-3 w-3" /> 다시 검사하기
             </Button>
           )}

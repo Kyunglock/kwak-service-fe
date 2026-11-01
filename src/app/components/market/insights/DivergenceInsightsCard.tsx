@@ -17,15 +17,15 @@ const DIVERGENCE_TYPE_KO: Record<string, string> = {
 };
 
 const RISK_BADGE: Record<string, string> = {
-  HIGH: "bg-red-800 text-red-200",
-  MEDIUM: "bg-yellow-800 text-yellow-200",
-  LOW: "bg-green-800 text-green-200",
+  HIGH: "bg-destructive/10 text-destructive",
+  MEDIUM: "bg-warning/15 text-warning",
+  LOW: "bg-success/15 text-success",
 };
 
 const SEVERITY_BAR: Record<string, string> = {
-  HIGH: "bg-red-400",
-  MEDIUM: "bg-yellow-400",
-  LOW: "bg-green-400",
+  HIGH: "bg-destructive",
+  MEDIUM: "bg-warning",
+  LOW: "bg-success",
 };
 
 interface Props {
@@ -65,34 +65,34 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
   }, [portfolioItems]);
 
   return (
-    <Card className="p-0 gap-0 bg-slate-700 border-slate-600 overflow-hidden">
-      <div className="h-1 bg-gradient-to-r from-red-500/80 to-orange-400/50" />
+    <Card className="p-0 gap-0 bg-card border-border overflow-hidden">
+      <div className="h-1 bg-accent" />
       <div className="p-4">
-      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
+      <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-foreground">
         <span>⚠️ 재무 이상 징후 감지</span>
-        <span className="text-[10px] font-normal text-gray-500 ml-auto">AI 분석</span>
+        <span className="text-[10px] font-normal text-faint-foreground ml-auto">AI 분석</span>
       </h3>
 
       {loading && (
-        <p className="text-xs text-gray-400 text-center py-4">분석 중...</p>
+        <p className="text-xs text-muted-foreground text-center py-4">분석 중...</p>
       )}
 
       {!loading && stockDivergences.length === 0 && (
         <div className="text-center py-4">
           <p className="text-2xl mb-1">✅</p>
-          <p className="text-xs text-gray-300">보유 종목에 이상 징후가 감지되지 않았습니다.</p>
+          <p className="text-xs text-muted-foreground">보유 종목에 이상 징후가 감지되지 않았습니다.</p>
         </div>
       )}
 
       {!loading && stockDivergences.length > 0 && (
         <div className="space-y-4">
           {stockDivergences.map(({ stockCd, results, interpretations }) => (
-            <div key={stockCd} className="bg-slate-600/40 rounded-lg p-3">
+            <div key={stockCd} className="bg-muted rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold bg-slate-500/60 text-gray-200 px-2 py-0.5 rounded">
+                <span className="text-xs font-bold bg-muted text-foreground px-2 py-0.5 rounded">
                   {stockCd}
                 </span>
-                <span className="text-xs text-gray-400">{results.length}건 감지</span>
+                <span className="text-xs text-muted-foreground">{results.length}건 감지</span>
               </div>
               <div className="space-y-2">
                 {results.map((r) => {
@@ -110,10 +110,10 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                   return (
                     <div
                       key={r.id}
-                      className="border border-slate-600/60 rounded-lg bg-slate-700/50 p-2.5 text-xs space-y-1.5"
+                      className="border border-border rounded-lg bg-card p-2.5 text-xs space-y-1.5"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-200">
+                        <span className="font-medium text-foreground">
                           {DIVERGENCE_TYPE_KO[r.divergenceType] ?? r.divergenceType}
                         </span>
                         <span
@@ -125,10 +125,10 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 shrink-0">
+                        <span className="text-faint-foreground shrink-0">
                           {r.fiscalYear}Q{r.fiscalQuarter}
                         </span>
-                        <div className="flex-1 bg-slate-600 rounded-full h-1.5">
+                        <div className="flex-1 bg-muted rounded-full h-1.5">
                           <div
                             className={`h-1.5 rounded-full transition-all duration-500 ${
                               SEVERITY_BAR[riskLevel] ?? SEVERITY_BAR.MEDIUM
@@ -136,19 +136,19 @@ export function DivergenceInsightsCard({ portfolioItems }: Props) {
                             style={{ width: `${severityPct}%` }}
                           />
                         </div>
-                        <span className="text-gray-400 shrink-0 tabular-nums">{severityPct}%</span>
+                        <span className="text-muted-foreground shrink-0 tabular-nums">{severityPct}%</span>
                       </div>
                       {interp?.summary ? (
-                        <p className="text-gray-300 leading-relaxed">{interp.summary}</p>
+                        <p className="text-muted-foreground leading-relaxed">{interp.summary}</p>
                       ) : (
                         r.evidence && (
-                          <p className="text-gray-400 leading-relaxed">{r.evidence}</p>
+                          <p className="text-muted-foreground leading-relaxed">{r.evidence}</p>
                         )
                       )}
                       {interp?.watchPoints && interp.watchPoints.length > 0 && (
                         <ul className="mt-1 space-y-0.5">
                           {interp.watchPoints.map((wp, idx) => (
-                            <li key={idx} className="flex items-start gap-1 text-gray-500">
+                            <li key={idx} className="flex items-start gap-1 text-faint-foreground">
                               <span className="mt-0.5 flex-shrink-0">·</span>
                               <span>{wp}</span>
                             </li>

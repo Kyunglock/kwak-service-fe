@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown, Minus, X } from "lucide-react";
 import { getMarketBriefing } from "@/app/services/newsService";
 import type { MarketBriefingResponse, MarketSentiment } from "@/app/types";
+import { BRIEFING_SENTIMENT } from "@/app/theme/featurePalettes";
 
 // 키 이름 변경 이력: marketBriefingSeenDt → Dismissed — 구버전에선 일반 닫기도 기록했어서
 // 의미가 달라진 새 버전('다시 보지 않기'만 기록)에서 구 기록을 무효화하기 위해 키를 교체함
 const SEEN_KEY = "marketBriefingDismissedDt";
 
-// 감성별 테마 — 앱 관례(수익 green / 손실 red) 준수, 보합·미분류는 중립 슬레이트
+// 감성별 테마 — 앱 관례(수익 green / 손실 red) 준수, 보합·미분류는 중립 (색은 featurePalettes.ts)
 const THEMES: Record<
   MarketSentiment | "UNKNOWN",
   { label: string; Icon: typeof TrendingUp; header: string; iconBox: string; iconColor: string; chip: string }
@@ -15,34 +16,22 @@ const THEMES: Record<
   POSITIVE: {
     label: "호재",
     Icon: TrendingUp,
-    header: "bg-gradient-to-r from-green-600/30 via-emerald-600/15 to-transparent border-green-700/50",
-    iconBox: "bg-green-500/20",
-    iconColor: "text-green-400",
-    chip: "bg-green-950 text-green-400 border border-green-800",
+    ...BRIEFING_SENTIMENT.POSITIVE,
   },
   NEGATIVE: {
     label: "악재",
     Icon: TrendingDown,
-    header: "bg-gradient-to-r from-red-600/30 via-rose-600/15 to-transparent border-red-700/50",
-    iconBox: "bg-red-500/20",
-    iconColor: "text-red-400",
-    chip: "bg-red-950 text-red-400 border border-red-800",
+    ...BRIEFING_SENTIMENT.NEGATIVE,
   },
   NEUTRAL: {
     label: "보합",
     Icon: Minus,
-    header: "bg-gradient-to-r from-slate-500/30 via-slate-500/15 to-transparent border-slate-500/50",
-    iconBox: "bg-slate-400/20",
-    iconColor: "text-gray-300",
-    chip: "bg-slate-800 text-gray-300 border border-slate-600",
+    ...BRIEFING_SENTIMENT.NEUTRAL,
   },
   UNKNOWN: {
     label: "시황",
     Icon: Minus,
-    header: "bg-gradient-to-r from-blue-600/25 via-indigo-600/15 to-transparent border-slate-600/60",
-    iconBox: "bg-blue-500/20",
-    iconColor: "text-blue-400",
-    chip: "bg-slate-800 text-gray-300 border border-slate-600",
+    ...BRIEFING_SENTIMENT.UNKNOWN,
   },
 };
 
@@ -89,11 +78,11 @@ export function MarketBriefingModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#3B2F26]/30 p-4"
       onClick={close}
     >
       <div
-        className="w-full max-w-2xl rounded-xl overflow-hidden bg-slate-700 border border-slate-600 shadow-2xl"
+        className="w-full max-w-2xl rounded-xl overflow-hidden bg-card border border-border shadow-paper"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 감성 컬러 헤더 */}
@@ -104,38 +93,38 @@ export function MarketBriefingModal() {
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-gray-100">오늘의 미국 증시</h2>
+                <h2 className="text-base font-semibold text-foreground">오늘의 미국 증시</h2>
                 <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${theme.chip}`}>
                   {theme.label}
                 </span>
               </div>
-              <p className="text-[11px] text-gray-400 mt-0.5">{briefing.summaryDt} · AI 요약</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{briefing.summaryDt} · AI 요약</p>
             </div>
           </div>
           <button
             onClick={close}
             aria-label="닫기"
-            className="p-1 rounded text-gray-400 hover:text-gray-200 hover:bg-slate-600/50 transition-colors"
+            className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* AI 요약 */}
-        <p className="px-6 py-5 text-[15px] text-gray-200 leading-relaxed whitespace-pre-line">
+        <p className="px-6 py-5 text-[15px] text-foreground leading-relaxed whitespace-pre-line">
           {briefing.summary}
         </p>
 
         <div className="px-6 pb-5 flex items-center justify-between">
           <button
             onClick={dismissForToday}
-            className="text-xs text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors"
+            className="text-xs text-faint-foreground hover:text-foreground underline underline-offset-2 transition-colors"
           >
             다시 보지 않기
           </button>
           <button
             onClick={close}
-            className="px-5 py-2 rounded-lg text-sm font-medium bg-slate-600 text-gray-200 hover:bg-slate-500 transition-colors"
+            className="px-5 py-2 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-accent transition-colors"
           >
             확인
           </button>

@@ -12,19 +12,19 @@ const PAGE_SIZE = 20;
 
 // 액션 유형별 라벨/색상
 const ACTION_META: Record<string, { label: string; cls: string }> = {
-  LOGIN: { label: "로그인", cls: "bg-cyan-600/80 text-white" },
-  LOGOUT: { label: "로그아웃", cls: "bg-slate-600/80 text-white" },
-  TRADE_BUY: { label: "매수", cls: "bg-emerald-600/80 text-white" },
-  TRADE_SELL: { label: "매도", cls: "bg-red-600/80 text-white" },
-  SURVEY_SUBMIT: { label: "설문 제출", cls: "bg-purple-600/80 text-white" },
-  PORTFOLIO_CREATE: { label: "포트폴리오 생성", cls: "bg-indigo-600/80 text-white" },
-  PORTFOLIO_DELETE: { label: "포트폴리오 삭제", cls: "bg-orange-600/80 text-white" },
-  AI_QA_ASK: { label: "AI 질문", cls: "bg-fuchsia-600/80 text-white" },
-  AI_TRADE_CAPTURE: { label: "AI 매매입력", cls: "bg-teal-600/80 text-white" },
+  LOGIN: { label: "로그인", cls: "bg-accent text-primary" },
+  LOGOUT: { label: "로그아웃", cls: "bg-muted text-muted-foreground" },
+  TRADE_BUY: { label: "매수", cls: "bg-accent text-primary" },
+  TRADE_SELL: { label: "매도", cls: "bg-muted text-foreground" },
+  SURVEY_SUBMIT: { label: "설문 제출", cls: "bg-accent text-primary" },
+  PORTFOLIO_CREATE: { label: "포트폴리오 생성", cls: "bg-accent text-primary" },
+  PORTFOLIO_DELETE: { label: "포트폴리오 삭제", cls: "bg-destructive/10 text-destructive" },
+  AI_QA_ASK: { label: "AI 질문", cls: "bg-accent text-primary" },
+  AI_TRADE_CAPTURE: { label: "AI 매매입력", cls: "bg-accent text-primary" },
 };
 
 const actionMeta = (a: string) =>
-  ACTION_META[a] ?? { label: a, cls: "bg-slate-600/80 text-white" };
+  ACTION_META[a] ?? { label: a, cls: "bg-muted text-foreground" };
 
 const fmtDateTime = (s: string) => s.replace("T", " ").slice(0, 19);
 
@@ -93,12 +93,12 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
     <div className="space-y-5">
       {/* 헤더 */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/25 to-purple-600/15 ring-1 ring-indigo-500/30">
-          <History className="h-5 w-5 text-indigo-300" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent ring-1 ring-ring/50">
+          <History className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-100">활동 내역</h2>
-          <p className="text-xs text-gray-500">
+          <h2 className="text-xl font-bold text-foreground">활동 내역</h2>
+          <p className="text-xs text-faint-foreground">
             {tab === "all" ? "전체 사용자 활동 (관리자)" : "내 활동 기록"}
           </p>
         </div>
@@ -106,15 +106,15 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
 
       {/* 관리자 탭 전환 */}
       {isAdmin && (
-        <div className="flex gap-1 rounded-lg bg-slate-800/60 p-1">
+        <div className="flex gap-1 rounded-lg bg-card p-1">
           {(["me", "all"] as const).map((t) => (
             <button
               key={t}
               onClick={() => switchTab(t)}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 tab === t
-                  ? "bg-indigo-600 text-white"
-                  : "text-gray-400 hover:text-gray-200"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {t === "me" ? "내 활동" : "전체 (관리자)"}
@@ -127,13 +127,13 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
       {isAdmin && tab === "all" && (
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[160px]">
-            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground" />
             <input
               value={userIdInput}
               onChange={(e) => setUserIdInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && applyAdminFilter()}
               placeholder="사용자 ID"
-              className="w-full rounded-lg border border-slate-600 bg-slate-700 py-2 pl-9 pr-3 text-sm text-gray-100 placeholder-gray-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm text-foreground placeholder-faint-foreground focus:border-primary/40 focus:outline-none"
             />
           </div>
           <input
@@ -141,12 +141,12 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
             onChange={(e) => setActionInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && applyAdminFilter()}
             placeholder="액션 (예: LOGIN)"
-            className="min-w-[140px] flex-1 rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-indigo-500 focus:outline-none"
+            className="min-w-[140px] flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder-faint-foreground focus:border-primary/40 focus:outline-none"
           />
           <Button
             size="sm"
             onClick={applyAdminFilter}
-            className="gap-1.5 bg-indigo-600 text-sm text-white hover:bg-indigo-500"
+            className="gap-1.5 bg-primary text-sm text-primary-foreground hover:bg-primary-strong"
           >
             <Search className="h-4 w-4" /> 조회
           </Button>
@@ -155,14 +155,14 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
 
       {/* 목록 */}
       {loading ? (
-        <Card className="p-10 text-center bg-slate-800/60 border-slate-700/60">
-          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-indigo-400 border-t-transparent" />
-          <p className="text-sm text-gray-400">불러오는 중...</p>
+        <Card className="p-10 text-center bg-card border-border">
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-primary/40 border-t-transparent" />
+          <p className="text-sm text-muted-foreground">불러오는 중...</p>
         </Card>
       ) : logs.length === 0 ? (
-        <Card className="p-12 text-center bg-slate-800/40 border-slate-700/60">
-          <History className="mx-auto mb-3 h-12 w-12 text-gray-600" />
-          <p className="text-sm text-gray-400">활동 기록이 없습니다.</p>
+        <Card className="p-12 text-center bg-card border-border">
+          <History className="mx-auto mb-3 h-12 w-12 text-faint-foreground" />
+          <p className="text-sm text-muted-foreground">활동 기록이 없습니다.</p>
         </Card>
       ) : (
         <div className="space-y-2">
@@ -171,7 +171,7 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
             return (
               <Card
                 key={log.logId}
-                className="flex items-center gap-3 border-slate-700/60 bg-slate-800/70 p-3.5"
+                className="flex items-center gap-3 border-border bg-card p-3.5"
               >
                 <span
                   className={`flex-shrink-0 rounded-md px-2 py-1 text-[12px] font-semibold ${meta.cls}`}
@@ -180,15 +180,15 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p
-                    className="truncate text-sm text-gray-200"
+                    className="truncate text-sm text-foreground"
                     title={log.detail ?? undefined}
                   >
                     {log.detail ?? log.targetType ?? "-"}
                     {log.targetId && (
-                      <span className="ml-1 text-gray-500">({log.targetId})</span>
+                      <span className="ml-1 text-faint-foreground">({log.targetId})</span>
                     )}
                   </p>
-                  <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+                  <div className="mt-0.5 flex items-center gap-2 text-xs text-faint-foreground">
                     <span>{fmtDateTime(log.regDt)}</span>
                     {tab === "all" && log.userId && (
                       <span className="flex items-center gap-1">
@@ -210,19 +210,19 @@ export function ActivityLog({ isAdmin = false }: ActivityLogProps) {
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-400 transition-colors hover:bg-slate-700 hover:text-gray-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             이전
           </button>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-faint-foreground">
             {page + 1} / {totalPages}
-            <span className="ml-1 text-indigo-400">· 총 {totalElements}건</span>
+            <span className="ml-1 text-primary">· 총 {totalElements}건</span>
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-400 transition-colors hover:bg-slate-700 hover:text-gray-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
           >
             다음
             <ChevronRight className="h-3.5 w-3.5" />

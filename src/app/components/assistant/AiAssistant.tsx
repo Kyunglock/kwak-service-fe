@@ -232,12 +232,12 @@ export function AiAssistant() {
           <img
             src={imagePreview}
             alt="첨부한 화면 캡처"
-            className="max-h-32 rounded-lg border border-slate-700"
+            className="max-h-32 rounded-lg border border-border"
           />
           <button
             type="button"
             onClick={clearImage}
-            className="absolute top-1 right-1 p-1 rounded-md bg-slate-900/80 text-gray-300 hover:text-white"
+            className="absolute top-1 right-1 p-1 rounded-md bg-card text-muted-foreground hover:text-foreground"
             aria-label="이미지 제거"
           >
             <X className="w-3.5 h-3.5" />
@@ -245,7 +245,7 @@ export function AiAssistant() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-slate-700 bg-slate-900 focus-within:border-indigo-500/60 transition-colors">
+      <div className="rounded-2xl border border-border bg-card focus-within:border-primary/40 transition-colors">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -254,7 +254,7 @@ export function AiAssistant() {
           maxLength={2000}
           disabled={pending}
           placeholder="무엇을 사고 파셨는지, 혹은 시황을 물어보세요. 증권사 화면을 캡처해 올려도 됩니다."
-          className="w-full bg-transparent px-4 pt-3 pb-1 text-sm text-gray-100 placeholder-gray-500 resize-none focus:outline-none disabled:opacity-60"
+          className="w-full bg-transparent px-4 pt-3 pb-1 text-sm text-foreground placeholder-faint-foreground resize-none focus:outline-none disabled:opacity-60"
         />
         <div className="flex items-center justify-between px-3 pb-2">
           <input
@@ -268,7 +268,7 @@ export function AiAssistant() {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={pending}
-            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs text-gray-400 hover:text-gray-200 hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-50 transition-colors"
           >
             <ImagePlus className="w-4 h-4" />
             화면 캡처
@@ -277,7 +277,7 @@ export function AiAssistant() {
             type="button"
             onClick={() => send()}
             disabled={pending || (!input.trim() && !imageFile)}
-            className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 text-white transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary hover:bg-primary-strong disabled:opacity-40 disabled:hover:bg-primary-strong text-primary-foreground transition-colors"
             aria-label="보내기"
           >
             {pending ? (
@@ -289,7 +289,7 @@ export function AiAssistant() {
         </div>
       </div>
 
-      {inputError && <p className="text-xs text-red-400 px-1">{inputError}</p>}
+      {inputError && <p className="text-xs text-destructive px-1">{inputError}</p>}
     </div>
   );
 
@@ -298,18 +298,18 @@ export function AiAssistant() {
       {/* 헤더 — 기록이 어느 포트폴리오로 가는지 항상 보이게 둔다 */}
       <div className="flex items-center justify-between gap-3 pb-3 flex-shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0" />
-          <h2 className="text-lg font-semibold text-gray-100 truncate">
+          <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+          <h2 className="text-lg font-semibold text-foreground truncate">
             AI 어시스턴트
           </h2>
         </div>
         {portfolios.length > 0 && (
-          <label className="flex items-center gap-2 text-xs text-gray-500 flex-shrink-0">
+          <label className="flex items-center gap-2 text-xs text-faint-foreground flex-shrink-0">
             기록할 곳
             <select
               value={portfolioId}
               onChange={(e) => setPortfolioId(Number(e.target.value))}
-              className="h-8 rounded-md bg-slate-800 border border-slate-700 text-xs px-2 text-gray-200 max-w-[10rem]"
+              className="h-8 rounded-md bg-card border border-border text-xs px-2 text-foreground max-w-[10rem]"
             >
               {portfolios.map((p) => (
                 <option key={p.portfolioId} value={p.portfolioId}>
@@ -322,7 +322,7 @@ export function AiAssistant() {
       </div>
 
       {portfolioLoaded && portfolios.length === 0 && (
-        <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-xs text-amber-400 flex-shrink-0">
+        <div className="mb-3 flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2 text-xs text-warning flex-shrink-0">
           <TriangleAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
           포트폴리오를 불러오지 못했어요. 새로고침하면 기본 포트폴리오가 만들어집니다.
         </div>
@@ -332,10 +332,10 @@ export function AiAssistant() {
         /* 빈 화면 — 입력창을 가운데 두고 예시를 보여준다 */
         <div className="flex-1 flex flex-col justify-center min-h-0">
           <div className="text-center mb-6">
-            <h3 className="text-xl sm:text-2xl font-semibold text-gray-100">
+            <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
               무엇을 도와드릴까요?
             </h3>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-faint-foreground">
               매매기록을 말이나 화면 캡처로 알려주시거나, 시황을 물어보세요.
             </p>
           </div>
@@ -349,7 +349,7 @@ export function AiAssistant() {
                 type="button"
                 onClick={() => send(example)}
                 disabled={pending}
-                className="px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800/60 text-xs text-gray-400 hover:text-gray-200 hover:border-slate-600 disabled:opacity-50 transition-colors"
+                className="px-3 py-1.5 rounded-full border border-border bg-card text-xs text-muted-foreground hover:text-foreground hover:border-border disabled:opacity-50 transition-colors"
               >
                 {example}
               </button>
@@ -363,12 +363,12 @@ export function AiAssistant() {
             {messages.map((m) =>
               m.role === "user" ? (
                 <div key={m.id} className="flex justify-end">
-                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-indigo-600 px-4 py-2.5 text-sm text-white space-y-2">
+                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-primary-foreground space-y-2">
                     {m.imageUrl && (
                       <img
                         src={m.imageUrl}
                         alt="첨부한 화면 캡처"
-                        className="max-h-48 rounded-lg border border-indigo-400/30"
+                        className="max-h-48 rounded-lg border border-primary/40"
                       />
                     )}
                     <p className="whitespace-pre-wrap break-words">{m.text}</p>
@@ -379,8 +379,8 @@ export function AiAssistant() {
                   <p
                     className={`text-sm whitespace-pre-wrap break-words ${
                       m.kind === "text" && m.tone === "error"
-                        ? "text-red-400"
-                        : "text-gray-300"
+                        ? "text-destructive"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {m.text}
@@ -393,7 +393,7 @@ export function AiAssistant() {
             )}
 
             {pending && (
-              <p className="flex items-center gap-2 text-sm text-gray-500">
+              <p className="flex items-center gap-2 text-sm text-faint-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 읽는 중...
               </p>

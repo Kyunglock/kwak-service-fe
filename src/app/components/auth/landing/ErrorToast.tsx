@@ -13,13 +13,13 @@ export function ErrorToast({
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
-      <Card className="p-4 bg-red-900/30 border-red-700 backdrop-blur-sm animate-in slide-in-from-top">
+      <Card className="p-4 bg-card border-destructive/40 shadow-float animate-in slide-in-from-top">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm text-red-200">{message}</p>
+            <p className="text-sm text-foreground">{message}</p>
           </div>
-          <button onClick={onClose} className="text-red-400 hover:text-red-300">
+          <button onClick={onClose} className="text-faint-foreground hover:text-foreground">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>

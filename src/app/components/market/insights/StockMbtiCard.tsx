@@ -38,14 +38,14 @@ function GaugeRow({ g, barClass, textClass }: { g: Gauge; barClass: string; text
         <span className={g.leftActive ? `font-bold ${textClass}` : "text-faint-foreground"}>{g.left}</span>
         <span className={!g.leftActive ? `font-bold ${textClass}` : "text-faint-foreground"}>{g.right}</span>
       </div>
-      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-card">
+      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
         <div
           className={`absolute inset-y-0 rounded-full ${barClass} opacity-90 transition-all duration-700`}
           style={{ left: `${fillLeft}%`, width: `${fillWidth}%` }}
         />
-        <div className="absolute left-1/2 top-0 h-full w-px bg-muted" />
+        <div className="absolute left-1/2 top-0 h-full w-px bg-foreground/25" />
         <div
-          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-border bg-card shadow-paper transition-all duration-700"
+          className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-foreground/30 bg-card shadow-paper transition-all duration-700"
           style={{ left: `${pos}%` }}
         />
       </div>
@@ -596,7 +596,7 @@ export function StockMbtiCard({ insightResult, onRetakeSurvey, building }: Props
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">{iDesc}</p>
           <div className="mt-4 space-y-3.5">
             {investGauges.map((g, i) => (
-              <GaugeRow key={i} g={g} barClass={INVEST_MBTI_TONE.bar} textClass="${INVEST_MBTI_TONE.text}" />
+              <GaugeRow key={i} g={g} barClass={INVEST_MBTI_TONE.bar} textClass={INVEST_MBTI_TONE.text} />
             ))}
           </div>
 

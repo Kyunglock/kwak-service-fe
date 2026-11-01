@@ -103,7 +103,7 @@ export function SurveyStatsView({ surveyName, totalParticipants, detail, loading
                           <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
                             <div
                               className={`h-full rounded-full transition-all duration-500 ${
-                                isMine ? "bg-primary" : "bg-muted"
+                                isMine ? "bg-primary" : "bg-switch-background"
                               }`}
                               style={{ width: `${pct}%` }}
                             />

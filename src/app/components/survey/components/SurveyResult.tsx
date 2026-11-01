@@ -129,7 +129,7 @@ export function SurveyResult({ statsLoading, surveyStatsDetail, onBackToList }: 
                           style={{ width: `${pct}%` }}
                         />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className={`text-xs font-semibold ${pct > 20 ? "text-foreground" : "text-muted-foreground"}`}>
+                          <span className={`text-xs font-semibold ${isMyAnswer && pct >= 50 ? "text-primary-foreground" : pct > 20 ? "text-foreground" : "text-muted-foreground"}`}>
                             {pct}%
                           </span>
                         </div>

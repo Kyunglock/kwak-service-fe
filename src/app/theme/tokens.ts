@@ -20,3 +20,6 @@ export const THEME = {
 } as const;
 
 export const CHART_COLORS = ['#C8643B', '#6B8F6B', '#D69A2D', '#4A6FA5', '#9A6B7F'] as const;
+
+// 10색이 필요한 파이·막대(종목·배당 비중)용: 기본 5색 + 같은 5색의 60% 톤
+export const CHART_COLORS_10 = [...CHART_COLORS, ...CHART_COLORS.map((c) => `${c}99`)] as const;

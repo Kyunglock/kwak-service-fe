@@ -8,6 +8,7 @@ const GUARDED: Record<string, string> = {
   ...import.meta.glob<string>('../../styles/theme.css', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../components/layout/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../components/auth/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
+  ...import.meta.glob<string>('../components/portfolio/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../components/error/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../components/user/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../components/figma/**/*.tsx', { query: '?raw', import: 'default', eager: true }),

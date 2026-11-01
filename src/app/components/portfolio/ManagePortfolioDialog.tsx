@@ -113,26 +113,26 @@ export function ManagePortfolioDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[90vw] max-h-[80vh] overflow-y-auto bg-slate-700 border-slate-600 text-gray-100">
+        <DialogContent className="max-w-[90vw] max-h-[80vh] overflow-y-auto bg-card border-border text-foreground">
           <DialogHeader>
-            <DialogTitle className="text-gray-100">포트폴리오 관리</DialogTitle>
+            <DialogTitle className="text-foreground">포트폴리오 관리</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* 포트폴리오 목록 */}
             <div className="space-y-2">
               {portfolios.map((portfolio) => (
-                <div key={portfolio.portfolioId} className="flex items-center justify-between p-2 rounded-md bg-slate-600/50">
+                <div key={portfolio.portfolioId} className="flex items-center justify-between p-2 rounded-md bg-muted">
                   <div className="flex items-center gap-2">
-                    <Folder className="w-4 h-4 text-gray-400" />
+                    <Folder className="w-4 h-4 text-muted-foreground" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-100 font-medium">{portfolio.portfolioNm}</span>
+                        <span className="text-sm text-foreground font-medium">{portfolio.portfolioNm}</span>
                         {portfolio.portfolioId === currentPortfolioId && (
-                          <Badge className="text-xs py-0.5 px-2 bg-gray-500 text-gray-300">현재</Badge>
+                          <Badge className="text-xs py-0.5 px-2 bg-muted text-muted-foreground">현재</Badge>
                         )}
                       </div>
                       {portfolio.portfolioDesc && (
-                        <span className="text-xs text-gray-400">{portfolio.portfolioDesc}</span>
+                        <span className="text-xs text-muted-foreground">{portfolio.portfolioDesc}</span>
                       )}
                     </div>
                   </div>
@@ -140,7 +140,7 @@ export function ManagePortfolioDialog({
                     <Button
                       size="sm"
                       onClick={() => handleEditPortfolio(portfolio)}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-primary hover:bg-primary-strong"
                     >
                       <Edit2 className="w-4 h-4" />
                     </Button>
@@ -148,7 +148,7 @@ export function ManagePortfolioDialog({
                       <Button
                         size="sm"
                         onClick={() => handleDeletePortfolio(portfolio.portfolioId)}
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -159,28 +159,28 @@ export function ManagePortfolioDialog({
             </div>
 
             {/* 새 포트폴리오 추가/수정 폼 */}
-            <div className="space-y-3 border-t border-slate-600 pt-4">
-              <h4 className="text-sm font-semibold text-gray-100">
+            <div className="space-y-3 border-t border-border pt-4">
+              <h4 className="text-sm font-semibold text-foreground">
                 {editingPortfolioId ? "포트폴리오 수정" : "새 포트폴리오 추가"}
               </h4>
               <div>
-                <Label htmlFor="newPortfolioName" className="text-xs text-gray-200">포트폴리오 이름 *</Label>
+                <Label htmlFor="newPortfolioName" className="text-xs text-foreground">포트폴리오 이름 *</Label>
                 <Input
                   id="newPortfolioName"
                   placeholder="예: 주식 포트폴리오"
                   value={newPortfolioName}
                   onChange={(e) => setNewPortfolioName(e.target.value)}
-                  className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                  className="text-sm bg-muted border-border text-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="newPortfolioDescription" className="text-xs text-gray-200">설명</Label>
+                <Label htmlFor="newPortfolioDescription" className="text-xs text-foreground">설명</Label>
                 <Input
                   id="newPortfolioDescription"
                   placeholder="포트폴리오에 대한 설명"
                   value={newPortfolioDescription}
                   onChange={(e) => setNewPortfolioDescription(e.target.value)}
-                  className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                  className="text-sm bg-muted border-border text-foreground"
                 />
               </div>
             </div>
@@ -190,13 +190,13 @@ export function ManagePortfolioDialog({
                 <Button
                   onClick={handleCancelEdit}
                   variant="outline"
-                  className="border-slate-500 text-gray-300 hover:bg-slate-600"
+                  className="border-border text-muted-foreground hover:bg-accent"
                 >
                   취소
                 </Button>
                 <Button
                   onClick={handleUpdatePortfolio}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-primary hover:bg-primary-strong"
                   disabled={!newPortfolioName.trim() || submitting}
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -206,7 +206,7 @@ export function ManagePortfolioDialog({
             ) : (
               <Button
                 onClick={handleCreatePortfolio}
-                className="w-full bg-indigo-600 hover:bg-indigo-700"
+                className="w-full bg-primary hover:bg-primary-strong"
                 disabled={!newPortfolioName.trim() || submitting}
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
@@ -219,22 +219,22 @@ export function ManagePortfolioDialog({
 
       {/* 삭제 확인 다이얼로그 */}
       <Dialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
-        <DialogContent className="max-w-[80vw] bg-slate-700 border-slate-600 text-gray-100">
+        <DialogContent className="max-w-[80vw] bg-card border-border text-foreground">
           <DialogHeader>
-            <DialogTitle className="text-gray-100">포트폴리오 삭제</DialogTitle>
+            <DialogTitle className="text-foreground">포트폴리오 삭제</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-300">이 포트폴리오와 모든 보유 종목을 삭제하시겠습니까?</p>
+          <p className="text-sm text-muted-foreground">이 포트폴리오와 모든 보유 종목을 삭제하시겠습니까?</p>
           <div className="grid grid-cols-2 gap-2 mt-4">
             <Button
               variant="outline"
               onClick={() => setDeleteConfirmId(null)}
-              className="border-slate-500 text-gray-300 hover:bg-slate-600"
+              className="border-border text-muted-foreground hover:bg-accent"
             >
               취소
             </Button>
             <Button
               onClick={confirmDeletePortfolio}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
               삭제
             </Button>

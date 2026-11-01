@@ -60,60 +60,60 @@ export function EditTradeDialog({ open, onOpenChange, transaction, onEditComplet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] bg-slate-700 border-slate-600 text-gray-100">
+      <DialogContent className="max-w-[90vw] bg-card border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-gray-100">매매 내역 수정</DialogTitle>
+          <DialogTitle className="text-foreground">매매 내역 수정</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {/* 종목 정보 (읽기전용) */}
-          <div className="flex items-center gap-2 p-2 rounded-md bg-slate-600">
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded ${isBuy ? "bg-blue-600" : "bg-red-600"} text-white`}>
+          <div className="flex items-center gap-2 p-2 rounded-md bg-muted">
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded ${isBuy ? "bg-primary text-primary-foreground" : "bg-foreground text-background"}`}>
               {isBuy ? "매수" : "매도"}
             </span>
-            <span className="font-bold text-gray-100">{transaction.stockCd}</span>
-            {stockInfo && <span className="text-xs text-gray-400">{stockInfo.nameKr}</span>}
+            <span className="font-bold text-foreground">{transaction.stockCd}</span>
+            {stockInfo && <span className="text-xs text-muted-foreground">{stockInfo.nameKr}</span>}
           </div>
 
           <div className="space-y-3">
             <div>
-              <Label htmlFor="editQty" className="text-xs text-gray-200">수량 *</Label>
+              <Label htmlFor="editQty" className="text-xs text-foreground">수량 *</Label>
               <Input
                 id="editQty"
                 type="number"
                 value={form.qty}
                 onChange={(e) => setForm({ ...form, qty: e.target.value })}
-                className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                className="text-sm bg-muted border-border text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="editPrice" className="text-xs text-gray-200">단가 ($) *</Label>
+              <Label htmlFor="editPrice" className="text-xs text-foreground">단가 ($) *</Label>
               <Input
                 id="editPrice"
                 type="number"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
-                className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                className="text-sm bg-muted border-border text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="editDt" className="text-xs text-gray-200">날짜 *</Label>
+              <Label htmlFor="editDt" className="text-xs text-foreground">날짜 *</Label>
               <Input
                 id="editDt"
                 type="date"
                 value={form.transDt}
                 onChange={(e) => setForm({ ...form, transDt: e.target.value })}
-                className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                className="text-sm bg-muted border-border text-foreground"
               />
             </div>
             <div>
-              <Label htmlFor="editMemo" className="text-xs text-gray-200">메모</Label>
+              <Label htmlFor="editMemo" className="text-xs text-foreground">메모</Label>
               <Input
                 id="editMemo"
                 placeholder="메모 (선택)"
                 value={form.memo}
                 onChange={(e) => setForm({ ...form, memo: e.target.value })}
-                className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                className="text-sm bg-muted border-border text-foreground"
               />
             </div>
           </div>
@@ -122,14 +122,14 @@ export function EditTradeDialog({ open, onOpenChange, transaction, onEditComplet
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 border-slate-500 text-gray-300 hover:bg-slate-600"
+              className="flex-1 border-border text-muted-foreground hover:bg-accent"
             >
               취소
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={!form.qty || !form.price || !form.transDt || submitting}
-              className={`flex-1 ${isBuy ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"}`}
+              className={`flex-1 ${isBuy ? "bg-primary hover:bg-primary-strong text-primary-foreground" : "bg-foreground hover:bg-foreground/85 text-background"}`}
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               수정하기

@@ -5,7 +5,7 @@ export default function Root() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-lime-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-lime-50 text-[oklch(0.145_0_0)]">
       <div className="max-w-5xl mx-auto p-6 md:p-12">
         {/* Navigation Tabs */}
         <div className="mb-6 flex gap-4 justify-center">

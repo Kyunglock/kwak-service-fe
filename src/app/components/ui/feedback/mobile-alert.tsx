@@ -10,10 +10,10 @@ const ICON_MAP: Record<AlertType, typeof AlertCircle> = {
 };
 
 const STYLE_MAP: Record<AlertType, { bg: string; border: string; icon: string }> = {
-  error: { bg: "bg-red-950/95", border: "border-red-700", icon: "text-red-400" },
-  success: { bg: "bg-green-950/95", border: "border-green-700", icon: "text-green-400" },
-  warning: { bg: "bg-yellow-950/95", border: "border-yellow-700", icon: "text-yellow-400" },
-  info: { bg: "bg-blue-950/95", border: "border-blue-700", icon: "text-blue-400" },
+  error: { bg: "bg-card", border: "border-destructive/40", icon: "text-destructive" },
+  success: { bg: "bg-card", border: "border-success/40", icon: "text-success" },
+  warning: { bg: "bg-card", border: "border-warning/40", icon: "text-warning" },
+  info: { bg: "bg-card", border: "border-border", icon: "text-primary" },
 };
 
 const AUTO_CLOSE_MS = 3000;
@@ -57,17 +57,17 @@ export function MobileAlert() {
             className={`
               pointer-events-auto w-full max-w-md
               flex items-start gap-3 px-4 py-3
-              rounded-xl border shadow-lg backdrop-blur-sm
+              rounded-xl border shadow-float
               ${style.bg} ${style.border}
               transition-all duration-300 ease-out
               ${alert.exiting ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0 animate-slide-down"}
             `}
           >
             <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${style.icon}`} />
-            <p className="text-sm text-gray-100 flex-1 break-words">{alert.message}</p>
+            <p className="text-sm text-foreground flex-1 break-words">{alert.message}</p>
             <button
               onClick={() => removeAlert(alert.id)}
-              className="shrink-0 text-gray-400 hover:text-gray-200 transition-colors"
+              className="shrink-0 text-faint-foreground hover:text-foreground transition-colors"
             >
               <X className="w-4 h-4" />
             </button>

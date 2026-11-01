@@ -192,9 +192,9 @@ export function TradeDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-[90vw] max-h-[80vh] overflow-y-auto bg-slate-700 border-slate-600 text-gray-100">
+      <DialogContent className="max-w-[90vw] max-h-[80vh] overflow-y-auto bg-card border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-gray-100">거래하기</DialogTitle>
+          <DialogTitle className="text-foreground">거래하기</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {/* 매수/매도 탭 */}
@@ -204,8 +204,8 @@ export function TradeDialog({
               onClick={() => setTradeType("BUY")}
               className={
                 tradeType === "BUY"
-                  ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "bg-slate-700 border-slate-500 text-gray-300 hover:bg-slate-600"
+                  ? "bg-primary hover:bg-primary-strong text-primary-foreground"
+                  : "bg-card border-border text-muted-foreground hover:bg-accent"
               }
             >
               매수
@@ -215,8 +215,8 @@ export function TradeDialog({
               onClick={() => setTradeType("SELL")}
               className={
                 tradeType === "SELL"
-                  ? "bg-red-600 hover:bg-red-700 text-white"
-                  : "bg-slate-700 border-slate-500 text-gray-300 hover:bg-slate-600"
+                  ? "bg-foreground hover:bg-foreground/85 text-background"
+                  : "bg-card border-border text-muted-foreground hover:bg-accent"
               }
             >
               매도
@@ -228,11 +228,11 @@ export function TradeDialog({
             <>
               <div className="space-y-3">
                 <div className="relative">
-                  <Label htmlFor="stockCd" className="text-xs text-gray-200">
+                  <Label htmlFor="stockCd" className="text-xs text-foreground">
                     종목 코드 *
                   </Label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="stockCd"
                       placeholder="종목 코드 또는 이름으로 검색 (예: AAPL, Apple)"
@@ -244,12 +244,12 @@ export function TradeDialog({
                       onFocus={() =>
                         setShowSearchResults(searchQuery.length > 0)
                       }
-                      className="text-sm bg-slate-600 border-slate-500 text-gray-100 pl-10"
+                      className="text-sm bg-muted border-border text-foreground pl-10"
                     />
                   </div>
 
                   {showSearchResults && searchResults.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-slate-600 border border-slate-500 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-float max-h-60 overflow-y-auto">
                       {searchResults.map((stock) => {
                         const isKrw = detectCurrency(stock.stockCd) === "KRW";
                         return (
@@ -257,33 +257,33 @@ export function TradeDialog({
                           key={stock.stockCd}
                           type="button"
                           onClick={() => handleSelectStock(stock)}
-                          className="w-full px-3 py-2 text-left hover:bg-slate-500 transition-colors border-b border-slate-500 last:border-b-0"
+                          className="w-full px-3 py-2 text-left hover:bg-accent transition-colors border-b border-border last:border-b-0"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-0.5">
-                                <span className="font-semibold text-sm text-gray-100">
+                                <span className="font-semibold text-sm text-foreground">
                                   {isKrw
                                     ? stock.stockNmKo || stock.stockNm
                                     : stock.stockCd}
                                 </span>
-                                <span className="text-xs text-cyan-400">
+                                <span className="text-xs text-primary">
                                   {isKrw
                                     ? stock.sectorKo
                                     : (stock.stockNmKo ?? stock.sectorKo)}
                                 </span>
                               </div>
-                              <div className="text-xs text-gray-300">
+                              <div className="text-xs text-muted-foreground">
                                 {stock.stockNm}
                               </div>
                             </div>
                             <div className="text-right ml-2">
-                              <div className="text-sm text-gray-100 font-medium">
+                              <div className="text-sm text-foreground font-medium">
                                 {detectCurrency(stock.stockCd) === "KRW"
                                   ? `₩${stock.closePrice.toLocaleString()}`
                                   : `$${stock.closePrice.toFixed(2)}`}
                               </div>
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-muted-foreground">
                                 {stock.sector}
                               </div>
                             </div>
@@ -297,8 +297,8 @@ export function TradeDialog({
                   {showSearchResults &&
                     searchQuery.length > 0 &&
                     searchResults.length === 0 && (
-                      <div className="absolute z-50 w-full mt-1 bg-slate-600 border border-slate-500 rounded-md shadow-lg p-3">
-                        <p className="text-xs text-gray-300 text-center">
+                      <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-float p-3">
+                        <p className="text-xs text-muted-foreground text-center">
                           검색 결과가 없습니다
                         </p>
                       </div>
@@ -306,7 +306,7 @@ export function TradeDialog({
                 </div>
 
                 <div>
-                  <Label htmlFor="buyQty" className="text-xs text-gray-200">
+                  <Label htmlFor="buyQty" className="text-xs text-foreground">
                     매수 수량 *
                   </Label>
                   <Input
@@ -317,11 +317,11 @@ export function TradeDialog({
                     onChange={(e) =>
                       setBuyForm({ ...buyForm, qty: e.target.value })
                     }
-                    className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                    className="text-sm bg-muted border-border text-foreground"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="buyPrice" className="text-xs text-gray-200">
+                  <Label htmlFor="buyPrice" className="text-xs text-foreground">
                     매수 단가 ({buyForm.currency === "KRW" ? "₩" : "$"}) *
                   </Label>
                   <Input
@@ -335,11 +335,11 @@ export function TradeDialog({
                     onChange={(e) =>
                       setBuyForm({ ...buyForm, price: e.target.value })
                     }
-                    className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                    className="text-sm bg-muted border-border text-foreground"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="buyDt" className="text-xs text-gray-200">
+                  <Label htmlFor="buyDt" className="text-xs text-foreground">
                     매수 날짜 *
                   </Label>
                   <Input
@@ -349,14 +349,14 @@ export function TradeDialog({
                     onChange={(e) =>
                       setBuyForm({ ...buyForm, transDt: e.target.value })
                     }
-                    className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                    className="text-sm bg-muted border-border text-foreground"
                   />
                 </div>
               </div>
 
               <Button
                 onClick={handleBuy}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-primary hover:bg-primary-strong"
                 disabled={
                   !buyForm.stockCd ||
                   !buyForm.qty ||
@@ -378,24 +378,24 @@ export function TradeDialog({
             <>
               {positions.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-sm text-gray-300">
+                  <p className="text-sm text-muted-foreground">
                     매도할 종목이 없습니다.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-xs text-gray-200">
+                    <Label className="text-xs text-foreground">
                       매도할 종목 *
                     </Label>
                     <Select
                       value={sellForm.stockCd || ""}
                       onValueChange={handleSelectSellStock}
                     >
-                      <SelectTrigger className="w-full bg-slate-600 border-slate-500 text-gray-100 text-sm">
+                      <SelectTrigger className="w-full bg-muted border-border text-foreground text-sm">
                         <SelectValue placeholder="선택하세요" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-600 border-slate-500">
+                      <SelectContent className="bg-muted border-border">
                         {positions.map((pos) => {
                           const info = getStockInfo(pos.stockCd);
                           const nameKr = pos.stockNmKo ?? info?.nameKr;
@@ -406,7 +406,7 @@ export function TradeDialog({
                             <SelectItem
                               key={pos.itemId}
                               value={pos.stockCd}
-                              className="text-gray-100 focus:bg-slate-500"
+                              className="text-foreground focus:bg-accent"
                             >
                               {isKrw && nameKr
                                 ? nameKr
@@ -419,7 +419,7 @@ export function TradeDialog({
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="sellQty" className="text-xs text-gray-200">
+                    <Label htmlFor="sellQty" className="text-xs text-foreground">
                       매도 수량 *
                     </Label>
                     <Input
@@ -430,13 +430,13 @@ export function TradeDialog({
                       onChange={(e) =>
                         setSellForm({ ...sellForm, qty: e.target.value })
                       }
-                      className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                      className="text-sm bg-muted border-border text-foreground"
                     />
                   </div>
                   <div>
                     <Label
                       htmlFor="sellPrice"
-                      className="text-xs text-gray-200"
+                      className="text-xs text-foreground"
                     >
                       매도 단가 ({sellForm.currency === "KRW" ? "₩" : "$"}) *
                     </Label>
@@ -451,11 +451,11 @@ export function TradeDialog({
                       onChange={(e) =>
                         setSellForm({ ...sellForm, price: e.target.value })
                       }
-                      className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                      className="text-sm bg-muted border-border text-foreground"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="sellDt" className="text-xs text-gray-200">
+                    <Label htmlFor="sellDt" className="text-xs text-foreground">
                       매도 날짜 *
                     </Label>
                     <Input
@@ -465,13 +465,13 @@ export function TradeDialog({
                       onChange={(e) =>
                         setSellForm({ ...sellForm, transDt: e.target.value })
                       }
-                      className="text-sm bg-slate-600 border-slate-500 text-gray-100"
+                      className="text-sm bg-muted border-border text-foreground"
                     />
                   </div>
 
                   <Button
                     onClick={handleSell}
-                    className="w-full bg-red-600 hover:bg-red-700"
+                    className="w-full bg-foreground hover:bg-foreground/85 text-background"
                     disabled={
                       !sellForm.stockCd ||
                       !sellForm.qty ||

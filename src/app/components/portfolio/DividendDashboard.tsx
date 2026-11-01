@@ -9,9 +9,10 @@ import type { PortfolioItemResponse, DividendHistoryRecord } from "@/app/types";
 import { useCurrency, EXCHANGE_RATE } from "@/app/contexts/CurrencyContext";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
 import { predictNextExDate, predictNextPaymentDate } from "@/app/utils/dividend";
+import { CHART_COLORS_10 } from "@/app/theme/tokens";
 
 const RADIAN = Math.PI / 180;
-const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#06b6d4", "#f97316", "#a78bfa", "#34d399"];
+const COLORS = CHART_COLORS_10;
 
 interface StockDividendInfo {
   stockCd: string;
@@ -49,10 +50,10 @@ function daysUntil(dateStr: string): number {
 function DDayBadge({ dateStr }: { dateStr: string }) {
   const diff = daysUntil(dateStr);
   if (diff === 0)
-    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-red-500 text-white">D-Day</span>;
+    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-primary text-primary-foreground">D-Day</span>;
   if (diff > 0)
-    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-blue-600 text-white">D-{diff}</span>;
-  return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-600 text-gray-300">D+{Math.abs(diff)}</span>;
+    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-primary text-primary-foreground">D-{diff}</span>;
+  return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">D+{Math.abs(diff)}</span>;
 }
 
 const renderLabel = ({
@@ -190,10 +191,10 @@ export function DividendDashboard() {
     const item = payload[0].payload;
     const pct = totalAnnual > 0 ? (item.rawValue / totalAnnual) * 100 : 0;
     return (
-      <div className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 shadow-xl text-xs">
-        <div className="font-semibold text-gray-100">{item.name}</div>
-        <div className="text-green-300">{fmtAmount(item.rawValue, currency === "KRW" ? "KRW" : "USD")}/년</div>
-        <div className="text-gray-400">{pct.toFixed(1)}%</div>
+      <div className="bg-card border border-border rounded-lg px-3 py-2 shadow-paper text-xs">
+        <div className="font-semibold text-foreground">{item.name}</div>
+        <div className="text-up">{fmtAmount(item.rawValue, currency === "KRW" ? "KRW" : "USD")}/년</div>
+        <div className="text-muted-foreground">{pct.toFixed(1)}%</div>
       </div>
     );
   };
@@ -202,33 +203,33 @@ export function DividendDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
-            <DollarSign className="w-6 h-6 text-green-400" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <DollarSign className="w-6 h-6 text-up" />
             예상 배당금
           </h2>
-          <p className="text-sm text-gray-400 mt-1">보유 종목 기반 배당 일정 및 수령 예상액</p>
+          <p className="text-sm text-muted-foreground mt-1">보유 종목 기반 배당 일정 및 수령 예상액</p>
         </div>
         <CurrencyToggleButton />
       </div>
 
       {loading ? (
-        <Card className="p-6 text-center bg-slate-700 border-slate-600">
-          <div className="w-7 h-7 border-2 border-green-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <p className="text-sm text-gray-300">데이터를 불러오는 중...</p>
+        <Card className="p-6 text-center bg-card border-border">
+          <div className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">데이터를 불러오는 중...</p>
         </Card>
       ) : stockDividends.length === 0 ? (
-        <Card className="p-6 text-center bg-slate-700 border-slate-600">
-          <DollarSign className="w-10 h-10 text-gray-500 mx-auto mb-2" />
-          <p className="text-sm text-gray-300">포트폴리오에 종목을 추가하면</p>
-          <p className="text-sm text-gray-300">예상 배당금을 확인할 수 있습니다.</p>
+        <Card className="p-6 text-center bg-card border-border">
+          <DollarSign className="w-10 h-10 text-faint-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">포트폴리오에 종목을 추가하면</p>
+          <p className="text-sm text-muted-foreground">예상 배당금을 확인할 수 있습니다.</p>
         </Card>
       ) : (
         <>
           {/* 요약 카드 */}
-          <Card className="p-4 text-white border-0 shadow-lg bg-gradient-to-br from-green-600 to-emerald-700">
+          <Card className="p-4 text-foreground border border-primary/20 shadow-paper bg-accent">
             <p className="text-sm opacity-90 mb-1">예상 연간 배당금 ({currency})</p>
             <p className="text-2xl font-bold mb-2">{fmtAmount(totalAnnual, currency === "KRW" ? "KRW" : "USD")}</p>
-            <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/20">
+            <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border">
               <div>
                 <p className="text-xs opacity-75">월간 예상</p>
                 <p className="text-sm font-semibold">{fmtAmount(monthlyEst, currency === "KRW" ? "KRW" : "USD")}</p>
@@ -239,7 +240,7 @@ export function DividendDashboard() {
               </div>
             </div>
             {nextDividendInfo && (
-              <div className="mt-3 pt-3 border-t border-white/20">
+              <div className="mt-3 pt-3 border-t border-border">
                 <p className="text-xs opacity-75 mb-1.5">가장 가까운 배당 예정 — {nextDividendInfo.stockCd}</p>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -261,7 +262,7 @@ export function DividendDashboard() {
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-xs opacity-60">예상 수령액</span>
-                  <span className="text-sm font-semibold text-yellow-300">
+                  <span className="text-sm font-semibold text-up">
                     {fmtAmount(nextDividendInfo.amount, nextDividendInfo.currency === "KRW" ? "KRW" : "USD")}
                   </span>
                 </div>
@@ -274,15 +275,15 @@ export function DividendDashboard() {
 
           {/* 다음 배당 일정 — 전체 종목 */}
           {scheduleItems.length > 0 && (
-            <Card className="bg-slate-700 border-slate-600 overflow-hidden">
-              <div className="p-3 border-b border-slate-600">
+            <Card className="bg-card border-border overflow-hidden">
+              <div className="p-3 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-blue-400" />
-                  <h4 className="text-sm font-semibold text-gray-100">다음 배당 일정</h4>
-                  <span className="text-xs text-gray-400 ml-auto">{scheduleItems.length}종목</span>
+                  <Clock className="w-4 h-4 text-primary" />
+                  <h4 className="text-sm font-semibold text-foreground">다음 배당 일정</h4>
+                  <span className="text-xs text-muted-foreground ml-auto">{scheduleItems.length}종목</span>
                 </div>
               </div>
-              <div className="divide-y divide-slate-600/60">
+              <div className="divide-y divide-border-soft">
                 {scheduleItems.map((d) => {
                   const isFuture = daysUntil(d.nextExDate!) >= 0;
                   return (
@@ -291,48 +292,48 @@ export function DividendDashboard() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isFuture ? "bg-blue-600/30" : "bg-slate-600/50"
+                            isFuture ? "bg-accent" : "bg-muted"
                           }`}>
                             <span className={`text-xs font-bold ${
-                              isFuture ? "text-blue-400" : "text-gray-400"
+                              isFuture ? "text-primary" : "text-muted-foreground"
                             }`}>{d.stockCd.slice(0, 2)}</span>
                           </div>
-                          <span className="text-sm font-semibold text-gray-100">{d.stockCd}</span>
+                          <span className="text-sm font-semibold text-foreground">{d.stockCd}</span>
                           {isFuture
-                            ? <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-600/30 text-blue-300">배당 예정</span>
-                            : <span className="text-xs px-1.5 py-0.5 rounded-full bg-slate-600 text-gray-400">지남</span>
+                            ? <span className="text-xs px-1.5 py-0.5 rounded-full bg-accent text-primary">배당 예정</span>
+                            : <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">지남</span>
                           }
                         </div>
                         {d.quarterlyDividend > 0 && (
-                          <span className="text-sm font-bold text-green-400">
+                          <span className="text-sm font-bold text-up">
                             {fmtAmount(d.quarterlyDividend, d.currency === "KRW" ? "KRW" : "USD")}
                           </span>
                         )}
                       </div>
                       {/* 날짜 정보 2줄 */}
                       <div className="grid grid-cols-2 gap-2 ml-9">
-                        <div className="bg-slate-800/60 rounded-lg px-2.5 py-1.5">
+                        <div className="bg-card rounded-lg px-2.5 py-1.5">
                           <div className="flex items-center gap-1 mb-0.5">
-                            <CalendarDays className="w-3 h-3 text-gray-400" />
-                            <span className="text-xs text-gray-400">배당락일</span>
+                            <CalendarDays className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">배당락일</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold text-gray-200">{fmtDate(d.nextExDate!)}</span>
+                            <span className="text-xs font-semibold text-foreground">{fmtDate(d.nextExDate!)}</span>
                             <DDayBadge dateStr={d.nextExDate!} />
                           </div>
                         </div>
-                        <div className="bg-slate-800/60 rounded-lg px-2.5 py-1.5">
+                        <div className="bg-card rounded-lg px-2.5 py-1.5">
                           <div className="flex items-center gap-1 mb-0.5">
-                            <Banknote className="w-3 h-3 text-gray-400" />
-                            <span className="text-xs text-gray-400">지급일 (추정)</span>
+                            <Banknote className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">지급일 (추정)</span>
                           </div>
                           <div className="flex items-center gap-1.5">
                             {d.nextPaymentDate
                               ? <>
-                                  <span className="text-xs font-semibold text-gray-200">{fmtDate(d.nextPaymentDate)}</span>
+                                  <span className="text-xs font-semibold text-foreground">{fmtDate(d.nextPaymentDate)}</span>
                                   <DDayBadge dateStr={d.nextPaymentDate} />
                                 </>
-                              : <span className="text-xs text-gray-500">데이터 없음</span>
+                              : <span className="text-xs text-faint-foreground">데이터 없음</span>
                             }
                           </div>
                         </div>
@@ -341,16 +342,16 @@ export function DividendDashboard() {
                   );
                 })}
               </div>
-              <div className="px-4 py-2 border-t border-slate-600/60 bg-slate-800/30">
-                <p className="text-xs text-gray-500">배당락일 기준 오름차순 · 지급일은 평균 간격 기준 추정값입니다</p>
+              <div className="px-4 py-2 border-t border-border bg-card">
+                <p className="text-xs text-faint-foreground">배당락일 기준 오름차순 · 지급일은 평균 간격 기준 추정값입니다</p>
               </div>
             </Card>
           )}
 
           {/* 종목별 배당금 비중 도넛 차트 */}
           {chartData.length > 0 && (
-            <Card className="p-4 bg-slate-700 border-slate-600 shadow-lg">
-              <h4 className="text-sm font-semibold text-gray-100 mb-1">종목별 배당금 비중</h4>
+            <Card className="p-4 bg-card border-border shadow-paper">
+              <h4 className="text-sm font-semibold text-foreground mb-1">종목별 배당금 비중</h4>
               <div className="relative h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -374,8 +375,8 @@ export function DividendDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-xs text-gray-400">배당</span>
-                  <span className="text-sm font-bold text-gray-100">{chartData.length}개</span>
+                  <span className="text-xs text-muted-foreground">배당</span>
+                  <span className="text-sm font-bold text-foreground">{chartData.length}개</span>
                 </div>
               </div>
               <div className="space-y-2.5 mt-4">
@@ -387,16 +388,16 @@ export function DividendDashboard() {
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
                           <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                          <span className="text-xs text-gray-300">{d.stockCd}</span>
+                          <span className="text-xs text-muted-foreground">{d.stockCd}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-green-400">
+                          <span className="text-xs font-semibold text-up">
                             {fmtAmount(d.annualDividend, d.currency === "KRW" ? "KRW" : "USD")}/년
                           </span>
-                          <span className="text-xs text-gray-400 w-10 text-right">{pct.toFixed(1)}%</span>
+                          <span className="text-xs text-muted-foreground w-10 text-right">{pct.toFixed(1)}%</span>
                         </div>
                       </div>
-                      <div className="w-full bg-slate-600 rounded-full h-1.5">
+                      <div className="w-full bg-muted rounded-full h-1.5">
                         <div
                           className="h-1.5 rounded-full transition-all duration-500"
                           style={{ width: `${pct}%`, backgroundColor: COLORS[index % COLORS.length] }}
@@ -411,33 +412,33 @@ export function DividendDashboard() {
 
           {/* 종목별 상세 */}
           {dividendStocks.length > 0 && (
-            <Card className="bg-slate-700 border-slate-600 overflow-hidden">
-              <div className="p-3 border-b border-slate-600">
-                <h4 className="text-sm font-semibold text-gray-100">종목별 연간 배당금</h4>
+            <Card className="bg-card border-border overflow-hidden">
+              <div className="p-3 border-b border-border">
+                <h4 className="text-sm font-semibold text-foreground">종목별 연간 배당금</h4>
               </div>
-              <div className="divide-y divide-slate-600">
+              <div className="divide-y divide-border-soft">
                 {dividendStocks.map((d) => {
                   const isOpen = expanded === d.stockCd;
                   return (
                     <div key={d.stockCd}>
                       <button
-                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-600/50 transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors"
                         onClick={() => setExpanded(isOpen ? null : d.stockCd)}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-green-600/30 flex items-center justify-center">
-                            <span className="text-xs font-bold text-green-400">{d.stockCd.slice(0, 2)}</span>
+                          <div className="w-8 h-8 rounded-full bg-up/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-up">{d.stockCd.slice(0, 2)}</span>
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-semibold text-gray-100">{d.stockCd}</p>
+                            <p className="text-sm font-semibold text-foreground">{d.stockCd}</p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <p className="text-xs text-gray-400">{d.holdQty.toLocaleString()}주</p>
+                              <p className="text-xs text-muted-foreground">{d.holdQty.toLocaleString()}주</p>
                               {d.nextExDate && (
                                 <>
-                                  <span className="text-gray-600">·</span>
+                                  <span className="text-faint-foreground">·</span>
                                   <div className="flex items-center gap-1">
-                                    <CalendarDays className="w-3 h-3 text-gray-500" />
-                                    <span className="text-xs text-gray-400">락 {fmtDate(d.nextExDate)}</span>
+                                    <CalendarDays className="w-3 h-3 text-faint-foreground" />
+                                    <span className="text-xs text-muted-foreground">락 {fmtDate(d.nextExDate)}</span>
                                     <DDayBadge dateStr={d.nextExDate} />
                                   </div>
                                 </>
@@ -447,34 +448,34 @@ export function DividendDashboard() {
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="text-right">
-                            <p className="text-sm font-bold text-green-400">
+                            <p className="text-sm font-bold text-up">
                               {fmtAmount(d.annualDividend, d.currency === "KRW" ? "KRW" : "USD")}
                             </p>
-                            <p className="text-xs text-gray-400">/년</p>
+                            <p className="text-xs text-muted-foreground">/년</p>
                           </div>
-                          <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-90" : ""}`} />
+                          <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? "rotate-90" : ""}`} />
                         </div>
                       </button>
                       {isOpen && (
-                        <div className="px-4 pb-3 bg-slate-800/50">
+                        <div className="px-4 pb-3 bg-card">
                           <div className="grid grid-cols-2 gap-2 text-xs">
-                            <div className="bg-slate-700 rounded-lg p-2">
-                              <p className="text-gray-400">보유수량</p>
-                              <p className="text-gray-100 font-semibold mt-0.5">{d.holdQty.toLocaleString()} 주</p>
+                            <div className="bg-card rounded-lg p-2">
+                              <p className="text-muted-foreground">보유수량</p>
+                              <p className="text-foreground font-semibold mt-0.5">{d.holdQty.toLocaleString()} 주</p>
                             </div>
-                            <div className="bg-slate-700 rounded-lg p-2">
-                              <p className="text-gray-400">주당 연간 배당금</p>
-                              <p className="text-gray-100 font-semibold mt-0.5">${d.annualDividendPerShare.toFixed(4)}</p>
+                            <div className="bg-card rounded-lg p-2">
+                              <p className="text-muted-foreground">주당 연간 배당금</p>
+                              <p className="text-foreground font-semibold mt-0.5">${d.annualDividendPerShare.toFixed(4)}</p>
                             </div>
-                            <div className="bg-slate-700 rounded-lg p-2">
-                              <p className="text-gray-400">월간 예상</p>
-                              <p className="text-green-400 font-semibold mt-0.5">
+                            <div className="bg-card rounded-lg p-2">
+                              <p className="text-muted-foreground">월간 예상</p>
+                              <p className="text-up font-semibold mt-0.5">
                                 {fmtAmount(d.annualDividend / 12, d.currency === "KRW" ? "KRW" : "USD")}
                               </p>
                             </div>
-                            <div className="bg-slate-700 rounded-lg p-2">
-                              <p className="text-gray-400">분기 예상</p>
-                              <p className="text-green-400 font-semibold mt-0.5">
+                            <div className="bg-card rounded-lg p-2">
+                              <p className="text-muted-foreground">분기 예상</p>
+                              <p className="text-up font-semibold mt-0.5">
                                 {fmtAmount(d.quarterlyDividend, d.currency === "KRW" ? "KRW" : "USD")}
                               </p>
                             </div>
@@ -482,22 +483,22 @@ export function DividendDashboard() {
                           {(d.nextExDate || d.nextPaymentDate) && (
                             <div className="mt-2 grid grid-cols-2 gap-2">
                               {d.nextExDate && (
-                                <div className="bg-slate-700 rounded-lg p-2">
+                                <div className="bg-card rounded-lg p-2">
                                   <div className="flex items-center gap-1 mb-1">
-                                    <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
-                                    <span className="text-xs text-gray-400">다음 배당락일 (추정)</span>
+                                    <CalendarDays className="w-3.5 h-3.5 text-primary" />
+                                    <span className="text-xs text-muted-foreground">다음 배당락일 (추정)</span>
                                   </div>
-                                  <p className="text-sm font-semibold text-gray-100">{fmtDate(d.nextExDate)}</p>
+                                  <p className="text-sm font-semibold text-foreground">{fmtDate(d.nextExDate)}</p>
                                   <div className="mt-1"><DDayBadge dateStr={d.nextExDate} /></div>
                                 </div>
                               )}
                               {d.nextPaymentDate && (
-                                <div className="bg-slate-700 rounded-lg p-2">
+                                <div className="bg-card rounded-lg p-2">
                                   <div className="flex items-center gap-1 mb-1">
-                                    <Banknote className="w-3.5 h-3.5 text-green-400" />
-                                    <span className="text-xs text-gray-400">다음 지급일 (추정)</span>
+                                    <Banknote className="w-3.5 h-3.5 text-up" />
+                                    <span className="text-xs text-muted-foreground">다음 지급일 (추정)</span>
                                   </div>
-                                  <p className="text-sm font-semibold text-gray-100">{fmtDate(d.nextPaymentDate)}</p>
+                                  <p className="text-sm font-semibold text-foreground">{fmtDate(d.nextPaymentDate)}</p>
                                   <div className="mt-1"><DDayBadge dateStr={d.nextPaymentDate} /></div>
                                 </div>
                               )}
@@ -513,11 +514,11 @@ export function DividendDashboard() {
           )}
 
           {noDividendStocks.length > 0 && (
-            <Card className="p-3 bg-slate-700 border-slate-600">
-              <p className="text-xs text-gray-400 mb-2">배당 데이터 없는 종목</p>
+            <Card className="p-3 bg-card border-border">
+              <p className="text-xs text-muted-foreground mb-2">배당 데이터 없는 종목</p>
               <div className="flex flex-wrap gap-2">
                 {noDividendStocks.map((d) => (
-                  <span key={d.stockCd} className="text-xs px-2 py-1 bg-slate-600 text-gray-300 rounded-full">
+                  <span key={d.stockCd} className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-full">
                     {d.stockCd}
                   </span>
                 ))}
@@ -525,10 +526,10 @@ export function DividendDashboard() {
             </Card>
           )}
 
-          <Card className="p-3 bg-slate-700/50 border-slate-600">
+          <Card className="p-3 bg-card border-border">
             <div className="flex items-start gap-2">
-              <TrendingUp className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-gray-400 leading-relaxed">
+              <TrendingUp className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 최근 4분기 배당락일 데이터 기준 연간 예상치입니다.
                 실제 배당 주기나 금액은 종목 정책에 따라 달라질 수 있습니다.
               </p>

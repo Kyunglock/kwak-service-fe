@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHART_COLORS, THEME } from './tokens';
+import { CHART_COLORS, CHART_COLORS_10, THEME } from './tokens';
 import css from '../../styles/theme.css?raw';
 
 // 테마 토큰의 단일 출처는 theme.css 다. tokens.ts 는 CSS 변수를 못 쓰는 곳(recharts SVG 속성)용 사본이라
@@ -29,6 +29,11 @@ describe('theme tokens', () => {
 
   it.each(CHART_COLORS.map((c, i) => [i + 1, c] as const))('CHART_COLORS[%i] 가 --chart-n 과 같다', (n, value) => {
     expect(cssVar(`chart-${n}`)?.toLowerCase()).toBe(value.toLowerCase());
+  });
+
+  it('CHART_COLORS_10 은 서로 다른 10색이고 앞 5색은 CHART_COLORS 와 같다', () => {
+    expect(new Set(CHART_COLORS_10).size).toBe(10);
+    expect(CHART_COLORS_10.slice(0, 5)).toEqual([...CHART_COLORS]);
   });
 
   it('body 규칙에 옛 남색 배경 #1e293b 가 없다', () => {

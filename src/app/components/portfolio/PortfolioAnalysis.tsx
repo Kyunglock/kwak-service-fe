@@ -11,6 +11,7 @@ import { getDividendsByPortfolio } from "@/app/services/dividendService";
 import { predictNextExDate, predictNextPaymentDate } from "@/app/utils/dividend";
 import { useCurrency, EXCHANGE_RATE } from "@/app/contexts/CurrencyContext";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
+import { CHART_COLORS_10, THEME } from "@/app/theme/tokens";
 
 type TrendPeriod = 'week' | 'month' | 'year';
 
@@ -97,14 +98,14 @@ const CustomTooltip = ({ active, payload, formatFn }: { active?: boolean; payloa
   if (!active || !payload?.length) return null;
   const item = payload[0].payload;
   return (
-    <div className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 shadow-xl text-xs">
-      <div className="font-semibold text-gray-100">{item.name}</div>
-      <div className="text-purple-300">{formatFn(item.rawValue, item.currency)}</div>
+    <div className="bg-card border border-border rounded-lg px-3 py-2 shadow-paper text-xs">
+      <div className="font-semibold text-foreground">{item.name}</div>
+      <div className="text-primary">{formatFn(item.rawValue, item.currency)}</div>
     </div>
   );
 };
 
-const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#06b6d4", "#f97316", "#a78bfa", "#34d399"];
+const COLORS = CHART_COLORS_10;
 
 // 컴포넌트 외부 정의 — 렌더링마다 새 타입이 생성되지 않아 Recharts 재애니메이션 방지
 const DonutChart = ({
@@ -140,8 +141,8 @@ const DonutChart = ({
       </PieChart>
     </ResponsiveContainer>
     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-      <span className="text-xs text-gray-400">{centerLabel}</span>
-      <span className="text-sm font-bold text-gray-100">{data.length}개</span>
+      <span className="text-xs text-muted-foreground">{centerLabel}</span>
+      <span className="text-sm font-bold text-foreground">{data.length}개</span>
     </div>
   </div>
 );
@@ -163,21 +164,21 @@ const ChartLegend = ({
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                <span className="text-xs text-gray-300">{item.name}</span>
+                <span className="text-xs text-muted-foreground">{item.name}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-gray-100">{formatFn(item.rawValue)}</span>
-                <span className="text-xs text-gray-400 w-10 text-right">{pct.toFixed(1)}%</span>
+                <span className="text-xs font-semibold text-foreground">{formatFn(item.rawValue)}</span>
+                <span className="text-xs text-muted-foreground w-10 text-right">{pct.toFixed(1)}%</span>
               </div>
             </div>
-            <div className="w-full bg-slate-600 rounded-full h-1.5">
+            <div className="w-full bg-muted rounded-full h-1.5">
               <div
                 className="h-1.5 rounded-full transition-all duration-500"
                 style={{ width: `${pct}%`, backgroundColor: COLORS[index % COLORS.length] }}
               />
             </div>
             {item.nextExDate && (
-              <p className="text-[11px] text-gray-500 mt-1 ml-4">
+              <p className="text-[11px] text-faint-foreground mt-1 ml-4">
                 배당락 {item.nextExDate} · 지급 {item.nextPaymentDate ?? "미정"}
               </p>
             )}
@@ -410,11 +411,11 @@ export function PortfolioAnalysis({
       {!embedded && (
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-purple-400" />
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-primary" />
               자산 분석
             </h2>
-            <p className="text-sm text-gray-400 mt-1">포트폴리오 비중 및 수익 추이</p>
+            <p className="text-sm text-muted-foreground mt-1">포트폴리오 비중 및 수익 추이</p>
           </div>
           <CurrencyToggleButton />
         </div>
@@ -422,27 +423,27 @@ export function PortfolioAnalysis({
 
       {loading ? (
         !embedded ? (
-          <Card className="p-12 text-center bg-slate-800 border-slate-700">
-            <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm text-gray-400">데이터를 불러오는 중...</p>
+          <Card className="p-12 text-center bg-card border-border">
+            <div className="w-8 h-8 border-2 border-primary/40 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">데이터를 불러오는 중...</p>
           </Card>
         ) : null
       ) : positions.length === 0 ? (
         !embedded ? (
-          <Card className="p-12 text-center bg-slate-800 border-slate-700">
-            <BarChart3 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-            <p className="text-sm text-gray-400">포트폴리오에 종목을 추가하면 자산 분석 데이터를 확인할 수 있습니다.</p>
+          <Card className="p-12 text-center bg-card border-border">
+            <BarChart3 className="w-12 h-12 text-faint-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">포트폴리오에 종목을 추가하면 자산 분석 데이터를 확인할 수 있습니다.</p>
           </Card>
         ) : null
       ) : (
         <>
           {/* 총자산 요약 카드 — 독립 탭일 때만 표시 */}
-          {!embedded && <Card className="p-5 text-white border-0 shadow-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
+          {!embedded && <Card className="p-5 text-primary-foreground border-0 shadow-paper bg-primary">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm opacity-80 mb-1">총 자산 ({currency === "USD" ? "USD" : "KRW"})</p>
                 <p className="text-3xl font-bold tracking-tight">{fmtConverted(totalCurrent)}</p>
-                <div className={`flex items-center gap-1 mt-2 text-sm ${totalProfit >= 0 ? "text-green-300" : "text-red-300"}`}>
+                <div className={`flex items-center gap-1 mt-2 text-sm ${totalProfit >= 0 ? "text-up" : "text-down"}`}>
                   {totalProfit >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                   <span className="font-semibold">{fmtConverted(Math.abs(totalProfit))}</span>
                   <span className="opacity-80">({totalProfitPct >= 0 ? "+" : ""}{totalProfitPct.toFixed(2)}%)</span>
@@ -451,8 +452,8 @@ export function PortfolioAnalysis({
               <div className="flex flex-col items-end gap-1.5 text-xs opacity-75">
                 <p>총 투자금: {fmtConverted(totalInvestment)}</p>
                 <div className="flex gap-1.5">
-                  {usdCount > 0 && <span className="bg-white/20 px-2 py-0.5 rounded-full">미국 {usdCount}종목</span>}
-                  {krwCount > 0 && <span className="bg-white/20 px-2 py-0.5 rounded-full">한국 {krwCount}종목</span>}
+                  {usdCount > 0 && <span className="bg-muted px-2 py-0.5 rounded-full">미국 {usdCount}종목</span>}
+                  {krwCount > 0 && <span className="bg-muted px-2 py-0.5 rounded-full">한국 {krwCount}종목</span>}
                 </div>
                 {hasBothCurrencies && <p className="text-right">{exchangeNote}</p>}
               </div>
@@ -463,11 +464,11 @@ export function PortfolioAnalysis({
           {(stockAllocation.length > 0 || sectorAllocation.length > 0) && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {stockAllocation.length > 0 && (
-                <Card className="p-5 bg-slate-800 border-slate-700 shadow-lg">
-                  <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
-                    <PieChartIcon className="w-4 h-4 text-blue-400" />
+                <Card className="p-5 bg-card border-border shadow-paper">
+                  <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-foreground">
+                    <PieChartIcon className="w-4 h-4 text-primary" />
                     종목별 비중
-                    {hasBothCurrencies && <span className="text-xs text-gray-500 font-normal ml-1">{exchangeNote}</span>}
+                    {hasBothCurrencies && <span className="text-xs text-faint-foreground font-normal ml-1">{exchangeNote}</span>}
                   </h3>
                   <DonutChart data={stockAllocation} centerLabel="종목" formatFn={fmtConverted} />
                   <ChartLegend data={stockAllocation} formatFn={fmtConverted} />
@@ -475,22 +476,22 @@ export function PortfolioAnalysis({
               )}
 
               {sectorAllocation.length > 0 && (
-                <Card className="p-5 bg-slate-800 border-slate-700 shadow-lg">
-                  <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
-                    <PieChartIcon className="w-4 h-4 text-purple-400" />
+                <Card className="p-5 bg-card border-border shadow-paper">
+                  <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-foreground">
+                    <PieChartIcon className="w-4 h-4 text-primary" />
                     섹터별 비중
-                    {hasBothCurrencies && <span className="text-xs text-gray-500 font-normal ml-1">{exchangeNote}</span>}
+                    {hasBothCurrencies && <span className="text-xs text-faint-foreground font-normal ml-1">{exchangeNote}</span>}
                   </h3>
                   <DonutChart data={sectorAllocation} centerLabel="섹터" formatFn={fmtConverted} />
                   <ChartLegend data={sectorAllocation} formatFn={fmtConverted} />
                 </Card>
               )}
 
-              <Card className="p-5 bg-slate-800 border-slate-700 shadow-lg">
-                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-gray-100">
-                  <PieChartIcon className="w-4 h-4 text-green-400" />
+              <Card className="p-5 bg-card border-border shadow-paper">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2 text-foreground">
+                  <PieChartIcon className="w-4 h-4 text-primary" />
                   배당금 비중
-                  {hasBothCurrencies && <span className="text-xs text-gray-500 font-normal ml-1">{exchangeNote}</span>}
+                  {hasBothCurrencies && <span className="text-xs text-faint-foreground font-normal ml-1">{exchangeNote}</span>}
                 </h3>
                 {dividendAllocation.length > 0 ? (
                   <>
@@ -499,8 +500,8 @@ export function PortfolioAnalysis({
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-72 text-center">
-                    <PieChartIcon className="w-10 h-10 text-gray-600 mb-3" />
-                    <p className="text-xs text-gray-500">배당 데이터가 없습니다</p>
+                    <PieChartIcon className="w-10 h-10 text-faint-foreground mb-3" />
+                    <p className="text-xs text-faint-foreground">배당 데이터가 없습니다</p>
                   </div>
                 )}
               </Card>
@@ -508,10 +509,10 @@ export function PortfolioAnalysis({
           )}
 
           {/* 자산 추이 차트 (풀 너비) */}
-          <Card className="p-5 bg-slate-800 border-slate-700 shadow-lg">
+          <Card className="p-5 bg-card border-border shadow-paper">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-sm flex items-center gap-2 text-gray-100">
-                <TrendingUp className="w-4 h-4 text-green-400" />
+              <h3 className="font-semibold text-sm flex items-center gap-2 text-foreground">
+                <TrendingUp className="w-4 h-4 text-primary" />
                 자산 추이
               </h3>
               <div className="flex gap-1">
@@ -521,8 +522,8 @@ export function PortfolioAnalysis({
                     onClick={() => setTrendPeriod(p)}
                     className={`px-3 py-1 text-xs rounded-md font-medium transition-colors ${
                       trendPeriod === p
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:bg-accent'
                     }`}
                   >
                     {p === 'week' ? '주별' : p === 'month' ? '월별' : '연별'}
@@ -531,27 +532,27 @@ export function PortfolioAnalysis({
               </div>
             </div>
             {trendData.length === 0 ? (
-              <p className="text-sm text-gray-500 text-center py-8">거래 내역이 없습니다.</p>
+              <p className="text-sm text-faint-foreground text-center py-8">거래 내역이 없습니다.</p>
             ) : (
               <>
                 <ResponsiveContainer width="100%" height={240}>
                   <AreaChart data={trendData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
                     <defs>
                       <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                        <stop offset="5%" stopColor={THEME.primary} stopOpacity={0.25} />
+                        <stop offset="95%" stopColor={THEME.primary} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={THEME.borderSoft} />
                     <XAxis
                       dataKey="label"
-                      tick={{ fill: '#64748b', fontSize: 11 }}
+                      tick={{ fill: THEME.mutedForeground, fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                       interval={Math.max(0, Math.floor(trendData.length / 6) - 1)}
                     />
                     <YAxis
-                      tick={{ fill: '#64748b', fontSize: 11 }}
+                      tick={{ fill: THEME.mutedForeground, fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                       width={56}
@@ -562,22 +563,22 @@ export function PortfolioAnalysis({
                       }
                     />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px' }}
-                      labelStyle={{ color: '#e2e8f0', fontSize: 12 }}
+                      contentStyle={{ backgroundColor: THEME.card, border: `1px solid ${THEME.border}`, borderRadius: '8px', color: THEME.foreground }}
+                      labelStyle={{ color: THEME.mutedForeground, fontSize: 12 }}
                       formatter={(value: number) => [fmtConverted(value), '누적 투자금']}
                     />
                     <Area
                       type="monotone"
                       dataKey="value"
-                      stroke="#6366f1"
+                      stroke={THEME.primary}
                       strokeWidth={2.5}
                       fill="url(#trendGradient)"
-                      dot={{ r: 3, fill: '#6366f1', strokeWidth: 0 }}
-                      activeDot={{ r: 5, fill: '#818cf8' }}
+                      dot={{ r: 3, fill: THEME.primary, strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: THEME.primaryStrong }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
-                <p className="text-[10px] text-gray-600 text-right mt-2">
+                <p className="text-[10px] text-faint-foreground text-right mt-2">
                   * 매수/매도 기준 누적 투자금액
                   {hasBothCurrencies && ` ${exchangeNote}`}
                 </p>

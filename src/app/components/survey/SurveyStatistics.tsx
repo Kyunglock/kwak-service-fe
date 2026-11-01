@@ -105,28 +105,28 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-purple-400" />
-          <h2 className="text-lg font-semibold text-gray-100">응답 내역</h2>
+          <BarChart3 className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">응답 내역</h2>
         </div>
         {!loading && (
-          <span className="text-xs text-gray-500">총 {totalElements}개</span>
+          <span className="text-xs text-faint-foreground">총 {totalElements}개</span>
         )}
       </div>
 
       {/* 목록 */}
       {loading ? (
-        <Card className="p-8 text-center bg-slate-700 border-slate-600">
-          <div className="w-7 h-7 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-400">불러오는 중...</p>
+        <Card className="p-8 text-center bg-card border-border">
+          <div className="w-7 h-7 border-2 border-primary/40 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">불러오는 중...</p>
         </Card>
       ) : responses.length === 0 ? (
-        <Card className="p-6 text-center bg-slate-700/50 border-slate-600">
-          <BarChart3 className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-gray-400">
+        <Card className="p-6 text-center bg-card border-border">
+          <BarChart3 className="w-10 h-10 text-faint-foreground mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
             {keyword ? "검색 결과가 없습니다." : "완료한 설문이 없습니다"}
           </p>
           {!keyword && (
-            <p className="text-xs text-gray-500 mt-1">설문을 완료하면 여기에 응답 내역이 표시됩니다.</p>
+            <p className="text-xs text-faint-foreground mt-1">설문을 완료하면 여기에 응답 내역이 표시됩니다.</p>
           )}
         </Card>
       ) : (
@@ -137,22 +137,22 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
             const isLoadingDetail = detailLoading === response.surveyId;
 
             return (
-              <Card key={response.surveyId} className="bg-slate-700 border-slate-600 overflow-hidden">
+              <Card key={response.surveyId} className="bg-card border-border overflow-hidden">
                 <div
-                  className="p-4 cursor-pointer hover:bg-slate-600/40 transition-colors"
+                  className="p-4 cursor-pointer hover:bg-accent transition-colors"
                   onClick={() => toggleSurvey(response.surveyId, response.responseId)}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-medium text-sm text-gray-100 leading-snug">
+                        <h3 className="font-medium text-sm text-foreground leading-snug">
                           {response.surveyName}
                         </h3>
-                        <Badge className="bg-green-700/60 text-green-300 text-[10px] px-1.5 py-0 border-0">
+                        <Badge className="bg-success/15 text-success text-[10px] px-1.5 py-0 border-0">
                           완료
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 text-xs text-faint-foreground">
                         <span>{response.regDt.slice(0, 10)}</span>
                         <span className="flex items-center gap-1">
                           <Users className="w-3 h-3" />
@@ -161,18 +161,18 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
                       </div>
                     </div>
                     {isExpanded
-                      ? <ChevronUp className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                      : <ChevronDown className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      ? <ChevronUp className="w-4 h-4 text-faint-foreground flex-shrink-0" />
+                      : <ChevronDown className="w-4 h-4 text-faint-foreground flex-shrink-0" />
                     }
                   </div>
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t border-slate-600 p-4 space-y-4 bg-slate-800/30">
+                  <div className="border-t border-border p-4 space-y-4 bg-card">
                     {isLoadingDetail ? (
                       <div className="text-center py-4">
-                        <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                        <p className="text-xs text-gray-500">불러오는 중...</p>
+                        <div className="w-6 h-6 border-2 border-primary/40 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                        <p className="text-xs text-faint-foreground">불러오는 중...</p>
                       </div>
                     ) : detail ? (
                       detail.questions.map((question, qIndex) => {
@@ -180,10 +180,10 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
                         return (
                           <div key={question.questionId} className="space-y-3">
                             <div className="flex items-start gap-2">
-                              <Badge className="bg-purple-700/60 text-purple-300 text-[10px] px-1.5 py-0 mt-0.5 flex-shrink-0 border-0">
+                              <Badge className="bg-accent text-primary text-[10px] px-1.5 py-0 mt-0.5 flex-shrink-0 border-0">
                                 Q{qIndex + 1}
                               </Badge>
-                              <h4 className="text-sm font-medium text-gray-100 leading-relaxed">
+                              <h4 className="text-sm font-medium text-foreground leading-relaxed">
                                 {question.questionText}
                               </h4>
                             </div>
@@ -197,22 +197,22 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
                                 return (
                                   <div key={option.optionId} className="space-y-1">
                                     <div className="flex items-center justify-between text-xs">
-                                      <span className={isMyAnswer ? "font-semibold text-purple-300" : "text-gray-400"}>
+                                      <span className={isMyAnswer ? "font-semibold text-primary" : "text-muted-foreground"}>
                                         {option.optionText}
                                       </span>
-                                      <span className="text-gray-500 tabular-nums">
+                                      <span className="text-faint-foreground tabular-nums">
                                         {option.selectedCount}명 · {percentage}%
                                       </span>
                                     </div>
-                                    <div className="relative h-6 bg-slate-600/40 rounded overflow-hidden">
+                                    <div className="relative h-6 bg-muted rounded overflow-hidden">
                                       <div
                                         className={`absolute inset-y-0 left-0 transition-all duration-500 ${
-                                          isMyAnswer ? "bg-purple-500/70" : "bg-slate-500/50"
+                                          isMyAnswer ? "bg-primary/70" : "bg-switch-background"
                                         }`}
                                         style={{ width: `${percentage}%` }}
                                       />
                                       <div className="absolute inset-0 flex items-center px-2">
-                                        <span className="text-xs font-medium text-white/80">{percentage}%</span>
+                                        <span className="text-xs font-medium text-foreground">{percentage}%</span>
                                       </div>
                                     </div>
                                   </div>
@@ -220,13 +220,13 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
                               })}
                             </div>
                             {qIndex < detail.questions.length - 1 && (
-                              <div className="border-t border-slate-700" />
+                              <div className="border-t border-border" />
                             )}
                           </div>
                         );
                       })
                     ) : (
-                      <p className="text-xs text-gray-500 text-center py-2">상세 정보를 불러올 수 없습니다.</p>
+                      <p className="text-xs text-faint-foreground text-center py-2">상세 정보를 불러올 수 없습니다.</p>
                     )}
                   </div>
                 )}
@@ -242,19 +242,19 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-gray-200 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             이전
           </button>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-faint-foreground">
             {page + 1} / {totalPages}
-            {keyword && <span className="ml-1 text-purple-400">· {totalElements}건</span>}
+            {keyword && <span className="ml-1 text-primary">· {totalElements}건</span>}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-gray-200 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             다음
             <ChevronRight className="w-3.5 h-3.5" />

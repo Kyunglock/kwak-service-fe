@@ -308,9 +308,9 @@ export function InvestmentSurvey({ keyword, onComplete, autoOpenType, onAutoOpen
   if (!surveyDetail || detailLoading || !surveyDetail.questions?.length) {
     return (
       <div className="p-4 space-y-4">
-        <Card className="p-8 text-center bg-slate-700 border-slate-600">
-          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-300">설문을 불러오는 중...</p>
+        <Card className="p-8 text-center bg-card border-border">
+          <div className="w-8 h-8 border-2 border-primary/40 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">설문을 불러오는 중...</p>
         </Card>
       </div>
     );

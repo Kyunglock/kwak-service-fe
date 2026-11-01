@@ -14,5 +14,7 @@ export default defineConfig({
   test: {
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     exclude: ['e2e/**', 'node_modules/**'],
+    // 테마 테스트가 theme.css 원문(?raw)을 읽는다. 기본값은 CSS 를 빈 문자열로 처리한다.
+    css: { include: [/src\/styles\/theme\.css/] },
   },
 });

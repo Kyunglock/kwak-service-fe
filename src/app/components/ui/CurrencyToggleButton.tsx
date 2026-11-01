@@ -7,14 +7,14 @@ export function CurrencyToggleButton() {
   return (
     <button
       onClick={toggleCurrency}
-      className="flex items-center gap-0.5 rounded-full border border-slate-500 bg-slate-700 p-0.5 text-xs font-semibold shadow-sm transition-colors hover:border-slate-400"
+      className="flex items-center gap-0.5 rounded-full border border-border bg-muted p-0.5 text-xs font-semibold shadow-paper transition-colors hover:border-primary/40"
       aria-label="통화 전환"
     >
       <span
         className={`rounded-full px-2.5 py-1 transition-colors ${
           !isKRW
-            ? "bg-blue-600 text-white shadow"
-            : "text-gray-400 hover:text-gray-300"
+            ? "bg-primary text-primary-foreground shadow-paper"
+            : "text-muted-foreground hover:text-foreground"
         }`}
       >
         USD
@@ -22,8 +22,8 @@ export function CurrencyToggleButton() {
       <span
         className={`rounded-full px-2.5 py-1 transition-colors ${
           isKRW
-            ? "bg-rose-600 text-white shadow"
-            : "text-gray-400 hover:text-gray-300"
+            ? "bg-primary text-primary-foreground shadow-paper"
+            : "text-muted-foreground hover:text-foreground"
         }`}
       >
         KRW

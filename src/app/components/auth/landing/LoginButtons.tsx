@@ -18,7 +18,7 @@ export function LoginButtons({
     <Button
       onClick={handleKakaoLogin}
       disabled={isKakaoLoading || isGuestLoading}
-      className={`h-12 bg-[#FEE500] hover:bg-[#FDD835] text-[#000000] font-semibold text-base shadow-lg disabled:opacity-50 ${
+      className={`h-12 bg-[#FEE500] hover:bg-[#FDD835] text-[#000000] font-semibold text-base shadow-paper disabled:opacity-50 ${
         row ? "w-full rounded-full sm:w-auto sm:px-9" : "w-full"
       }`}
     >
@@ -45,13 +45,13 @@ export function LoginButtons({
       variant="outline"
       className={`h-12 font-semibold text-base ${
         row
-          ? "w-full rounded-full border-white/15 bg-white/5 text-slate-200 hover:border-white/30 hover:bg-white/10 sm:w-auto sm:px-9"
-          : "w-full border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700"
+          ? "w-full rounded-full border-border bg-card text-foreground shadow-paper hover:border-primary/40 hover:bg-accent sm:w-auto sm:px-9"
+          : "w-full border-border bg-card text-foreground shadow-paper hover:bg-accent"
       }`}
     >
       {isGuestLoading ? (
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 border-2 border-slate-400/20 border-t-slate-300 rounded-full animate-spin"></div>
+          <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <span>로그인 중...</span>
         </div>
       ) : (
@@ -76,9 +76,9 @@ export function LoginButtons({
     <div className="space-y-4">
       {kakaoButton}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-px bg-slate-700"></div>
-        <span className="text-xs text-gray-500">또는</span>
-        <div className="flex-1 h-px bg-slate-700"></div>
+        <div className="flex-1 h-px bg-border"></div>
+        <span className="text-xs text-faint-foreground">또는</span>
+        <div className="flex-1 h-px bg-border"></div>
       </div>
       {guestButton}
     </div>

@@ -170,7 +170,7 @@ export function MainLayout() {
     <CurrencyProvider>
       <MobileAlert />
       {needsNickname && <NicknameModal onComplete={() => setNeedsNickname(false)} />}
-      <div className="min-h-screen min-h-dvh bg-slate-800 lg:flex">
+      <div className="min-h-screen min-h-dvh bg-background text-foreground lg:flex">
         {/* 사이드바 (PC: 항상 표시, 모바일: 햄버거 토글) */}
         <SideMenu
           isOpen={isMenuOpen}
@@ -189,11 +189,11 @@ export function MainLayout() {
         {/* 메인 콘텐츠 영역 */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* 모바일 전용 헤더 */}
-          <header className="lg:hidden bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-lg sticky top-0 z-50">
+          <header className="lg:hidden bg-card border-b border-border text-foreground p-4 shadow-paper sticky top-0 z-50">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl font-bold">🧭 주식 나침반</h1>
-                <p className="text-xs opacity-90 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   S&amp;P 500 종목 기반 포트폴리오 관리
                 </p>
               </div>
@@ -201,7 +201,7 @@ export function MainLayout() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white hover:bg-white/20 h-14 w-14 p-0"
+                className="text-foreground hover:bg-accent h-14 w-14 p-0"
               >
                 {isMenuOpen ? (
                   <X className="size-7" />
@@ -231,13 +231,13 @@ export function MainLayout() {
                 <div className="space-y-4 w-full max-w-4xl mx-auto">
                   {/* 공유 검색창 */}
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-faint-foreground" />
                     <input
                       type="text"
                       value={surveyInputKeyword}
                       onChange={(e) => setSurveyInputKeyword(e.target.value)}
                       placeholder="설문 제목 또는 설명 검색"
-                      className="w-full pl-9 pr-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-600 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 bg-input-background border border-border rounded-lg text-sm text-foreground placeholder-faint-foreground focus:outline-none focus:border-primary transition-colors"
                     />
                   </div>
 
@@ -258,8 +258,8 @@ export function MainLayout() {
                         onAutoOpenHandled={() => setAutoOpenSurveyType(null)}
                       />
                     </div>
-                    <div className="hidden lg:block w-px bg-slate-700 self-stretch" />
-                    <hr className="lg:hidden border-slate-700 my-6" />
+                    <div className="hidden lg:block w-px bg-border self-stretch" />
+                    <hr className="lg:hidden border-border my-6" />
                     <div className="lg:w-2/5 lg:sticky lg:top-6">
                       <SurveyStatistics
                         keyword={surveyKeyword}
@@ -277,8 +277,8 @@ export function MainLayout() {
                   <StockRecommendations />
                 ) : (
                   <div className="p-4 text-center py-12">
-                    <Star className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                    <p className="text-sm text-gray-300">
+                    <Star className="w-16 h-16 text-faint-foreground mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">
                       설문을 완료하시면 맞춤형 종목 추천을 받을 수 있습니다.
                     </p>
                   </div>

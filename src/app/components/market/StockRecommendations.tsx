@@ -330,41 +330,41 @@ export function StockRecommendations() {
   };
 
   const sectorColors: Record<string, { bg: string; border: string; dot: string; sectorBadge: string; accentText: string }> = {
-    "기술":     { bg: "from-slate-700/90 to-slate-800/90", border: "border-slate-500/70", dot: "bg-slate-400", sectorBadge: "text-slate-200 bg-slate-600/60 border-slate-400/50", accentText: "text-slate-200" },
-    "헬스케어": { bg: "from-slate-700/90 to-slate-800/90", border: "border-slate-500/70", dot: "bg-slate-400", sectorBadge: "text-slate-200 bg-slate-600/60 border-slate-400/50", accentText: "text-slate-200" },
-    "소비재":   { bg: "from-slate-700/90 to-slate-800/90", border: "border-slate-500/70", dot: "bg-slate-400", sectorBadge: "text-slate-200 bg-slate-600/60 border-slate-400/50", accentText: "text-slate-200" },
-    "에너지":   { bg: "from-slate-700/90 to-slate-800/90", border: "border-slate-500/70", dot: "bg-slate-400", sectorBadge: "text-slate-200 bg-slate-600/60 border-slate-400/50", accentText: "text-slate-200" },
-    "통신":     { bg: "from-slate-700/90 to-slate-800/90", border: "border-slate-500/70", dot: "bg-slate-400", sectorBadge: "text-slate-200 bg-slate-600/60 border-slate-400/50", accentText: "text-slate-200" },
+    "기술":     { bg: "bg-card", border: "border-border", dot: "bg-muted", sectorBadge: "text-foreground bg-muted border-border", accentText: "text-foreground" },
+    "헬스케어": { bg: "bg-card", border: "border-border", dot: "bg-muted", sectorBadge: "text-foreground bg-muted border-border", accentText: "text-foreground" },
+    "소비재":   { bg: "bg-card", border: "border-border", dot: "bg-muted", sectorBadge: "text-foreground bg-muted border-border", accentText: "text-foreground" },
+    "에너지":   { bg: "bg-card", border: "border-border", dot: "bg-muted", sectorBadge: "text-foreground bg-muted border-border", accentText: "text-foreground" },
+    "통신":     { bg: "bg-card", border: "border-border", dot: "bg-muted", sectorBadge: "text-foreground bg-muted border-border", accentText: "text-foreground" },
   };
 
   const typeLabels: Record<string, { label: string; color: string }> = {
-    growth:   { label: "성장주", color: "text-violet-300 bg-violet-900/50 border-violet-600/40" },
-    balance:  { label: "균형형", color: "text-cyan-300 bg-cyan-900/50 border-cyan-600/40" },
-    dividend: { label: "배당주", color: "text-amber-300 bg-amber-900/50 border-amber-600/40" },
-    survey:   { label: "설문추천", color: "text-emerald-300 bg-emerald-900/50 border-emerald-600/40" },
+    growth:   { label: "성장주", color: "text-primary bg-accent border-primary/40" },
+    balance:  { label: "균형형", color: "text-primary bg-accent border-primary/40" },
+    dividend: { label: "배당주", color: "text-warning bg-warning/10 border-warning/30" },
+    survey:   { label: "설문추천", color: "text-success bg-success/10 border-success/30" },
   };
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-            <Lightbulb className="w-4 h-4 text-white" />
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-paper">
+            <Lightbulb className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-100">투자 아이디어</h2>
-            <p className="text-xs text-gray-400">AI 포트폴리오 분석 기반 맞춤 추천</p>
+            <h2 className="text-xl font-semibold text-foreground">투자 아이디어</h2>
+            <p className="text-xs text-muted-foreground">AI 포트폴리오 분석 기반 맞춤 추천</p>
           </div>
         </div>
         <div className="text-center py-16">
           <div className="w-16 h-16 mx-auto mb-4 relative">
-            <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
-            <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-cyan-900 to-blue-900 border border-cyan-700 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-cyan-400" />
+            <div className="absolute inset-0 rounded-full bg-accent animate-ping"></div>
+            <div className="relative w-16 h-16 rounded-full bg-accent border border-primary/40 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-primary" />
             </div>
           </div>
-          <p className="text-sm text-gray-300">AI가 포트폴리오를 분석 중입니다...</p>
-          <p className="text-xs text-gray-500 mt-1">설문 응답과 보유 종목을 교차 분석합니다</p>
+          <p className="text-sm text-muted-foreground">AI가 포트폴리오를 분석 중입니다...</p>
+          <p className="text-xs text-faint-foreground mt-1">설문 응답과 보유 종목을 교차 분석합니다</p>
         </div>
       </div>
     );
@@ -374,41 +374,41 @@ export function StockRecommendations() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
-          <Lightbulb className="w-6 h-6 text-cyan-400" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Lightbulb className="w-6 h-6 text-primary" />
           투자 아이디어
         </h2>
-        <p className="text-sm text-gray-400 mt-1">AI 포트폴리오 분석 기반 맞춤 추천</p>
+        <p className="text-sm text-muted-foreground mt-1">AI 포트폴리오 분석 기반 맞춤 추천</p>
       </div>
 
       {/* 포트폴리오 분석 결과 */}
       {analysisResult && (
-        <div className="rounded-2xl overflow-hidden border border-cyan-700/40 bg-gradient-to-br from-cyan-950/70 to-blue-950/70">
-          <div className="px-4 pt-3.5 pb-3 flex items-center gap-2.5 border-b border-white/10">
-            <div className="w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-              <AlertCircle className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="rounded-2xl overflow-hidden border border-primary/40 bg-accent">
+          <div className="px-4 pt-3.5 pb-3 flex items-center gap-2.5 border-b border-border">
+            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
+              <AlertCircle className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="text-sm font-semibold text-cyan-300">포트폴리오 분석</span>
+            <span className="text-sm font-semibold text-primary">포트폴리오 분석</span>
           </div>
           <div className="p-4 space-y-2">
             {analysisResult.recommendations.length > 0 ? (
               analysisResult.recommendations.map((rec, index) => (
-                <div key={index} className="flex items-start gap-2 text-xs text-gray-300">
-                  <ChevronRight className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                <div key={index} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <ChevronRight className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
                   <span>{rec}</span>
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-2 text-xs text-emerald-300">
+              <div className="flex items-center gap-2 text-xs text-success">
                 <CheckCircle className="w-4 h-4" />
                 포트폴리가 균형잡혀 있습니다.
               </div>
             )}
             {/* 섹터 비중 - 항상 표시 */}
-            <div className="pt-3 border-t border-white/10">
-              <div className="text-xs text-gray-400 mb-3">현재 섹터 비중</div>
+            <div className="pt-3 border-t border-border">
+              <div className="text-xs text-muted-foreground mb-3">현재 섹터 비중</div>
               {Object.keys(analysisResult.currentAllocation).length === 0 ? (
-                <div className="text-xs text-gray-500 text-center py-2">포트폴리오에 종목을 추가하면 섹터 비중이 표시됩니다.</div>
+                <div className="text-xs text-faint-foreground text-center py-2">포트폴리오에 종목을 추가하면 섹터 비중이 표시됩니다.</div>
               ) : (
                 <div className="space-y-2.5">
                   {Object.entries(analysisResult.currentAllocation)
@@ -416,12 +416,12 @@ export function StockRecommendations() {
                     .map(([sector, percent]) => (
                       <div key={sector}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-gray-300">{sector}</span>
-                          <span className="text-xs font-bold text-cyan-300">{percent.toFixed(0)}%</span>
+                          <span className="text-xs text-muted-foreground">{sector}</span>
+                          <span className="text-xs font-bold text-primary">{percent.toFixed(0)}%</span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-700"
+                            className="h-full rounded-full bg-primary transition-all duration-700"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
@@ -436,8 +436,8 @@ export function StockRecommendations() {
 
       {/* 소제목 */}
       <div className="flex items-center gap-2">
-        <CheckCircle className="w-4 h-4 text-cyan-400" />
-        <h3 className="text-sm font-semibold text-gray-200">균형잡힌 포트폴리오를 위한 아이디어</h3>
+        <CheckCircle className="w-4 h-4 text-primary" />
+        <h3 className="text-sm font-semibold text-foreground">균형잡힌 포트폴리오를 위한 아이디어</h3>
       </div>
 
       {/* 종목 카드 */}
@@ -449,26 +449,26 @@ export function StockRecommendations() {
           return (
             <div
               key={stock.symbol}
-              className={`rounded-2xl overflow-hidden border ${colors.border} bg-gradient-to-br ${colors.bg}`}
+              className={`rounded-2xl overflow-hidden border ${colors.border} ${colors.bg} shadow-paper`}
             >
               {/* 카드 헤더 */}
               <div className="px-4 pt-4 pb-3">
                 <div className="flex items-start justify-between gap-2">
                   {/* 순번 + 종목 정보 */}
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0 bg-white/10 border border-white/20">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold text-foreground flex-shrink-0 bg-muted border border-border">
                       {index + 1}
                     </div>
                     <div className="min-w-0">
                       {/* 티커 + 유형 뱃지 */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-extrabold text-xl text-white tracking-widest">{stock.symbol}</span>
+                        <span className="font-extrabold text-xl text-foreground tracking-widest">{stock.symbol}</span>
                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${typeInfo.color}`}>
                           {typeInfo.label}
                         </span>
                       </div>
                       {/* 영어명 */}
-                      <p className="text-xs text-gray-400 mt-0.5 truncate">{stock.nameEn}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{stock.nameEn}</p>
                       {/* 한글명 */}
                       <p className={`text-xs font-medium mt-0.5 ${colors.accentText}`}>{stock.nameKo}</p>
                     </div>
@@ -481,38 +481,38 @@ export function StockRecommendations() {
               </div>
 
               {/* 구분선 */}
-              <div className="h-px bg-white/10" />
+              <div className="h-px bg-muted" />
 
               {/* 기대점 */}
               <div className="px-4 pt-3 pb-2">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-xs font-semibold text-emerald-400">기대점</span>
+                  <TrendingUp className="w-3.5 h-3.5 text-up" />
+                  <span className="text-xs font-semibold text-up">기대점</span>
                 </div>
                 <div className="space-y-2">
                   {(stock.pros || []).map((pro, i) => (
                     <div key={i} className="flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
-                      <span className="text-xs text-gray-200 leading-relaxed">{pro}</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-up mt-1.5 flex-shrink-0" />
+                      <span className="text-xs text-foreground leading-relaxed">{pro}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* 구분선 */}
-              <div className="h-px bg-white/10 mx-4 my-1" />
+              <div className="h-px bg-muted mx-4 my-1" />
 
               {/* 리스크 */}
               <div className="px-4 pt-2 pb-4">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-                  <span className="text-xs font-semibold text-rose-400">리스크</span>
+                  <ShieldAlert className="w-3.5 h-3.5 text-down" />
+                  <span className="text-xs font-semibold text-down">리스크</span>
                 </div>
                 <div className="space-y-2">
                   {(stock.risks || []).map((risk, i) => (
                     <div key={i} className="flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5 flex-shrink-0" />
-                      <span className="text-xs text-gray-300 leading-relaxed">{risk}</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-down mt-1.5 flex-shrink-0" />
+                      <span className="text-xs text-muted-foreground leading-relaxed">{risk}</span>
                     </div>
                   ))}
                 </div>
@@ -523,12 +523,12 @@ export function StockRecommendations() {
       </div>
 
       {/* 투자 유의사항 */}
-      <div className="rounded-2xl border border-amber-800/40 bg-amber-950/30 p-4">
+      <div className="rounded-2xl border border-warning/30 bg-warning/5 p-4">
         <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="w-4 h-4 text-amber-400" />
-          <p className="text-xs font-semibold text-amber-300">투자 유의사항</p>
+          <AlertCircle className="w-4 h-4 text-warning" />
+          <p className="text-xs font-semibold text-warning">투자 유의사항</p>
         </div>
-        <p className="text-xs text-amber-400/70 leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           본 아이디어는 포트폴리오 분석 및 설문 응답을 바탕으로 한 참고 자료입니다.
           실제 투자 결정은 본인의 판단과 책임 하에 이루어져야 하며,
           과거 수익률이 미래 수익을 보장하지 않습다.

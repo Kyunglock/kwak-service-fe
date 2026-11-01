@@ -18,6 +18,7 @@ import { StockMbtiCard } from "./insights/StockMbtiCard";
 import { GuruMatchCard } from "./insights/GuruMatchCard";
 import { InvestmentSurvey } from "@/app/components/survey/InvestmentSurvey";
 import { StockFortuneCard } from "./fortune/StockFortuneCard";
+import { PLAYGROUND_TONES } from "@/app/theme/featurePalettes";
 
 type View = "landing" | "mbti" | "guru-match" | "survey" | "fortune";
 
@@ -138,7 +139,7 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   const BackButton = () => (
     <button
       onClick={() => setView("landing")}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-gray-200 transition-colors hover:border-slate-500 hover:bg-slate-700 hover:text-white"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-border hover:bg-accent hover:text-foreground"
     >
       <ArrowLeft className="w-4 h-4" />
       투자 놀이터로 돌아가기
@@ -196,23 +197,23 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
   return (
     <div className="space-y-5 w-full max-w-4xl mx-auto">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-pink-400" />
-        <h2 className="text-xl font-semibold text-gray-100">투자 놀이터</h2>
+        <Sparkles className="w-5 h-5 text-primary" />
+        <h2 className="text-xl font-semibold text-foreground">투자 놀이터</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <button
           onClick={handleMbtiStart}
-          className="group text-left rounded-xl border border-pink-700/40 bg-gradient-to-br from-pink-900/50 to-rose-900/30 p-6 hover:border-pink-500/60 hover:from-pink-900/70 hover:to-rose-900/50 transition-all duration-200"
+          className={`group text-left rounded-xl border border-border bg-card p-6 shadow-paper ${PLAYGROUND_TONES["투자 MBTI 알아보기!"].hover} transition-all duration-200`}
         >
           <div className="text-4xl mb-4">🧬</div>
-          <h3 className="text-xl font-bold text-pink-200 mb-2 group-hover:text-pink-100 transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 transition-colors">
             투자 MBTI 알아보기!
           </h3>
-          <p className="text-base text-gray-400 leading-relaxed mb-5">
+          <p className="text-base text-muted-foreground leading-relaxed mb-5">
             44문항 통합 설문으로 나의 성격 MBTI와 투자 MBTI를 함께 알아보세요. 일반 MBTI와 16가지 투자 성향 분석으로 당신의 투자 스타일을 찾아보세요.
           </p>
-          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-pink-300 group-hover:text-pink-200 group-hover:gap-3 transition-all duration-200">
+          <span className={`inline-flex items-center gap-1.5 text-base font-semibold ${PLAYGROUND_TONES["투자 MBTI 알아보기!"].icon} group-hover:gap-3 transition-all duration-200`}>
             {hasRiskProfileResponse === null
               ? " "
               : hasRiskProfileResponse
@@ -223,32 +224,32 @@ export function InvestorTypeDashboard({ onRetakeSurvey }: Props) {
 
         <button
           onClick={() => setView("guru-match")}
-          className="group text-left rounded-xl border border-indigo-700/40 bg-gradient-to-br from-indigo-900/50 to-purple-900/30 p-6 hover:border-indigo-500/60 hover:from-indigo-900/70 hover:to-purple-900/50 transition-all duration-200"
+          className={`group text-left rounded-xl border border-border bg-card p-6 shadow-paper ${PLAYGROUND_TONES["내 포트폴리오와 맞는 투자 대가는?"].hover} transition-all duration-200`}
         >
           <div className="text-4xl mb-4">👑</div>
-          <h3 className="text-xl font-bold text-indigo-200 mb-2 group-hover:text-indigo-100 transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 transition-colors">
             내 포트폴리오와 맞는 투자 대가는?
           </h3>
-          <p className="text-base text-gray-400 leading-relaxed mb-5">
+          <p className="text-base text-muted-foreground leading-relaxed mb-5">
             내가 보유한 종목을 워런 버핏, 조지 소로스 등 전설적 투자자들의 포트폴리오와 비교해보세요.
           </p>
-          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-indigo-300 group-hover:text-indigo-200 group-hover:gap-3 transition-all duration-200">
+          <span className={`inline-flex items-center gap-1.5 text-base font-semibold ${PLAYGROUND_TONES["내 포트폴리오와 맞는 투자 대가는?"].icon} group-hover:gap-3 transition-all duration-200`}>
             알아보기 →
           </span>
         </button>
 
         <button
           onClick={() => setView("fortune")}
-          className="group text-left rounded-xl border border-amber-700/40 bg-gradient-to-br from-amber-900/50 to-orange-900/30 p-6 hover:border-amber-500/60 hover:from-amber-900/70 hover:to-orange-900/50 transition-all duration-200"
+          className={`group text-left rounded-xl border border-border bg-card p-6 shadow-paper ${PLAYGROUND_TONES["오늘의 종목운세"].hover} transition-all duration-200`}
         >
           <div className="text-4xl mb-4">🔮</div>
-          <h3 className="text-xl font-bold text-amber-200 mb-2 group-hover:text-amber-100 transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 transition-colors">
             오늘의 종목운세
           </h3>
-          <p className="text-base text-gray-400 leading-relaxed mb-5">
+          <p className="text-base text-muted-foreground leading-relaxed mb-5">
             궁금한 종목의 오늘 기운을 점쳐보세요. 별자리, 숫자 궁합, 로고 색상까지 총동원한 재미용 운세입니다.
           </p>
-          <span className="inline-flex items-center gap-1.5 text-base font-semibold text-amber-300 group-hover:text-amber-200 group-hover:gap-3 transition-all duration-200">
+          <span className={`inline-flex items-center gap-1.5 text-base font-semibold ${PLAYGROUND_TONES["오늘의 종목운세"].icon} group-hover:gap-3 transition-all duration-200`}>
             운세 보기 →
           </span>
         </button>

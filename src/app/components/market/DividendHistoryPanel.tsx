@@ -39,10 +39,10 @@ export function DividendHistoryPanel({ positions }: DividendHistoryPanelProps) {
   if (positions.length === 0) return null;
 
   return (
-    <Card className="p-4 bg-slate-700 border-slate-600 shadow-lg">
+    <Card className="p-4 bg-card border-border shadow-paper">
       <div className="flex items-center gap-2 mb-3">
-        <DollarSign className="w-4 h-4 text-green-400" />
-        <h3 className="font-semibold text-sm text-gray-100">배당 이력</h3>
+        <DollarSign className="w-4 h-4 text-up" />
+        <h3 className="font-semibold text-sm text-foreground">배당 이력</h3>
       </div>
 
       {/* 종목 선택 */}
@@ -50,7 +50,7 @@ export function DividendHistoryPanel({ positions }: DividendHistoryPanelProps) {
         <select
           value={selectedStock}
           onChange={(e) => setSelectedStock(e.target.value)}
-          className="w-full bg-slate-600 text-gray-100 text-sm rounded-lg px-3 py-2 border border-slate-500 appearance-none pr-8 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="w-full bg-muted text-foreground text-sm rounded-lg px-3 py-2 border border-border appearance-none pr-8 focus:outline-none focus:ring-1 focus:ring-ring/50"
         >
           {positions.map((p) => (
             <option key={p.stockCd} value={p.stockCd}>
@@ -58,27 +58,27 @@ export function DividendHistoryPanel({ positions }: DividendHistoryPanelProps) {
             </option>
           ))}
         </select>
-        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
       </div>
 
       {loading ? (
         <div className="flex justify-center py-6">
-          <div className="w-6 h-6 border-2 border-green-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       ) : records.length === 0 ? (
-        <p className="text-center text-sm text-gray-400 py-6">배당 데이터가 없습니다.</p>
+        <p className="text-center text-sm text-muted-foreground py-6">배당 데이터가 없습니다.</p>
       ) : (
         <>
           {/* 연간 예상 배당금 요약 */}
           {estimatedAnnual > 0 && (
-            <div className="bg-slate-600 rounded-lg p-3 mb-3 flex items-center justify-between">
+            <div className="bg-muted rounded-lg p-3 mb-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-300 font-medium">연간 예상 배당금</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground font-medium">연간 예상 배당금</p>
+                <p className="text-xs text-muted-foreground">
                   {selectedPosition?.holdQty}주 × 최근 4분기 ${annualDividendPerShare.toFixed(4)}
                 </p>
               </div>
-              <span className="text-lg font-bold text-green-400">
+              <span className="text-lg font-bold text-up">
                 ${estimatedAnnual.toFixed(2)}
               </span>
             </div>
@@ -86,17 +86,17 @@ export function DividendHistoryPanel({ positions }: DividendHistoryPanelProps) {
 
           {/* 배당 이력 목록 */}
           <div className="space-y-1.5">
-            <div className="grid grid-cols-2 text-xs text-gray-400 px-1 mb-1">
+            <div className="grid grid-cols-2 text-xs text-muted-foreground px-1 mb-1">
               <span>배당락일</span>
               <span className="text-right">주당 배당금</span>
             </div>
             {records.map((r) => (
               <div
                 key={r.exDate}
-                className="grid grid-cols-2 text-xs bg-slate-600 rounded-lg px-3 py-2"
+                className="grid grid-cols-2 text-xs bg-muted rounded-lg px-3 py-2"
               >
-                <span className="text-gray-300">{r.exDate}</span>
-                <span className="text-right text-green-300 font-medium">
+                <span className="text-muted-foreground">{r.exDate}</span>
+                <span className="text-right text-up font-medium">
                   ${r.dividend.toFixed(4)}
                 </span>
               </div>

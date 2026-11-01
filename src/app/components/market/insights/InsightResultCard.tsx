@@ -194,7 +194,7 @@ export function InsightResultCard({ results }: Props) {
         <button
           onClick={handleBuildContext}
           disabled={building}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary hover:bg-primary-strong disabled:bg-muted text-primary-foreground transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary hover:bg-primary-strong disabled:bg-muted disabled:text-faint-foreground text-primary-foreground transition-colors flex-shrink-0"
         >
           <RefreshCw className={`w-3 h-3 ${building ? "animate-spin" : ""}`} />
           {building ? "분석 중..." : "결과보기"}

@@ -279,7 +279,7 @@ export function InvestmentCompetition() {
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-full">
                 {myRank <= 3 ? getMedalIcon(myRank) : (
-                  <span className="text-base font-bold text-foreground">{myRank}</span>
+                  <span className="text-base font-bold text-primary-foreground">{myRank}</span>
                 )}
               </div>
               <div>

@@ -156,7 +156,7 @@ export function GuruMatchCard({ portfolioItems, guruPortfolios }: Props) {
 
                 <div className="h-1.5 rounded-full bg-muted overflow-hidden mb-2">
                   <div
-                    className={`h-full rounded-full transition-all duration-700 ${isTop ? "bg-primary" : "bg-muted"}`}
+                    className={`h-full rounded-full transition-all duration-700 ${isTop ? "bg-primary" : "bg-switch-background"}`}
                     style={{ width: `${inv.score}%` }}
                   />
                 </div>

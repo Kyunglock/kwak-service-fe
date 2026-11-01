@@ -207,7 +207,7 @@ export function SurveyStatistics({ keyword, defaultExpandedSurveyId, onExpandHan
                                     <div className="relative h-6 bg-muted rounded overflow-hidden">
                                       <div
                                         className={`absolute inset-y-0 left-0 transition-all duration-500 ${
-                                          isMyAnswer ? "bg-primary/70" : "bg-switch-background"
+                                          isMyAnswer ? "bg-primary/40" : "bg-switch-background"
                                         }`}
                                         style={{ width: `${percentage}%` }}
                                       />

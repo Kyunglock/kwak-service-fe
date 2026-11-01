@@ -86,7 +86,7 @@ export function InsightsDashboard() {
             onClick={trigger}
             disabled={isProcessing || surveyRequired}
             title={surveyRequired ? "투자 성향 설문을 먼저 완료해주세요" : undefined}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary hover:bg-primary-strong disabled:bg-muted text-primary-foreground transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary hover:bg-primary-strong disabled:bg-muted disabled:text-faint-foreground text-primary-foreground transition-colors"
           >
             <RefreshCw className={`w-3 h-3 ${isProcessing ? "animate-spin" : ""}`} />
             {isProcessing ? "분석 중..." : "결과 생성"}

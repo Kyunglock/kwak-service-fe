@@ -9,7 +9,7 @@ import type { PortfolioItemResponse, DividendHistoryRecord } from "@/app/types";
 import { useCurrency, EXCHANGE_RATE } from "@/app/contexts/CurrencyContext";
 import { CurrencyToggleButton } from "@/app/components/ui/CurrencyToggleButton";
 import { predictNextExDate, predictNextPaymentDate } from "@/app/utils/dividend";
-import { CHART_COLORS_10 } from "@/app/theme/tokens";
+import { CHART_COLORS_10, chartLabelColor } from "@/app/theme/tokens";
 
 const RADIAN = Math.PI / 180;
 const COLORS = CHART_COLORS_10;
@@ -57,16 +57,16 @@ function DDayBadge({ dateStr }: { dateStr: string }) {
 }
 
 const renderLabel = ({
-  cx, cy, midAngle, innerRadius, outerRadius, name, percent,
+  cx, cy, midAngle, innerRadius, outerRadius, name, percent, index,
 }: {
-  cx: number; cy: number; midAngle: number; innerRadius: number; outerRadius: number; name: string; percent: number;
+  cx: number; cy: number; midAngle: number; innerRadius: number; outerRadius: number; name: string; percent: number; index: number;
 }) => {
   if (percent < 0.05) return null;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.55;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
   return (
-    <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
+    <text x={x} y={y} fill={chartLabelColor(COLORS[index % COLORS.length])} textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
       <tspan x={x} dy="-0.6em">{name}</tspan>
       <tspan x={x} dy="1.3em">{(percent * 100).toFixed(0)}%</tspan>
     </text>

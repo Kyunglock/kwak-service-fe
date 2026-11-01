@@ -13,12 +13,11 @@ import { confirmTradeDraft } from "@/app/services/tradeCaptureService";
 /**
  * 입력칸 스타일.
  *
- * <p>Input 기본값은 밝은 배경(--input-background: #f3f3f5)이고 이 값은 .dark 에서도
- * 재정의되지 않는다. 어두운 대화 화면 위에 밝은 칸만 동동 뜨고, 글자색을 밝게 잡으면
- * 흰 배경에 흰 글씨가 된다. 같은 카드 안의 select 와 톤을 맞춰 배경까지 직접 지정한다.
+ * <p>Input 기본 배경(--input-background)은 카드보다 한 톤 어둡다. 같은 카드 안의
+ * select 와 톤을 맞추려고 배경까지 직접 지정한다.
  */
 const FIELD_CLASS =
-  "bg-slate-900 border-slate-700 text-gray-100 placeholder:text-gray-500";
+  "bg-card border-border text-foreground placeholder:text-faint-foreground";
 
 /** 대화 안에서 수정 가능한 행. 초안 응답을 편집 가능한 형태로 펼친 것. */
 interface EditableRow {
@@ -140,7 +139,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
   if (done) {
     // 상세 안내는 뒤따르는 어시스턴트 메시지가 하므로 여기서는 짧게 끝낸다
     return (
-      <div className="flex items-center gap-1.5 text-xs text-emerald-400">
+      <div className="flex items-center gap-1.5 text-xs text-success">
         <Check className="w-3.5 h-3.5 flex-shrink-0" />
         저장 완료
       </div>
@@ -148,7 +147,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-900/60 p-3 sm:p-4 space-y-3">
+    <div className="rounded-xl border border-border bg-card p-3 sm:p-4 space-y-3">
       <div className="space-y-3">
         {rows.map((row) => {
           const valid = isRowValid(row);
@@ -157,12 +156,12 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
               key={row.lineNo}
               className={`rounded-lg border p-3 space-y-3 ${
                 row.include && !valid
-                  ? "border-amber-500/40 bg-amber-500/5"
-                  : "border-slate-700 bg-slate-800/50"
+                  ? "border-warning/40 bg-warning/5"
+                  : "border-border bg-card"
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <label className="flex items-center gap-2 text-sm text-gray-300 min-w-0">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
                   <input
                     type="checkbox"
                     checked={row.include}
@@ -171,7 +170,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                     }
                     className="accent-indigo-500 flex-shrink-0"
                   />
-                  <span className="text-gray-500 flex-shrink-0">읽은 내용:</span>
+                  <span className="text-faint-foreground flex-shrink-0">읽은 내용:</span>
                   <span className="font-medium truncate">{row.rawName}</span>
                 </label>
                 <button
@@ -179,7 +178,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                   onClick={() =>
                     setRows((prev) => prev.filter((r) => r.lineNo !== row.lineNo))
                   }
-                  className="p-1 text-gray-500 hover:text-red-400 flex-shrink-0"
+                  className="p-1 text-faint-foreground hover:text-destructive flex-shrink-0"
                   aria-label="이 항목 빼기"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -187,7 +186,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
               </div>
 
               {row.issue && (
-                <p className="flex items-start gap-1.5 text-xs text-amber-400">
+                <p className="flex items-start gap-1.5 text-xs text-warning">
                   <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                   {row.issue}
                 </p>
@@ -208,8 +207,8 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                       }
                       className={`px-2 py-1 rounded-md text-xs border transition-colors ${
                         row.stockCd === c.stockCd
-                          ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-300"
-                          : "bg-slate-800 border-slate-700 text-gray-400 hover:text-gray-200"
+                          ? "bg-accent border-primary/40 text-primary"
+                          : "bg-card border-border text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {c.stockNm} ({c.stockCd})
@@ -220,7 +219,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
 
               <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
                 <div className="col-span-2">
-                  <Label className="text-xs text-gray-500">종목코드</Label>
+                  <Label className="text-xs text-faint-foreground">종목코드</Label>
                   <Input
                     value={row.stockCd}
                     onChange={(e) =>
@@ -232,13 +231,13 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                     className={FIELD_CLASS}
                   />
                   {row.stockNm && (
-                    <p className="mt-1 text-xs text-gray-500 truncate">
+                    <p className="mt-1 text-xs text-faint-foreground truncate">
                       {row.stockNm}
                     </p>
                   )}
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">유형</Label>
+                  <Label className="text-xs text-faint-foreground">유형</Label>
                   <select
                     value={row.transType}
                     onChange={(e) =>
@@ -246,14 +245,14 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                         transType: e.target.value as "BUY" | "SELL",
                       })
                     }
-                    className="w-full h-9 rounded-md bg-slate-900 border border-slate-700 text-sm px-2 text-gray-200"
+                    className="w-full h-9 rounded-md bg-card border border-border text-sm px-2 text-foreground"
                   >
                     <option value="BUY">매수</option>
                     <option value="SELL">매도</option>
                   </select>
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">날짜</Label>
+                  <Label className="text-xs text-faint-foreground">날짜</Label>
                   <Input
                     type="date"
                     value={row.transDt}
@@ -264,7 +263,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">수량</Label>
+                  <Label className="text-xs text-faint-foreground">수량</Label>
                   <Input
                     type="number"
                     min="0"
@@ -275,7 +274,7 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">단가</Label>
+                  <Label className="text-xs text-faint-foreground">단가</Label>
                   <Input
                     type="number"
                     min="0"
@@ -293,15 +292,15 @@ export function TradeDraftCard({ draft, onSaved }: TradeDraftCardProps) {
         })}
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <div className="flex items-center justify-end gap-3">
-        <span className="text-xs text-gray-500">{validCount}건 저장 가능</span>
+        <span className="text-xs text-faint-foreground">{validCount}건 저장 가능</span>
         <button
           type="button"
           onClick={handleSave}
           disabled={saving || validCount === 0}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-strong disabled:opacity-50 text-primary-foreground rounded-lg text-sm font-medium transition-colors"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />

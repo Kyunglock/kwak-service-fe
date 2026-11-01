@@ -1,19 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 // 크림 테마로 옮긴 경로에 옛 어두운 테마·"AI틱한" 장식이 다시 들어오지 않게 막는다.
-// 영역을 하나 옮길 때마다 아래 GUARDED 에 import.meta.glob 한 줄을 추가한다
+// 전 영역 전환 완료 — 컴포넌트 전체를 검사한다. 새 경로(예: pages)를 넣을 땐 import.meta.glob 한 줄을 추가한다
 // (Vite 제약: 패턴과 옵션 모두 리터럴로 직접 써야 한다 — 변수로 뺄 수 없다).
 const GUARDED: Record<string, string> = {
-  ...import.meta.glob<string>('../components/ui/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
+  ...import.meta.glob<string>('../components/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob<string>('../../styles/theme.css', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/layout/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/auth/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/portfolio/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/market/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/survey/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/error/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/user/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
-  ...import.meta.glob<string>('../components/figma/**/*.tsx', { query: '?raw', import: 'default', eager: true }),
 };
 
 // 기능별 고유 색(MBTI 유형, 브랜드 버튼 등)은 featurePalettes.ts 에 모아 두고 가드에서 뺀다.
